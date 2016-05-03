@@ -81,7 +81,7 @@ while true do
 	local maxTemp = reactor.getMaxHeat()
 	local shutDownTemp = maxTemp / 5
 	local invSize = reactor.getInventorySize()
-	local waitTime = 10
+	local cycle = 5
 	
 	display(reactor, energyMode())
 	
@@ -89,7 +89,7 @@ while true do
 	if temp > shutDownTemp then
 		while reactor.getHeat() > 1 do
 			display(reactor, coolDownMode())
-			wait(waitTime)
+			wait(cycle)
 		end
 		display(reactor, energyMode())
 	end
@@ -101,7 +101,7 @@ while true do
 			if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
 				while reactor.getStackInSlot(i)["dmg"]/item["max_dmg"] > .05 do
 					display(reactor, coolDownMode())
-					wait(waitTime)
+					wait(cycle)
 				end
 				display(reactor, energyMode())
 			end
@@ -110,11 +110,11 @@ while true do
 			if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
 				while reactor.getStackInSlot(i)["dmg"]/item["max_dmg"] > .95 do
 					display(reactor, shutDownMode())
-					wait(waitTime)
+					wait(cycle)
 				end
 				display(reactor, energyMode())
 			end
 		end
 	end
-	os.sleep(5)
+	wait(cycle)
 end
