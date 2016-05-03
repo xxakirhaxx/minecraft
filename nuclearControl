@@ -37,7 +37,7 @@ end
 while true do
 	local temp = reactor.getHeat()
 	local maxTemp = reactor.getMaxHeat()
-	local shutDownTemp = maxheat / 5
+	local shutDownTemp = maxTemp / 5
 	local n = getInventorySize()
 	local mode = "Energy"
 	
