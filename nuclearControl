@@ -45,6 +45,7 @@ while true do
 	if temp > shutDownTemp then
 		while reactor.getHeat() > 1 do
 			display(reactor, coolDownMode())
+			os.sleep(10)
 		end
 		display(reactor, energyMode())
 	end
@@ -56,6 +57,7 @@ while true do
 			if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
 				while item["dmg"]/item["max_dmg"] > .05 do
 					display(reactor, coolDownMode())
+					os.sleep(10)
 				end
 				display(reactor, energyMode())
 			end
@@ -64,9 +66,11 @@ while true do
 			if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
 				while item["dmg"]/item["max_dmg"] > .95 do
 					display(reactor, shutDownMode())
+					os.sleep(10)
 				end
 				display(reactor, energyMode())
 			end
 		end
-	end	
+	end
+	os.sleep(5)
 end
