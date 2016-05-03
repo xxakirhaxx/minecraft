@@ -55,31 +55,32 @@ while true do
 		display(reactor, mode)
 	end
 	
-	for i = 1, i < invSize, 1 do
+	for i = 1, invSize do
 		local item = reactor.getStackInSlot(i)
-		
-		--Check parts dmg, if any is too high send system into cool down mode
-		if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
-			while item["dmg"]/item["max_dmg"] > .05 do
-				coolDownMode()
-				mode = "Cool Down"
+		if item["dmg"] ~= nil and item["max_dmg"] ~= nil and item["name"] ~= nil then
+			--Check parts dmg, if any is too high send system into cool down mode
+			if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
+				while item["dmg"]/item["max_dmg"] > .05 do
+					coolDownMode()
+					mode = "Cool Down"
+					display(reactor, mode)
+				end
+				energyMode()
+				mode = "Energy"
 				display(reactor, mode)
 			end
-			energyMode()
-			mode = "Energy"
-			display(reactor, mode)
-		end
-		
-		--Check fuel rod dmg, if dmg is too high shut down 
-		if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
-			while item["dmg"]/item["max_dmg"] > .95 do
-				shutDownMode()
-				mode = "Shutdown"
+			
+			--Check fuel rod dmg, if dmg is too high shut down 
+			if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
+				while item["dmg"]/item["max_dmg"] > .95 do
+					shutDownMode()
+					mode = "Shutdown"
+					display(reactor, mode)
+				end
+				energyMode()
+				mode = "Energy"
 				display(reactor, mode)
 			end
-			energyMode()
-			mode = "Energy"
-			display(reactor, mode)
 		end
 	end	
 end
