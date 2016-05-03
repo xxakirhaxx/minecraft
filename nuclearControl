@@ -44,7 +44,7 @@ while true do
 	display(reactor, mode)
 	
 	-- Lock into cool down mode if  temp is to high until temp is 0
-	if (temp > shutDownTemp) then
+	if temp > shutDownTemp then
 		while reactor.getHeat() > 1 do
 			coolDownMode()
 			mode = "Cool Down"
