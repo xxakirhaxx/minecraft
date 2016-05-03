@@ -61,7 +61,7 @@ function wait (num)
 	event = {"", "", "", "", "", ""}
 	os.startTimer(num)
 	while true do
-		event[1], event[2], event[3], event[4], event[5], event[6],  = os.pullEvent()
+		event[1], event[2], event[3], event[4], event[5], event[6]  = os.pullEvent()
 		if event[1] == "timer" or event[1] == "rednet_message" then
 			break
 		end
