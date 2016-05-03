@@ -1,28 +1,27 @@
 local reactor = peripheral.wrap("back")
-local reactorR = "back"
-local red = "right"
-local green = "top"
-local blue = "left"
 
 function coolDownMode ()
-	redstone.setOutput(reactorR, false)
-	redstone.setOutput(red, false)
-	redstone.setOutput(green, false)
-	redstone.setOutput(blue, true)
+	redstone.setOutput("back", false)
+	redstone.setOutput("right", false)
+	redstone.setOutput("top", false)
+	redstone.setOutput("left", true)
+	return "COOLDOWN"
 end
 
 function energyMode ()
-	redstone.setOutput(reactorR, true)
-	redstone.setOutput(red, false)
-	redstone.setOutput(green, true)
-	redstone.setOutput(blue, false)
+	redstone.setOutput("back", true)
+	redstone.setOutput("right", false)
+	redstone.setOutput("top", true)
+	redstone.setOutput("left", false)
+	return "ENERGY"
 end
 
 function shutDownMode ()
-	redstone.setOutput(reactorR, false)
-	redstone.setOutput(red, true)
-	redstone.setOutput(green, false)
-	redstone.setOutput(blue, false)
+	redstone.setOutput("back", false)
+	redstone.setOutput("right", true)
+	redstone.setOutput("top", false)
+	redstone.setOutput("left", true)
+	return "SHUTDOWN"
 end
 
 function display (reactor, mode)
@@ -39,20 +38,15 @@ while true do
 	local maxTemp = reactor.getMaxHeat()
 	local shutDownTemp = maxTemp / 5
 	local invSize = reactor.getInventorySize()
-	local mode = "Energy"
 	
-	display(reactor, mode)
+	display(reactor, energyMode())
 	
 	-- Lock into cool down mode if  temp is to high until temp is 0
 	if temp > shutDownTemp then
 		while reactor.getHeat() > 1 do
-			coolDownMode()
-			mode = "Cool Down"
-			display(reactor, mode)
+			display(reactor, coolDownMode())
 		end
-		energyMode()
-		mode = "Energy"
-		display(reactor, mode)
+		display(reactor, energyMode())
 	end
 	
 	for i = 1, invSize do
@@ -61,25 +55,17 @@ while true do
 			--Check parts dmg, if any is too high send system into cool down mode
 			if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
 				while item["dmg"]/item["max_dmg"] > .05 do
-					coolDownMode()
-					mode = "Cool Down"
-					display(reactor, mode)
+					display(reactor, coolDownMode())
 				end
-				energyMode()
-				mode = "Energy"
-				display(reactor, mode)
+				display(reactor, energyMode())
 			end
 			
 			--Check fuel rod dmg, if dmg is too high shut down 
 			if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
 				while item["dmg"]/item["max_dmg"] > .95 do
-					shutDownMode()
-					mode = "Shutdown"
-					display(reactor, mode)
+					display(reactor, shutDownMode())
 				end
-				energyMode()
-				mode = "Energy"
-				display(reactor, mode)
+				display(reactor, energyMode())
 			end
 		end
 	end	
