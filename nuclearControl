@@ -4,28 +4,28 @@ local red = "right"
 local green = "top"
 local blue = "left"
 
-function coolDownMode () do
+function coolDownMode ()
 	redstone.setOutput(reactorR, false)
 	redstone.setOutput(red, false)
 	redstone.setOutput(green, false)
 	redstone.setOutput(blue, true)
 end
 
-function energyMode () do
+function energyMode ()
 	redstone.setOutput(reactorR, true)
 	redstone.setOutput(red, false)
 	redstone.setOutput(green, true)
 	redstone.setOutput(blue, false)
 end
 
-function shutDownMode () do
+function shutDownMode ()
 	redstone.setOutput(reactorR, false)
 	redstone.setOutput(red, true)
 	redstone.setOutput(green, false)
 	redstone.setOutput(blue, false)
 end
 
-function display (reactor, mode) do
+function display (reactor, mode)
 	term.clear()
 	print("Current Temperature: ", reactor.getHeat())
 	print("Max Temperature: ", reactor.getMaxHeat())
@@ -35,5 +35,97 @@ end
 
 
 while true do
-
+	local temp = reactor.getHeat()
+	local maxTemp = reactor.getMaxHeat()
+	local shutDownTemp = maxheat / 5
+	local n = getInventorySize()
+	local mode = "Energy"
+	
+	display(reactor, mode)
+	
+	-- Lock into cool down mode if  temp is to high until temp is 0
+	if temp > shutDownTemp then
+		while reactor.getHeat() > 1 do
+			coolDownMode()
+			mode = "Cool Down"
+			display(reactor, mode)
+		end
+		energyMode()
+		mode = "Energy"
+		display(reactor, mode)
+	end
+	
+	for i = 1, j < n do
+		local item = reactor.getStackInSlot(i)
+		
+		--Check parts dmg, if any is too high send system into cool down mode
+		if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
+			while item["dmg"]/item["max_dmg"] > .05 do
+				coolDownMode()
+				mode = "Cool Down"
+				display(reactor, mode)
+			end
+			energyMode()
+			mode = "Energy"
+			display(reactor, mode)
+		end
+		
+		--Check fuel rod dmg, if dmg is too high shut down 
+		if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
+			while item["dmg"]/item["max_dmg"] > .95 do
+				shutDownMode()
+				mode = "Shutdown"
+				display(reactor, mode)
+			end
+			energyMode()
+			mode = "Energy"
+			display(reactor, mode)
+		end
+	end		local temp = reactor.getHeat()
+	local maxTemp = reactor.getMaxHeat()
+	local shutDownTemp = maxheat / 5
+	local n = getInventorySize()
+	local mode = "Energy"
+	
+	display(reactor, mode)
+	
+	-- Lock into cool down mode if  temp is to high until temp is 0
+	if temp > shutDownTemp then
+		while reactor.getHeat() > 1 do
+			coolDownMode()
+			mode = "Cool Down"
+			display(reactor, mode)
+		end
+		energyMode()
+		mode = "Energy"
+		display(reactor, mode)
+	end
+	
+	for i = 1, j < n do
+		local item = reactor.getStackInSlot(i)
+		
+		--Check parts dmg, if any is too high send system into cool down mode
+		if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
+			while item["dmg"]/item["max_dmg"] > .05 do
+				coolDownMode()
+				mode = "Cool Down"
+				display(reactor, mode)
+			end
+			energyMode()
+			mode = "Energy"
+			display(reactor, mode)
+		end
+		
+		--Check fuel rod dmg, if dmg is too high shut down 
+		if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
+			while item["dmg"]/item["max_dmg"] > .95 do
+				shutDownMode()
+				mode = "Shutdown"
+				display(reactor, mode)
+			end
+			energyMode()
+			mode = "Energy"
+			display(reactor, mode)
+		end
+	end	
 end
