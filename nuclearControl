@@ -55,7 +55,7 @@ while true do
 		if item ~= nil then
 			--Check parts dmg, if any is too high send system into cool down mode
 			if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
-				while item["dmg"]/item["max_dmg"] > .05 do
+				while reactor.getStackInSlot(i)["dmg"]/item["max_dmg"] > .05 do
 					display(reactor, coolDownMode())
 					os.sleep(10)
 				end
@@ -64,7 +64,7 @@ while true do
 			
 			--Check fuel rod dmg, if dmg is too high shut down 
 			if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
-				while item["dmg"]/item["max_dmg"] > .95 do
+				while reactor.getStackInSlot(i)["dmg"]/item["max_dmg"] > .95 do
 					display(reactor, shutDownMode())
 					os.sleep(10)
 				end
