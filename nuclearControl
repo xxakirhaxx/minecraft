@@ -71,7 +71,7 @@ while true do
 		end
 		
 		--Check fuel rod dmg, if dmg is too high shut down 
-		if (item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad") then
+		if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
 			while item["dmg"]/item["max_dmg"] > / .95 do
 				shutDownMode()
 				mode = "Shutdown"
