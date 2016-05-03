@@ -57,7 +57,7 @@ while true do
 	
 	for i = 1, invSize do
 		local item = reactor.getStackInSlot(i)
-		if item["dmg"] ~= nil and item["max_dmg"] ~= nil and item["name"] ~= nil then
+		if item ~= nil then
 			--Check parts dmg, if any is too high send system into cool down mode
 			if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
 				while item["dmg"]/item["max_dmg"] > .05 do
