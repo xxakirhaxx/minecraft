@@ -101,7 +101,7 @@ while true do
 		display(reactor, mode)
 	end
 	
-	for i = 1, i < invSize, 1 do
+	for i = 1, i < invSize do
 		local item = reactor.getStackInSlot(i)
 		
 		--Check parts dmg, if any is too high send system into cool down mode
