@@ -59,7 +59,7 @@ while true do
 		local item = reactor.getStackInSlot(i)
 		
 		--Check parts dmg, if any is too high send system into cool down mode
-		if (item["dmg"]/item["max_dmg"] > .5 and item["name"] != "reactorUraniumQuad") then
+		if item["dmg"]/item["max_dmg"] > .5 and item["name"] != "reactorUraniumQuad" then
 			while item["dmg"]/item["max_dmg"] > .05 do
 				coolDownMode()
 				mode = "Cool Down"
