@@ -1,1 +1,48 @@
 local reactor = peripheral.wrap("back")
+local reactorR = "back"
+local red = "right"
+local green = "top"
+local blue = "left"
+
+function coolDownMode () do
+	redstone.setOutput(reactorR, false)
+	redstone.setOutput(red, false)
+	redstone.setOutput(green, false)
+	redstone.setOutput(blue, true)
+end
+
+function energyMode () do
+	redstone.setOutput(reactorR, true)
+	redstone.setOutput(red, false)
+	redstone.setOutput(green, true)
+	redstone.setOutput(blue, false)
+end
+
+function shutDownMode () do
+	redstone.setOutput(reactorR, false)
+	redstone.setOutput(red, true)
+	redstone.setOutput(green, false)
+	redstone.setOutput(blue, false)
+end
+
+
+while true do
+	local temp = reactor.getHeat();
+	local maxTemp = reactor.getMaxHeat()
+	local shutDownTemp = maxheat / 5
+	local n = getInventorySize()
+	local mode = "energy"
+	
+	term.clear()
+	print("Current Temperature: ", temp)
+	print("Max Temperature: ", maxTemp)
+	print("Shutdown Temperature: ", shutDownTemp)
+	
+	if temp > shutDownTemp then
+		mode = "coolDown"
+	elseif temp < 1
+		
+	end
+	
+	
+end
