@@ -1,5 +1,19 @@
 local reactor = peripheral.wrap("back")
 
+function getNuclearControlId ()
+	local event = ""
+	local id = ""
+	local msg = ""
+	
+	while msg ~= "nuclearControl" do
+		event, id, msg  = os.pullEvent()
+	end
+	
+	return id
+end
+
+local nuclearControlId = getNuclearControlId()
+
 function coolDownMode ()
 	redstone.setOutput("back", false)
 	redstone.setOutput("right", false)
@@ -32,12 +46,41 @@ function display (reactor, mode)
 	print("System State: ", mode)
 end
 
+function command (cmd)
+	local event = ""
+	local id = ""
+	local msg = ""
+	if(cmd == "stop") then
+		while msg ~= "start" and id ~= nuclearControlId do
+			event, id, msg = os.pullEvent()
+		end
+	end
+end
+
+function wait (num)
+	event = {"", "", "", "", "", ""}
+	os.startTimer(num)
+	while true do
+		event[1], event[2], event[3], event[4], event[5], event[6],  = os.pullEvent()
+		if event[1] == "timer" or event[1] == "rednet_message" then
+			break
+		end
+	end
+	if event[1] == "rednet_message" and event[2] == nuclearControlId then
+		command(event[3])
+		wait(num)
+	end
+	
+	return event
+end
+
 
 while true do
 	local temp = reactor.getHeat()
 	local maxTemp = reactor.getMaxHeat()
 	local shutDownTemp = maxTemp / 5
 	local invSize = reactor.getInventorySize()
+	local waitTime = 10
 	
 	display(reactor, energyMode())
 	
@@ -45,7 +88,7 @@ while true do
 	if temp > shutDownTemp then
 		while reactor.getHeat() > 1 do
 			display(reactor, coolDownMode())
-			os.sleep(10)
+			wait(waitTime)
 		end
 		display(reactor, energyMode())
 	end
@@ -57,7 +100,7 @@ while true do
 			if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
 				while reactor.getStackInSlot(i)["dmg"]/item["max_dmg"] > .05 do
 					display(reactor, coolDownMode())
-					os.sleep(10)
+					wait(waitTime)
 				end
 				display(reactor, energyMode())
 			end
@@ -66,7 +109,7 @@ while true do
 			if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
 				while reactor.getStackInSlot(i)["dmg"]/item["max_dmg"] > .95 do
 					display(reactor, shutDownMode())
-					os.sleep(10)
+					wait(waitTime)
 				end
 				display(reactor, energyMode())
 			end
