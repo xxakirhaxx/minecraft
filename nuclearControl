@@ -20,7 +20,7 @@ local nuclearControlId = getNuclearControlId()
 
 function sendReactorInfo ()
 
-	local reactorInfo = reactor.getHeat()..":"..reactor.getMaxHeat()..":".. reactor.getEUOutput().."|"
+	local reactorInfo = {getHeat = reactor.getHeat(), getMaxHeat = reactor.getMaxHeat(), getEUOutput = reactor.getEUOutput()}
 	
 	rednet.open("bottom")
 	rednet.send(tonumber(nuclearControlId), reactorInfo)
