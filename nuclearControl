@@ -16,6 +16,8 @@ function getNuclearControlId ()
 	return id
 end
 
+local nuclearControlId = getNuclearControlId()
+
 function sendReactorInfo ()
 
 	local reactorInfo = reactor.getHeat()..":"..reactor.getMaxHeat()..":".. reactor.getEUOutput().."|"
@@ -25,8 +27,6 @@ function sendReactorInfo ()
 	rednet.close("bottom")
 	
 end
-
-local nuclearControlId = getNuclearControlId()
 
 function coolDownMode ()
 	redstone.setOutput("back", false)
