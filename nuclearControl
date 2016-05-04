@@ -51,6 +51,8 @@ function command (cmd)
 	local event = ""
 	local id = ""
 	local msg = ""
+	
+	rednet.open("bottom")
 	if cmd == "shutdown" then
 		shutDownMode()
 		while msg ~= "start" and id ~= nuclearControlId do
@@ -62,6 +64,7 @@ function command (cmd)
 			event, id, msg = os.pullEvent()
 		end
 	end
+	rednet.close()
 	
 end
 
