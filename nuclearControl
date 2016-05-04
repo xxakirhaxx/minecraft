@@ -1,5 +1,6 @@
 local reactor = peripheral.wrap("back")
 local cycle = 5
+local currentMode = "energy"
 
 function getNuclearControlId ()
 	local event = ""
@@ -51,7 +52,7 @@ function shutDownMode ()
 	return "SHUTDOWN"
 end
 
-function display (reactor, mode)
+function display (mode)
 	term.clear()
 	print("Current Temperature: ", reactor.getHeat())
 	print("Max Temperature: ", reactor.getMaxHeat())
@@ -60,55 +61,73 @@ function display (reactor, mode)
 	
 end
 
+function setCurrentMode (m)
+	
+	if m ~= "" then
+		currentMode = m
+	end
+	
+	if currentMode == "energy" then
+		display(energyMode())
+	elseif currentMode == "cooldown" then
+		display(coolDownMode())
+	elseif currentMode == "shutdown" then
+		display(shutDownMode())
+	end
+	
+end
+
 function command (cmd)
 	local event = ""
 	local id = ""
 	local msg = ""
+	local m = currentMode
 	
 	if cmd == "shutdown" then
-		shutDownMode()
+		
+		setCurrentMode("shutdown")
 		while msg ~= "start" and id ~= nuclearControlId do
 			rednet.open("bottom")
 			event, id, msg = os.pullEvent()
 			rednet.close("bottom")
 		end
+		setCurrentMode(m)
+		
 	elseif cmd == "stop" then
-		coolDownMode()
-		while msg ~= "start" and id ~= nuclearControlId do
-			
-			os.startTimer(cycle)
-			
-			rednet.open("bottom")
-			event, id, msg = os.pullEvent()
-			rednet.close("bottom")
-			
-			sendReactorInfo()
-		end
+		setCurrentMode("cooldown")
+		while wait(cycle) ~= "start" and id ~= nuclearControlId do end
+		setCurrentMode(m)
 	end	
 end
 
 function wait (num)
-	event = {"", "", "", "", "", ""}
-	os.startTimer(num)
+	local event = ""
+	local id = ""
+	local msg = ""
+	
+	if num > 0 then
+		os.startTimer(num)
+	end
 
 	while true do
 		rednet.open("bottom")
-		event[1], event[2], event[3], event[4], event[5], event[6]  = os.pullEvent()
+		event, id, msg  = os.pullEvent()
 		rednet.close("bottom")
 		
-		if event[1] == "timer" or event[1] == "rednet_message" then
+		if event == "timer" or (event == "rednet_message" and id == nuclearControlId)then
 			break
 		end
 	end
 		
+	setCurrentMode("")
 	sendReactorInfo()
 	
-	if event[1] == "rednet_message" and event[2] == nuclearControlId then
-		command(event[3])
+	if event == "rednet_message" and id == nuclearControlId then
+		command(msg)
 		wait(num)
 	end
 	
-	return event
+	return msg
 end
 
 
@@ -118,15 +137,15 @@ while true do
 	local shutDownTemp = maxTemp / 5
 	local invSize = reactor.getInventorySize()
 	
-	display(reactor, energyMode())
+	setCurrentMode("energy")
 	
 	-- Lock into cool down mode if  temp is to high until temp is 0
 	if temp > shutDownTemp then
 		while reactor.getHeat() > 1 do
-			display(reactor, coolDownMode())
+			setCurrentMode("cooldown")
 			wait(cycle)
 		end
-		display(reactor, energyMode())
+		setCurrentMode("energy")
 	end
 	
 	for i = 1, invSize do
@@ -135,19 +154,19 @@ while true do
 			--Check parts dmg, if any is too high send system into cool down mode
 			if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
 				while reactor.getStackInSlot(i)["dmg"]/item["max_dmg"] > .05 do
-					display(reactor, coolDownMode())
+					setCurrentMode("cooldown")
 					wait(cycle)
 				end
-				display(reactor, energyMode())
+				setCurrentMode("energy")
 			end
 			
 			--Check fuel rod dmg, if dmg is too high shut down 
 			if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
 				while reactor.getStackInSlot(i)["dmg"]/item["max_dmg"] > .95 do
-					display(reactor, shutDownMode())
+					setCurrentMode("shutdown")
 					wait(cycle)
 				end
-				display(reactor, energyMode())
+				setCurrentMode("energy")
 			end
 		end
 	end
