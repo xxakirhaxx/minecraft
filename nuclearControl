@@ -95,7 +95,7 @@ function command (cmd)
 		
 	elseif cmd == "stop" then
 		setCurrentMode("cooldown")
-		while wait(cycle) ~= "start" or id ~= nuclearControlId do end
+		while wait(cycle) ~= "start" do end
 		setCurrentMode(m)
 	end	
 end
