@@ -1,4 +1,5 @@
 local reactor = peripheral.wrap("back")
+rednet.open("bottom")
 
 function getNuclearControlId ()
 	local event = ""
@@ -34,7 +35,7 @@ function shutDownMode ()
 	redstone.setOutput("back", false)
 	redstone.setOutput("right", true)
 	redstone.setOutput("top", false)
-	redstone.setOutput("left", true)
+	redstone.setOutput("left", false)
 	return "SHUTDOWN"
 end
 
