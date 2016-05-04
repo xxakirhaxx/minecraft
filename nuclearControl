@@ -1,4 +1,5 @@
 local reactor = peripheral.wrap("back")
+local cycle = 5
 
 function getNuclearControlId ()
 	local event = ""
@@ -9,8 +10,19 @@ function getNuclearControlId ()
 	while msg ~= "nuclearControl" do
 		event, id, msg  = os.pullEvent()
 	end
+	rednet.send(id, "nuclearControl")
 	rednet.close("bottom")
 	return id
+end
+
+function sendReactorInfo ()
+
+	local reactorInfo = {getHeat = reactor.getHeat(), getMaxHeat = reactor.getMaxHeat(), getEUOutput = reactor.getEUOutput()}
+	
+	rednet.open("bottom")
+	rednet.send(nuclearControlId, reactorInfo)
+	rednet.close("bottom")
+	
 end
 
 local nuclearControlId = getNuclearControlId()
@@ -45,6 +57,7 @@ function display (reactor, mode)
 	print("Max Temperature: ", reactor.getMaxHeat())
 	print("Shutdown Temperature: ", reactor.getMaxHeat() / 5)
 	print("System State: ", mode)
+	
 end
 
 function command (cmd)
@@ -52,34 +65,43 @@ function command (cmd)
 	local id = ""
 	local msg = ""
 	
-	rednet.open("bottom")
 	if cmd == "shutdown" then
 		shutDownMode()
 		while msg ~= "start" and id ~= nuclearControlId do
+			rednet.open("bottom")
 			event, id, msg = os.pullEvent()
+			rednet.close("bottom")
 		end
 	elseif cmd == "stop" then
 		coolDownMode()
 		while msg ~= "start" and id ~= nuclearControlId do
+			
+			os.startTimer(cycle)
+			
+			rednet.open("bottom")
 			event, id, msg = os.pullEvent()
+			rednet.close("bottom")
+			
+			sendReactorInfo()
 		end
-	end
-	rednet.close()
-	
+	end	
 end
 
 function wait (num)
 	event = {"", "", "", "", "", ""}
 	os.startTimer(num)
-	
-	rednet.open("bottom")
+
 	while true do
+		rednet.open("bottom")
 		event[1], event[2], event[3], event[4], event[5], event[6]  = os.pullEvent()
+		rednet.close("bottom")
+		
 		if event[1] == "timer" or event[1] == "rednet_message" then
 			break
 		end
 	end
-	rednet.close("bottom")
+		
+	sendReactorInfo()
 	
 	if event[1] == "rednet_message" and event[2] == nuclearControlId then
 		command(event[3])
@@ -95,7 +117,6 @@ while true do
 	local maxTemp = reactor.getMaxHeat()
 	local shutDownTemp = maxTemp / 5
 	local invSize = reactor.getInventorySize()
-	local cycle = 5
 	
 	display(reactor, energyMode())
 	
