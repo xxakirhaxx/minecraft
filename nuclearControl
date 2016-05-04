@@ -95,7 +95,7 @@ function command (cmd)
 		
 	elseif cmd == "stop" then
 		setCurrentMode("cooldown")
-		while wait(cycle) ~= "start" do end
+		while msg ~= "start" do msg = wait(cycle) end
 		setCurrentMode(m)
 	end	
 end
