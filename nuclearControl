@@ -114,7 +114,7 @@ function wait (num)
 		event, id, msg  = os.pullEvent()
 		rednet.close("bottom")
 		
-		if event == "timer" or (event == "rednet_message" and id == nuclearControlId)then
+		if event == "timer" or (event == "rednet_message" and id == nuclearControlId) then
 			break
 		end
 	end
