@@ -120,7 +120,7 @@ function wait (num)
 	end
 		
 	setCurrentMode("")
-	sendReactorInfo()
+	--sendReactorInfo()
 	
 	if event == "rednet_message" and id == nuclearControlId then
 		command(msg)
