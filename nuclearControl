@@ -21,7 +21,7 @@ function sendReactorInfo ()
 	local reactorInfo = {getHeat = reactor.getHeat(), getMaxHeat = reactor.getMaxHeat(), getEUOutput = reactor.getEUOutput()}
 	
 	rednet.open("bottom")
-	rednet.send(nuclearControlId, reactorInfo)
+	rednet.send(tonumber(nuclearControlId), reactorInfo)
 	rednet.close("bottom")
 	
 end
@@ -120,7 +120,7 @@ function wait (num)
 	end
 		
 	setCurrentMode("")
-	--sendReactorInfo()
+	sendReactorInfo()
 	
 	if event == "rednet_message" and id == nuclearControlId then
 		command(msg)
