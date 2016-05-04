@@ -84,9 +84,9 @@ function command (cmd)
 	local m = currentMode
 	
 	if cmd == "shutdown" then
-		
+	
 		setCurrentMode("shutdown")
-		while msg ~= "start" and id ~= nuclearControlId do
+		while msg ~= "start" or id ~= nuclearControlId do
 			rednet.open("bottom")
 			event, id, msg = os.pullEvent()
 			rednet.close("bottom")
@@ -95,7 +95,7 @@ function command (cmd)
 		
 	elseif cmd == "stop" then
 		setCurrentMode("cooldown")
-		while wait(cycle) ~= "start" and id ~= nuclearControlId do end
+		while wait(cycle) ~= "start" or id ~= nuclearControlId do end
 		setCurrentMode(m)
 	end	
 end
