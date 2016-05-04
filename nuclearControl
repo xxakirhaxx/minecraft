@@ -124,7 +124,6 @@ function wait (num)
 	
 	if event == "rednet_message" and id == nuclearControlId then
 		command(msg)
-		wait(num)
 	end
 	
 	return msg
