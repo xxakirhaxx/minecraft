@@ -19,7 +19,7 @@ local function updateNuclearControlSystemsStats (...)
 	
 	for i, j in ipairs(args) do
 		id = j
-	then
+	end
 	
 	if id > 0 then
 		
