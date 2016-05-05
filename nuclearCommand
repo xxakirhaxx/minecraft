@@ -17,11 +17,9 @@ local function updateNuclearControlSystemsStats (...)
 	local id = 0
 	local msg = {}
 	
-	for i, j in ipairs(args) do
-		id = j
-	end
-	
-	if id > 0 then
+	if args not nil then
+		
+		id = args[1]
 		
 		if nuclearControlSystems[id].currentMode ~= "shutdown" then
 			rednet.open(modemSide)
