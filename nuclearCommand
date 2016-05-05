@@ -113,6 +113,7 @@ local function eventHandler (t)
 	--get any event
 	rednet.open(modemSide)
 	event, id, msg = os.pullEvent()
+	print(event, " : " , id, " : ", msg)
 	rednet.close(modemSide)
 	
 	--pause timer
