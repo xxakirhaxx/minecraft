@@ -57,7 +57,7 @@ local function handleCommandEvent (cmd)
 		rMsg = c[1]
 	elseif c[1] == "stop" then
 		rednet.open(modemSide)
-		rednet.broadcast("cooldown")
+		rednet.broadcast("stop")
 		rednet.close(modemSide)
 	elseif c[1] == "start" then
 		rednet.open(modemSide)
@@ -69,7 +69,7 @@ local function handleCommandEvent (cmd)
 		rednet.close(modemSide)
 	elseif c[1] == "disconnect" then
 		rednet.open(modemSide)
-		rednet.broadcast("start")
+		rednet.broadcast("disconnect")
 		rednet.close(modemSide)
 	end
 	
