@@ -7,15 +7,17 @@ local currentPage = 0
 local modemSide = "bottom"
 local pageSize = 14
 
---Returns the size of a table
-local function tableSz (tbl)
-
-	local count = 0
-	for i, k in ipairs(tbl) do
-		count = count + 1
+local function removeNuclearControlSystem (id)
+	
+	for i = 1, #nuclearControlIds do
+		if nuclearControlId[i] == id then
+			table.remove(nuclearControlSystems[id])
+			table.remove(nuclearControlIds[i])
+			return true
+		end
 	end
 	
-	return count
+	return false
 end
 
 --Updates nuclearControlSystems table with current data
@@ -169,19 +171,32 @@ local function handleNuclearSystemEvent (id, msg)
 	nuclearControlSystems[id] = msg
 end
 
+--Sends a command to one or all nuclear control systems
+--id: int
+--if id is 0 cmd will be broadcast to all nuclear control systems
+--cmd: string
+--command to send to nuclear control systems
+--return: string
+--msg received from nuclear control system
 local function executeCommand (id, cmd)
 
 	local rMsg = ""
 	
+	--It's poor design, but a very specific action needs to be taken if the cmd is disconnect
 	if id > 0 then
 	
 		while rid ~= nuclearControlIds[i] do
 			local rid = 0
 			rednet.open(modemSide)
-			rednet.send(nuclearControlIds[c[2]], cmd)
+			rednet.send(nuclearControlIds[id], cmd)
 			rid, rMsg = rednet.receive()
 			rednet.close(modemSide)
 		end
+		
+		if cmd == "disconnect" then
+			removeNuclearControlSystem(id)
+		end
+		
 	else
 		for i = 1, #nuclearControlIds do
 			while rid ~= nuclearControlIds[i] do
@@ -191,11 +206,16 @@ local function executeCommand (id, cmd)
 				rid, rMsg = rednet.receive()
 				rednet.close(modemSide)
 			end
+			if cmd == "disconnect" then
+				removeNuclearControlSystem(nuclearControlIds[i])
+			end
+			
 		end
 	end
 	
 	return rMsg
 end
+
 --Handles any command events
 --cmd: string
 --String with the format of <cmd> <arg1> <arg2> <arg3> ...
@@ -236,23 +256,25 @@ local function handleCommandEvent (cmd)
 		
 	elseif c[1] == "shutdown" then
 	
-		
 		if #c > 1 then
 			rMsg = executeCommand(c[2],c[1])
 		else
 			rMsg = executeCommand(0,c[1])
 		end
 	elseif c[1] == "turnon" then
+	
 		if #c > 1 then
 			rMsg = executeCommand(c[2],c[1])
 		else
 			rMsg = executeCommand(0,c[1])
 		end
-	end
 	elseif c[1] == "disconnect" then
-		rednet.open(modemSide)
-		rednet.broadcast("disconnect")
-		rednet.close(modemSide)
+		
+		if #c > 1 then
+			rMsg = executeCommand(c[2],c[1])
+		else
+			rMsg = executeCommand(0,c[1])
+		end
 	elseif c[1] == "draw" then
 		drawMonitor(0)
 	end
