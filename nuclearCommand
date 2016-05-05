@@ -32,7 +32,7 @@ end
 local function addNuclearControlSystem (id)
 
 	--add id to table
-	nuclearControlSystem[#nuclearControlSystem+1] = id
+	nuclearControlSystems[#nuclearControlSystems + 1] = id
 	
 	--send start message
 	rednet.open(modemSide)
