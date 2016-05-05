@@ -16,7 +16,7 @@ local function isNuclearSystemId (id)
 			return true
 		end
 	end
-	
+	--wtf
 	return false
 end
 
