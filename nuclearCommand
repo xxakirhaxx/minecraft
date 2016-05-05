@@ -3,7 +3,7 @@ local cycle = 5
 local monitor = peripheral.wrap("top")
 local nuclearControlSystems = {}
 local modemSide = "bottom"
-local pageSize = 10
+local pageSize = 8
 
 --Draws the monitor
 --page: int
@@ -12,7 +12,7 @@ local function drawMonitor(page)
 	
 	local n = 0
 	local x = 1
-	local y = 1
+	local y = 2
 	local title = "Nuclear Command"
 	local w,h = monitor.getSize()
 	local totalEU = 0
@@ -41,13 +41,13 @@ local function drawMonitor(page)
 		
 		local id = nuclearControlSystems[i]
 		local msg = {}
-		local k = i + 1
-		x = (k%2) * 40 + 1
-		y = 7 + math.floor(k/2)
+		local k = i
+		x = (k%1) * 48 + 1
+		y = 8 + math.floor(k/2)
 		local nPos = 0
 		local sPos = 14
-		local euPos = 22
-		local tPos = 32
+		local euPos = 26
+		local tPos = 38
 		
 		rednet.open(modemSide)
 		print("requesting info from: "..id)
@@ -88,7 +88,7 @@ local function drawMonitor(page)
 	monitor.setTextColour(1)
 	monitor.setTextScale(1)
 	x = math.floor(math.floor(w - string.len(euString))/2)
-	y = 5
+	y = 6
 	monitor.setCursorPos(x,y)
 	monitor.write(euString)
 	monitor.setCursorPos(1,1)
