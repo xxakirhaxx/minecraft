@@ -23,6 +23,8 @@ local function drawMonitor(page)
 		n = #nuclearControlSystems
 	end
 	
+	print("Drawing Title")
+	
 	monitor.clear()
 	monitor.setTextColour(1)
 	monitor.setTextScale(3)
@@ -31,6 +33,9 @@ local function drawMonitor(page)
 	monitor.write(title)
 	monitor.setTextScale(1)
 	
+	print("Done Drawing title.")
+	
+	print("Beginning for loop")
 	
 	for i = page*pageSize + 1, n do
 		
