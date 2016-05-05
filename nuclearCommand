@@ -20,6 +20,20 @@ local function isNuclearSystemId (id)
 	return false
 end
 
+--handles all nuclear system events
+--id: int
+--a nuclear system id
+--msg: table
+--table containing nuclear system information
+--returns: string
+--return message
+local function handleNuclearSystemEvent (id, msg)
+
+	local rMsg = ""
+	
+	return rMsg
+end
+
 --Handles any command events
 --cmd: string
 --String with the format of <cmd> <arg1> <arg2> <arg3> ...
@@ -47,6 +61,33 @@ local function handleCommandEvent (cmd)
 	return rMsg
 end
 
+--Handles normal system events
+--returns: string
+--return message
+local function handleSystemEvent ()
+	
+	local rMsg = ""
+	
+	return rMsg
+end
+
+--Handles any rednet events not from nuclear control systems
+--id: int
+--senders computer id
+--msg: string
+--senders msg
+--returns: string
+--return message
+local function handleRednetMessageEvent (id, msg)
+
+	local rMsg = ""
+	
+	return rMsg
+end
+
+--Adds nuclear control system to nuclearControlSystems and sends a start command
+--id: int
+--nuclear control system id
 local function addNuclearControlSystem (id)
 
 	--add id to table
@@ -86,7 +127,7 @@ local function eventHandler (t)
 	if isNuclearSystemId(id) then
 		msg = handleNuclearSystemEvent(id, msg)
 	elseif event == "timer" then
-		msg = handleSystemEvents()
+		msg = handleSystemEvent()
 	elseif event == "rednet_message" then
 		msg = handleRednetMessageEvent(id, msg)
 	elseif event == "key" then
