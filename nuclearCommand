@@ -27,7 +27,7 @@ local function drawMonitor(page)
 	
 	monitor.clear()
 	monitor.setTextColour(1)
-	monitor.setTextScale(2)
+	monitor.setTextScale(1)
 	x = math.floor(math.floor(w - string.len(title))/2)
 	monitor.setCursorPos(x,y)
 	monitor.write(title)
@@ -43,7 +43,7 @@ local function drawMonitor(page)
 		local msg = {}
 		local k = i
 		x = (k%1) * 48 + 1
-		y = 8 + math.floor(k/2)
+		y = 8 + math.floor(k/1)
 		local nPos = 0
 		local sPos = 14
 		local euPos = 26
