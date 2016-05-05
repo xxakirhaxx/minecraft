@@ -11,7 +11,10 @@ function getNuclearControlId ()
 	while msg ~= "nuclearControl" do
 		event, id, msg  = os.pullEvent()
 	end
-	rednet.send(id, "nuclearControl")
+	rednet.send(id, "nuclearCommand")
+	while msg ~= "start" do
+		event, id, msg  = os.pullEvent()
+	end
 	rednet.close("bottom")
 	return id
 end

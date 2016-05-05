@@ -1,0 +1,140 @@
+--Time between running normal system events
+local cycle = 5
+local monitor = peripheral.wrap("top")
+local nuclearControlSystems = {}
+
+--Handles any command events
+--cmd: string
+--String with the format of <cmd> <arg1> <arg2> <arg3> ...
+local function handleCommandEvent (cmd)
+	--table with element 1 being the command and every element after an arg
+	local c = {}
+	--return message
+	local rMsg = ""
+	
+	--put individual words from the command into c
+	for word in string.gmatch(cmd, "%a+") do 
+		c[#c+1] = word 
+	end
+	
+	--handle each command
+	
+	--quits program
+	if c[1] == "quit" then
+		rMsg = c[1]
+	end
+	
+	
+	return rMsg
+end
+
+local function addNuclearControlSystem (id)
+
+	--add id to table
+	nuclearControlSystem[#nuclearControlSystem+1] = id
+	
+	--send start message
+	rednet.open()
+	rednet.send(id, "start")
+	rednet.close()
+	
+end
+
+--waits for events and performs actions based on them 
+-- t: int
+-- time between performing system events
+local function eventHandler (t)
+	local event = ""
+	local id = ""
+	local msg = ""
+	local tid = os.startTimer(t)
+	
+	--get any event
+	rednet.open()
+	event, id, msg = os.pullEvent()
+	rednet.close()
+	
+	--pause timer
+	if os.clock - t > 0 then
+		t = os.clock - t
+		os.cancelTimer(tid)
+	else
+		t = cycle
+	end
+	
+	--handle events
+	if isNuclearControlId(id) then
+		msg = handleNuclearSystemEvent(id, msg)
+	elseif event == "timer" then
+		msg = handleSystemEvents()
+	elseif event == "rednet_message" then
+		msg = handleRednetMessageEvent(id, msg)
+	elseif event == "key" then
+		msg = handleCommandEvent(read())
+	end
+		
+	return {msg = msg, t = t}
+end 
+
+--initialize program
+local function init ()
+	
+	local event = ""
+	local id = ""
+	local msg = ""
+	
+	--Clear Monitor and start initialize timer
+	monitor.clear()
+	os.startTimer()
+	
+		while event ~= "timer" do
+		
+			rednet.open()
+			rednet.broadcast("nuclearControl")
+			event, id, msg = os.pullEvent()
+			rednet.close()
+		
+			if event == "rednet_message" and msg == "nuclearCommand" then
+				addNuclearControlSystem(id)
+			end
+		
+		end
+end
+
+--Handles everything before a shutdown occurs
+local function shutdown ()
+
+	rednet.open()
+	rednet.broadcast("shutdown")
+	rednet.close()
+	
+end
+
+--main function for program
+local function main ()
+	
+	local t = cycle
+	
+	--initialize program
+	init()
+	
+	--loop in eventHandler
+	while true do
+		
+		local n = eventHandler(t)
+		
+		t = n.t
+		
+		if n.msg == "quit" then
+			break
+		end
+		
+	end
+	
+	--shutdown program
+	shutdown()
+	
+end
+
+--Run main program
+main()
