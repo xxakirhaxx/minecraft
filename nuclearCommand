@@ -241,10 +241,21 @@ end
 --nuclear control system id
 local function addNuclearControlSystem (id)
 
-	print("Adding "..id.." to nuclearControlIds")
-	--add id to table
-	nuclearControlIds[#nuclearControlIds + 1] = id
-	nuclearControlSystems[id] = {getHeat = 0, getMaxHeat = 0, getEUOutput = 0, currentMode = ""}
+	local exists = false
+	
+	for i = 1, #nuclearControlIds do
+		if id == i then 
+			exist = true
+			break
+		end
+	end
+	
+	if exists = false then
+		print("Adding "..id.." to nuclearControlIds")
+		--add id to table
+		nuclearControlIds[#nuclearControlIds + 1] = id
+		nuclearControlSystems[id] = {getHeat = 0, getMaxHeat = 0, getEUOutput = 0, currentMode = ""}
+	end
 	
 	--send start message
 	rednet.open(modemSide)
