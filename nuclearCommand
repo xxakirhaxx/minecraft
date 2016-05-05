@@ -39,7 +39,14 @@ local function updateNuclearControlSystemsStats (...)
 		print("Updating all nuclear control ids")
 		for i = 1, #nuclearControlIds do
 			print("Updating: "..nuclearControlIds[i])
-			updateNuclearControlSystemsStats(nuclearControlIds[i])
+			if nuclearControlSystems[id].currentMode ~= "shutdown" then
+				rednet.open(modemSide)
+				rednet.send(id, "getStats")
+				id, msg = rednet.receive()
+				rednet.send(id, "received")
+				rednet.close(modemSide)
+				nuclearControlSystems[id] = msg
+			end
 		end
 		
 	end
