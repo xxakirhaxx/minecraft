@@ -244,13 +244,13 @@ local function addNuclearControlSystem (id)
 	local exists = false
 	
 	for i = 1, #nuclearControlIds do
-		if id == i then 
+		if id == i then
 			exist = true
 			break
 		end
 	end
 	
-	if exists = false then
+	if exists == false then
 		print("Adding "..id.." to nuclearControlIds")
 		--add id to table
 		nuclearControlIds[#nuclearControlIds + 1] = id
