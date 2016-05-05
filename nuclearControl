@@ -102,6 +102,8 @@ function command (id, cmd)
 	elseif cmd == "disconnect" then
 		setCurrentMode("shutdown")
 		os.reboot()
+	elseif cmd == "getStats" then
+		sendReactorInfo()
 	end	
 	
 end
@@ -126,7 +128,6 @@ function wait (num)
 	end
 		
 	setCurrentMode("")
-	sendReactorInfo()
 	
 	if event == "rednet_message" and id == nuclearControlId then
 		command(id, msg)
