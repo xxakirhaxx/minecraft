@@ -117,9 +117,9 @@ local function eventHandler (t)
 	rednet.close(modemSide)
 	
 	--pause timer
+	os.cancelTimer(tid)
 	if os.clock() - ct > 0 then
 		t = os.clock() - ct
-		os.cancelTimer(tid)
 	else
 		t = cycle
 	end
