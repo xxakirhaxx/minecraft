@@ -2,6 +2,7 @@
 local cycle = 5
 local monitor = peripheral.wrap("top")
 local nuclearControlSystems = {}
+local modemSide = "bottom"
 
 --Handles any command events
 --cmd: string
@@ -34,9 +35,9 @@ local function addNuclearControlSystem (id)
 	nuclearControlSystem[#nuclearControlSystem+1] = id
 	
 	--send start message
-	rednet.open()
+	rednet.open(modemSide)
 	rednet.send(id, "start")
-	rednet.close()
+	rednet.close(modemSide)
 	
 end
 
@@ -50,9 +51,9 @@ local function eventHandler (t)
 	local tid = os.startTimer(t)
 	
 	--get any event
-	rednet.open()
+	rednet.open(modemSide)
 	event, id, msg = os.pullEvent()
-	rednet.close()
+	rednet.close(modemSide)
 	
 	--pause timer
 	if os.clock - t > 0 then
@@ -89,10 +90,10 @@ local function init ()
 	
 		while event ~= "timer" do
 		
-			rednet.open()
+			rednet.open(modemSide)
 			rednet.broadcast("nuclearControl")
 			event, id, msg = os.pullEvent()
-			rednet.close()
+			rednet.close(modemSide)
 		
 			if event == "rednet_message" and msg == "nuclearCommand" then
 				addNuclearControlSystem(id)
@@ -104,9 +105,9 @@ end
 --Handles everything before a shutdown occurs
 local function shutdown ()
 
-	rednet.open()
+	rednet.open(modemSide)
 	rednet.broadcast("shutdown")
-	rednet.close()
+	rednet.close(modemSide)
 	
 end
 
