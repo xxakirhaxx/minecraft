@@ -49,6 +49,7 @@ local function eventHandler (t)
 	local id = ""
 	local msg = ""
 	local tid = os.startTimer(t)
+	local ct = os.clock()
 	
 	--get any event
 	rednet.open(modemSide)
@@ -56,8 +57,8 @@ local function eventHandler (t)
 	rednet.close(modemSide)
 	
 	--pause timer
-	if os.clock - t > 0 then
-		t = os.clock - t
+	if os.clock() - ct > 0 then
+		t = os.clock() - ct
 		os.cancelTimer(tid)
 	else
 		t = cycle
@@ -74,7 +75,7 @@ local function eventHandler (t)
 		msg = handleCommandEvent(read())
 	end
 		
-	return {msg = msg, t = t}
+	return {msg, t}
 end 
 
 --initialize program
@@ -84,22 +85,26 @@ local function init ()
 	local id = ""
 	local msg = ""
 	
+	print("Initializing system...")
 	--Clear Monitor and start initialize timer
 	monitor.clear()
 	os.startTimer(10)
 	
-		while event ~= "timer" do
+	while event ~= "timer" do
 		
-			rednet.open(modemSide)
-			rednet.broadcast("nuclearControl")
-			event, id, msg = os.pullEvent()
-			rednet.close(modemSide)
+		rednet.open(modemSide)
+		rednet.broadcast("nuclearControl")
+		event, id, msg = os.pullEvent()
+		rednet.close(modemSide)
 		
-			if event == "rednet_message" and msg == "nuclearCommand" then
-				addNuclearControlSystem(id)
-			end
-		
+		if event == "rednet_message" and msg == "nuclearCommand" then
+			addNuclearControlSystem(id)
 		end
+		
+	end
+
+	print("Initialization Complete!")
+	print("Welcome to Nuclear Command!")
 end
 
 --Handles everything before a shutdown occurs
@@ -124,10 +129,14 @@ local function main ()
 		
 		local n = eventHandler(t)
 		
-		t = n.t
+		t = n[2]
 		
-		if n.msg == "quit" then
-			break
+		if type(n[1]) == "string" then
+		
+			if n[1] == "quit" then
+				break
+			end
+		
 		end
 		
 	end
