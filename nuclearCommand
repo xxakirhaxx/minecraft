@@ -7,6 +7,11 @@ local currentPage = 0
 local modemSide = "bottom"
 local pageSize = 14
 
+--Removes a nuclear control system
+--id: int
+--nuclear system id to be deleted
+--returns: boolean
+-- true if delete succesful false if unsuccesful
 local function removeNuclearControlSystem (id)
 	
 	for i = 1, #nuclearControlIds do
@@ -222,6 +227,7 @@ end
 --return: string
 --a string return message (mostly for exiting program)
 local function handleCommandEvent (cmd)
+	
 	--table with element 1 being the command and every element after an arg
 	local c = {}
 	local id = 0
