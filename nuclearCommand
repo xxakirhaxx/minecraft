@@ -3,7 +3,7 @@ local cycle = 5
 local monitor = peripheral.wrap("top")
 local nuclearControlSystems = {}
 local modemSide = "bottom"
-local pageSize = 32
+local pageSize = 10
 
 --Draws the monitor
 --page: int
@@ -27,7 +27,7 @@ local function drawMonitor(page)
 	
 	monitor.clear()
 	monitor.setTextColour(1)
-	monitor.setTextScale(3)
+	monitor.setTextScale(2)
 	x = math.floor(math.floor(w - string.len(title))/2)
 	monitor.setCursorPos(x,y)
 	monitor.write(title)
@@ -50,8 +50,10 @@ local function drawMonitor(page)
 		local tPos = 32
 		
 		rednet.open(modemSide)
+		print("requesting info from: "..id)
 		rednet.send(id, "getStats")
 		id, msg = rednet.receive()
+		print("info received from: "..id)
 		rednet.close(modemSide)
 		
 		local temp = math.floor(tonumber(msg.getHeat)/tonumber(msg.getMaxHeat))
