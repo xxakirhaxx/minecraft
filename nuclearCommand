@@ -2,8 +2,45 @@
 local cycle = 5
 local monitor = peripheral.wrap("top")
 local nuclearControlSystems = {}
+local nuclearControlIds = {}
+local currentPage = 0
 local modemSide = "bottom"
-local pageSize = 8
+local pageSize = 14
+
+
+--Updates nuclearControlSystems table with current data
+--id: int
+--optional send number id to update a single nuclear control system
+local function updateNuclearControlSystemsStats (...)
+
+	
+	local id = 0
+	local msg = {}
+	
+	for i, j in ipairs(args) do
+		id = j
+	then
+	
+	if id > 0 then
+		
+		if nuclearControlSystems[id].currentMode ~= "shutdown" then
+			rednet.open(modemSide)
+			rednet.send(id, "getStats")
+			id, msg = rednet.receive()
+			rednet.send(id, "received")
+			rednet.close(modemSide)
+			nuclearControlSystems[id] = msg
+		}
+		
+	else
+	
+		for i = 1, #nuclearControlIds do
+			updateNuclearControlSystemsStats(nuclearControlIds[i])
+		end
+		
+	end
+	
+end
 
 --Draws the monitor
 --page: int
@@ -12,22 +49,22 @@ local function drawMonitor(page)
 	
 	local n = 0
 	local x = 1
-	local y = 3
+	local y = 1
 	local title = "Nuclear Command"
 	local w,h = monitor.getSize()
 	local totalEU = 0
 	
-	if page*pageSize + pageSize < #nuclearControlSystems then
+	if page*pageSize + pageSize < #nuclearControlIds then
 		n = page*pageSize + pageSize
 	else
-		n = #nuclearControlSystems
+		n = #nuclearControlIds
 	end
 	
 	print("Drawing Title")
 	
 	monitor.clear()
 	monitor.setTextColour(1)
-	monitor.setTextScale(2)
+	monitor.setTextScale(1)
 	x = math.floor(math.floor(w - string.len(title))/2)
 	monitor.setCursorPos(x,y)
 	monitor.write(title)
@@ -35,33 +72,27 @@ local function drawMonitor(page)
 	
 	for i = page*pageSize + 1, n do
 		
-		local id = nuclearControlSystems[i]
-		local msg = {}
+		local id = nuclearControlIds[i]
 		local k = i
 		x = (k%1) * 48 + 1
-		y = 9 + math.floor(k/1)
+		y = 4 + math.floor(k/1)
 		local nPos = 0
 		local sPos = 14
 		local euPos = 26
 		local tPos = 38
 		
-		rednet.open(modemSide)
-		rednet.send(id, "getStats")
-		id, msg = rednet.receive()
-		rednet.close(modemSide)
-		
-		local temp = math.floor(tonumber(msg.getHeat)/tonumber(msg.getMaxHeat))
+		local temp = math.floor(tonumber(nuclearControlSystems[id].getHeat)/tonumber(nuclearControlSystems[id].getMaxHeat))
 		local mode = ""
-		totalEU = totalEU + msg.getEUOutput
+		totalEU = totalEU + nuclearControlSystems[id].getEUOutput
 		
 		monitor.setCursorPos(x+nPos,y)
 		monitor.write("System #"..id)
 		monitor.setCursorPos(x+sPos,y)
 		
-		if msg.currentMode == "energy" then
+		if nuclearControlSystems[id].currentMode == "energy" then
 			mode = "ENERGY"
 			monitor.setTextColour(8192)
-		elseif msg.currentMode == "cooldown" then
+		elseif nuclearControlSystems[id].currentMode == "cooldown" then
 			mode = "COOLDOWN"
 			monitor.setTextColour(2048)
 		else
@@ -73,7 +104,7 @@ local function drawMonitor(page)
 		monitor.setTextColour(1)
 		
 		monitor.setCursorPos(x+euPos,y)
-		monitor.write("EU: "..msg.getEUOutput)
+		monitor.write("EU: "..nuclearControlSystems[id].getEUOutput)
 		monitor.setCursorPos(x+tPos,y)
 		monitor.write("Temp: "..temp.."%")
 	end
@@ -82,7 +113,7 @@ local function drawMonitor(page)
 	monitor.setTextColour(1)
 	monitor.setTextScale(1)
 	x = math.floor(math.floor(w - string.len(euString))/2)
-	y = 7
+	y = 2
 	monitor.setCursorPos(x,y)
 	monitor.write(euString)
 	monitor.setCursorPos(1,1)
@@ -93,11 +124,11 @@ end
 --id: int
 --Represents a possible computer id
 --returns: boolean
---true if id exists in nuclearControlSystems table else false
+--true if id exists in nuclearControlIds table else false
 local function isNuclearSystemId (id)
 
-	for i = 1, #nuclearControlSystems do
-		if id == nuclearControlSystems[i] then
+	for i = 1, #nuclearControlIds do
+		if id == nuclearControlIds[i] then
 			return true
 		end
 	end
@@ -113,10 +144,7 @@ end
 --returns: string
 --return message
 local function handleNuclearSystemEvent (id, msg)
-
-	local rMsg = ""
-	
-	return rMsg
+	nuclearControlSystems[id] = msg
 end
 
 --Handles any command events
@@ -167,6 +195,9 @@ end
 --Handles normal system events
 local function handleSystemEvent ()
 	
+	updateNuclearControlSystemsStats()
+	drawMonitor(currentPage)
+	
 end
 
 --Handles any rednet events not from nuclear control systems
@@ -183,14 +214,15 @@ local function handleRednetMessageEvent (id, msg)
 	return rMsg
 end
 
---Adds nuclear control system to nuclearControlSystems and sends a start command
+--Adds nuclear control system to nuclearControlIds and sends a start command
 --id: int
 --nuclear control system id
 local function addNuclearControlSystem (id)
 
-	print("Adding "..id.." to nuclearControlSystems")
+	print("Adding "..id.." to nuclearControlIds")
 	--add id to table
-	nuclearControlSystems[#nuclearControlSystems + 1] = id
+	nuclearControlIds[#nuclearControlIds + 1] = id
+	nuclearControlSystems[id] = {getHeat = 0, getMaxHeat = 0, getEUOutput = 0, currentMode = ""}
 	
 	--send start message
 	rednet.open(modemSide)
