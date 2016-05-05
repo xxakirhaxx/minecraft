@@ -101,7 +101,7 @@ function command (id, cmd)
 		setCurrentMode(m)
 	elseif cmd == "disconnect" then
 		setCurrentMode("shutdown")
-		os.exit()
+		os.reboot()
 	end	
 	
 end
@@ -120,7 +120,7 @@ function wait (num)
 		event, id, msg  = os.pullEvent()
 		rednet.close("bottom")
 		
-		if event == "timer" or (event == "rednet_message" and id == nuclearControlId) then
+		if event == "timer" or event == "rednet_message" then
 			break
 		end
 	end
