@@ -4,9 +4,27 @@ local monitor = peripheral.wrap("top")
 local nuclearControlSystems = {}
 local modemSide = "bottom"
 
+--Verifies if an id is a nuclear system id
+--id: int
+--Represents a possible computer id
+--returns: boolean
+--true if id exists in nuclearControlSystems table else false
+local function isNuclearSystemId (id)
+
+	for i = 1 in #nuclearControlSystems do
+		if id == nuclearControlSystems[i] then
+			return true
+		end
+	end
+	
+	return false
+end
+
 --Handles any command events
 --cmd: string
 --String with the format of <cmd> <arg1> <arg2> <arg3> ...
+--return: string
+--a string return message (mostly for exiting program)
 local function handleCommandEvent (cmd)
 	--table with element 1 being the command and every element after an arg
 	local c = {}
@@ -65,7 +83,7 @@ local function eventHandler (t)
 	end
 	
 	--handle events
-	if isNuclearControlId(id) then
+	if isNuclearSystemId(id) then
 		msg = handleNuclearSystemEvent(id, msg)
 	elseif event == "timer" then
 		msg = handleSystemEvents()
