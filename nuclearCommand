@@ -17,7 +17,11 @@ local function updateNuclearControlSystemsStats (...)
 	local id = 0
 	local msg = {}
 	
+	print("Updating nuclear control systems")
+	print("args type: "..type(args))
 	if args ~= nil then
+		
+		print("args: "..args[1])
 		
 		id = args[1]
 		
@@ -32,7 +36,9 @@ local function updateNuclearControlSystemsStats (...)
 		
 	else
 	
+		print("Updating all nuclear control ids")
 		for i = 1, #nuclearControlIds do
+			print("Updating: "..nuclearControlIds[i])
 			updateNuclearControlSystemsStats(nuclearControlIds[i])
 		end
 		
