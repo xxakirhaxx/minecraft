@@ -85,7 +85,7 @@ local function init ()
 	
 	--Clear Monitor and start initialize timer
 	monitor.clear()
-	os.startTimer()
+	os.startTimer(10)
 	
 		while event ~= "timer" do
 		
