@@ -7,6 +7,16 @@ local currentPage = 0
 local modemSide = "bottom"
 local pageSize = 14
 
+--Returns the size of a table
+local function tableSz (tbl)
+
+	local count = 0
+	for i, k in ipairs(tbl) do
+		count = count + 1
+	end
+	
+	return count
+end
 
 --Updates nuclearControlSystems table with current data
 --id: int
@@ -38,7 +48,10 @@ local function updateNuclearControlSystemsStats (...)
 	
 		print("Updating all nuclear control ids")
 		for i = 1, #nuclearControlIds do
-			print("Updating: "..nuclearControlIds[i])
+		
+			id = nuclearControlSystems[i]
+			
+			print("Updating: "..id)
 			if nuclearControlSystems[id].currentMode ~= "shutdown" then
 				rednet.open(modemSide)
 				rednet.send(id, "getStats")
