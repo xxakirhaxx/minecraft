@@ -49,7 +49,7 @@ local function updateNuclearControlSystemsStats (...)
 		print("Updating all nuclear control ids")
 		for i = 1, #nuclearControlIds do
 		
-			id = nuclearControlSystems[i]
+			id = nuclearControlIds[i]
 			
 			print("Updating: "..id)
 			if nuclearControlSystems[id].currentMode ~= "shutdown" then
