@@ -112,9 +112,10 @@ function wait (num)
 	local event = ""
 	local id = 0
 	local msg = ""
+	local tid  = 0
 	
 	if num > 0 then
-		os.startTimer(num)
+		tid = os.startTimer(num)
 	end
 
 	while true do
@@ -141,6 +142,8 @@ function wait (num)
 		rednet.close("bottom")
 		
 	end
+	
+	os.cancelTimer(tid)
 	
 	return msg
 end

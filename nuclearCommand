@@ -62,13 +62,8 @@ local function handleCommandEvent (cmd)
 end
 
 --Handles normal system events
---returns: string
---return message
 local function handleSystemEvent ()
 	
-	local rMsg = ""
-	
-	return rMsg
 end
 
 --Handles any rednet events not from nuclear control systems
@@ -108,7 +103,6 @@ local function eventHandler (t)
 	local id = ""
 	local msg = ""
 	local tid = os.startTimer(t)
-	local ct = os.clock()
 	
 	--get any event
 	rednet.open(modemSide)
@@ -116,25 +110,20 @@ local function eventHandler (t)
 	print(event, " : " , id, " : ", msg)
 	rednet.close(modemSide)
 	
-	--pause timer
 	os.cancelTimer(tid)
-	if os.clock() - ct > 0 then
-		t = os.clock() - ct
-	else
-		t = cycle
-	end
+
 	
 	--handle events
 	if isNuclearSystemId(id) then
 		msg = handleNuclearSystemEvent(id, msg)
-	elseif event == "timer" then
-		msg = handleSystemEvent()
 	elseif event == "rednet_message" then
 		msg = handleRednetMessageEvent(id, msg)
 	elseif event == "key" then
 		msg = handleCommandEvent(read())
 	end
-		
+	
+	handleSystemEvent()
+	
 	return {msg, t}
 end 
 
