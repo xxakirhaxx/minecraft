@@ -11,7 +11,7 @@ local modemSide = "bottom"
 --true if id exists in nuclearControlSystems table else false
 local function isNuclearSystemId (id)
 
-	for i = 1 in #nuclearControlSystems do
+	for i = 1, #nuclearControlSystems do
 		if id == nuclearControlSystems[i] then
 			return true
 		end
