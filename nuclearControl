@@ -16,6 +16,7 @@ function getNuclearControlId ()
 		event, id, msg  = os.pullEvent()
 	end
 	rednet.close("bottom")
+	
 	return id
 end
 
@@ -87,18 +88,28 @@ function command (cmd)
 	local m = currentMode
 	
 	if cmd == "shutdown" then
-	
+		
+		--stupid artifact of this being my first program
+		id = -1
 		setCurrentMode("shutdown")
-		while msg ~= "start" or id ~= nuclearControlId do
-			rednet.open("bottom")
-			event, id, msg = os.pullEvent()
-			rednet.close("bottom")
+		while id == -1 do
+			id = getNuclearControlId()
 		end
 		setCurrentMode(m)
 		
 	elseif cmd == "stop" then
 		setCurrentMode("cooldown")
 		while msg ~= "start" do msg = wait(cycle) end
+		setCurrentMode(m)
+	elseif cmd == "nuclearControl" then
+		
+		setCurrentMode("shutdown")
+		rednet.open("bottom")
+		rednet.send(id, "nuclearCommand")
+		while msg ~= "start" do
+			event, id, msg  = os.pullEvent()
+		end
+		rednet.close("bottom")
 		setCurrentMode(m)
 	end	
 end
