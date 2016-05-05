@@ -58,8 +58,6 @@ local function drawMonitor(page)
 		n = #nuclearControlIds
 	end
 	
-	print("Drawing Title")
-	
 	monitor.clear()
 	monitor.setTextColour(1)
 	monitor.setTextScale(1)
