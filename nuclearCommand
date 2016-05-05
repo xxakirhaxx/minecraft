@@ -30,7 +30,7 @@ local function updateNuclearControlSystemsStats (...)
 			rednet.send(id, "received")
 			rednet.close(modemSide)
 			nuclearControlSystems[id] = msg
-		}
+		end
 		
 	else
 	
