@@ -55,6 +55,22 @@ local function handleCommandEvent (cmd)
 	--quits program
 	if c[1] == "quit" then
 		rMsg = c[1]
+	elseif c[1] == "cooldown" then
+		rednet.open(modemSide)
+		rednet.broadcast("cooldown")
+		rednet.close(modemSide)
+	elseif c[1] == "start" then
+		rednet.open(modemSide)
+		rednet.broadcast("start")
+		rednet.close(modemSide)
+	elseif c[1] == "shutdown" then
+		rednet.open(modemSide)
+		rednet.broadcast("shutdown")
+		rednet.close(modemSide)
+	elseif c[1] == "nuclearControl" then
+		rednet.open(modemSide)
+		rednet.broadcast("start")
+		rednet.close(modemSide)
 	end
 	
 	
