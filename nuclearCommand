@@ -169,6 +169,33 @@ local function handleNuclearSystemEvent (id, msg)
 	nuclearControlSystems[id] = msg
 end
 
+local function executeCommand (id, cmd)
+
+	local rMsg = ""
+	
+	if id > 0 then
+	
+		while rid ~= nuclearControlIds[i] do
+			local rid = 0
+			rednet.open(modemSide)
+			rednet.send(nuclearControlIds[c[2]], cmd)
+			rid, rMsg = rednet.receive()
+			rednet.close(modemSide)
+		end
+	else
+		for i = 1, #nuclearControlIds do
+			while rid ~= nuclearControlIds[i] do
+				local rid = 0
+				rednet.open(modemSide)
+				rednet.send(nuclearControlIds[i], cmd)
+				rid, rMsg = rednet.receive()
+				rednet.close(modemSide)
+			end
+		end
+	end
+	
+	return rMsg
+end
 --Handles any command events
 --cmd: string
 --String with the format of <cmd> <arg1> <arg2> <arg3> ...
@@ -177,6 +204,7 @@ end
 local function handleCommandEvent (cmd)
 	--table with element 1 being the command and every element after an arg
 	local c = {}
+	local id = 0
 	--return message
 	local rMsg = ""
 	
@@ -191,17 +219,36 @@ local function handleCommandEvent (cmd)
 	if c[1] == "quit" then
 		rMsg = c[1]
 	elseif c[1] == "stop" then
-		rednet.open(modemSide)
-		rednet.broadcast("stop")
-		rednet.close(modemSide)
+			
+		if #c > 1 then
+			rMsg = executeCommand(c[2],c[1])
+		else
+			rMsg = executeCommand(0,c[1])
+		end
+		
 	elseif c[1] == "start" then
-		rednet.open(modemSide)
-		rednet.broadcast("start")
-		rednet.close(modemSide)
+	
+		if #c > 1 then
+			rMsg = executeCommand(c[2],c[1])
+		else
+			rMsg = executeCommand(0,c[1])
+		end
+		
 	elseif c[1] == "shutdown" then
-		rednet.open(modemSide)
-		rednet.broadcast("shutdown")
-		rednet.close(modemSide)
+	
+		
+		if #c > 1 then
+			rMsg = executeCommand(c[2],c[1])
+		else
+			rMsg = executeCommand(0,c[1])
+		end
+	elseif c[1] == "turnon" then
+		if #c > 1 then
+			rMsg = executeCommand(c[2],c[1])
+		else
+			rMsg = executeCommand(0,c[1])
+		end
+	end
 	elseif c[1] == "disconnect" then
 		rednet.open(modemSide)
 		rednet.broadcast("disconnect")
