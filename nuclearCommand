@@ -3,6 +3,90 @@ local cycle = 5
 local monitor = peripheral.wrap("top")
 local nuclearControlSystems = {}
 local modemSide = "bottom"
+local pageSize = 32
+
+--Draws the monitor
+--page: int
+--current page the monitor is on
+local function drawMonitor(page)
+	
+	local n = 0
+	local x = 1
+	local y = 1
+	local title = "Nuclear Command"
+	local w,h = monitor.getSize()
+	local totalEU = 0
+	
+	if page*pageSize + pageSize < #nuclearControlSystems then
+		n = page*pageSize + pageSize
+	else
+		n = #nuclearControlSystems
+	end
+	
+	monitor.clear()
+	monitor.setTextColour(1)
+	monitor.setTextScale(3)
+	x = math.floor(math.floor(w - string.len(title))/2)
+	monitor.setCursorPos(x,y)
+	monitor.write(title)
+	monitor.setTextScale(1)
+	
+	
+	for i = page*pageSize + 1, n do
+		
+		local id = 0
+		local msg = {}
+		local k = i + 1
+		x = (k%2) * 40 + 1
+		y = 7 + math.floor(k/2)
+		local nPos = 0
+		local sPos = 14
+		local euPos = 22
+		local tPos = 32
+		
+		rednet.open(modemSide)
+		rednet.send(id, "getStats")
+		id, msg = rednet.receive()
+		rednet.close(modemSide)
+		
+		local temp = math.floor(tonumber(msg.getHeat)/tonumber(msg.getMaxHeat))
+		local mode = ""
+		totalEU = totalEU + msg.getEUOutput
+		
+		monitor.setCursorPos(x+nPos,y)
+		monitor.write("System #"..id)
+		monitor.setCursorPos(x+sPos,y)
+		
+		if msg.currentMode == "energy" then
+			mode = "ENERGY"
+			monitor.setTextColour(1)
+		elseif msg.currentMode == "cooldown" then
+			mode = "COOLDOWN"
+			monitor.setTextColour(1)
+		else
+			mode = "SHUTDOWN"
+			monitor.setTextColour(1)
+		end
+		
+		monitor.write(mode)
+		monitor.setTextColour(1)
+		
+		monitor.setCursorPos(x+euPos,y)
+		monitor.write("EU: "..msg.getEUOutput)
+		monitor.setCursorPos(x+tPos,y)
+		monitor.write("Temp: "..temp.."%")
+	end
+	
+	local euString = "Total EU being produced: "..totalEU
+	monitor.setTextColour(1)
+	monitor.setTextScale(1)
+	x = math.floor(math.floor(w - string.len(euString))/2)
+	y = 5
+	monitor.setCursorPos(x,y)
+	monitor.write(euString)
+	monitor.setCursorPos(1,1)
+	
+end
 
 --Verifies if an id is a nuclear system id
 --id: int
@@ -71,6 +155,8 @@ local function handleCommandEvent (cmd)
 		rednet.open(modemSide)
 		rednet.broadcast("disconnect")
 		rednet.close(modemSide)
+	elseif c[1] == "draw" then
+		drawMonitor(0)
 	end
 	
 	
@@ -116,7 +202,7 @@ end
 -- time between performing system events
 local function eventHandler (t)
 	local event = ""
-	local id = ""
+	local id = 0
 	local msg = ""
 	local tid = os.startTimer(t)
 	
@@ -147,7 +233,7 @@ end
 local function init ()
 	
 	local event = ""
-	local id = ""
+	local id = 0
 	local msg = ""
 	
 	print("Initializing system...")
