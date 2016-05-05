@@ -39,7 +39,7 @@ local function drawMonitor(page)
 	
 	for i = page*pageSize + 1, n do
 		
-		local id = 0
+		local id = nuclearControlSystems(i)
 		local msg = {}
 		local k = i + 1
 		x = (k%2) * 40 + 1
@@ -194,6 +194,7 @@ end
 --nuclear control system id
 local function addNuclearControlSystem (id)
 
+	print("Adding "..id.." to nuclearControlSystems")
 	--add id to table
 	nuclearControlSystems[#nuclearControlSystems + 1] = id
 	
