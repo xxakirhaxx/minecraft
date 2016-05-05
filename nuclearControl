@@ -57,11 +57,11 @@ function shutDownMode ()
 end
 
 function display (mode)
-	--term.clear()
-	--print("Current Temperature: ", reactor.getHeat())
-	--print("Max Temperature: ", reactor.getMaxHeat())
-	--print("Shutdown Temperature: ", reactor.getMaxHeat() / 5)
-	--print("System State: ", mode)
+	term.clear()
+	print("Current Temperature: ", reactor.getHeat())
+	print("Max Temperature: ", reactor.getMaxHeat())
+	print("Shutdown Temperature: ", reactor.getMaxHeat() / 5)
+	print("System State: ", mode)
 	
 end
 
@@ -123,7 +123,6 @@ function wait (num)
 		event, id, msg  = os.pullEvent()
 		rednet.close("bottom")
 		
-		print(event," : ",id," : ",msg)
 		if event == "timer" or event == "rednet_message" then
 			break
 		end
