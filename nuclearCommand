@@ -46,7 +46,7 @@ end
 local function removeNuclearControlSystem (id)
 	
 	for i = 1, #nuclearControlIds do
-		if nuclearControlId[i] == id then
+		if nuclearControlIds[i] == id then
 			table.remove(nuclearControlSystems[id])
 			table.remove(nuclearControlIds[i])
 			return true
@@ -220,7 +220,6 @@ local function executeCommand (id, cmd)
 	--It's poor design, but a very specific action needs to be taken if the cmd is disconnect
 	if id > 0 then
 	
-		print("Sending single")
 		received, rMsg = send(id, cmd)
 		
 		if cmd == "disconnect" and received == true then
@@ -260,23 +259,12 @@ local function handleCommandEvent (cmd)
 	local id = 0
 	--return message
 	local rMsg = ""
-	
-	print(cmd)
-	
+
 	--put individual words from the command into c
 	for word, w in string.gmatch(cmd, "[%a%d]+") do 
 		c[#c+1] = word
-		print("Actual word: ", word)
-		print(#c)
-		print("Word being stored: ", c[#c])
 	end
-	
-	print(#c)
-	if #c > 1 then
-		print(c[1]," ",c[2])
-	else
-		print(c[1])
-	end
+
 	--handle each command
 	
 	--quits program
@@ -320,6 +308,7 @@ local function handleCommandEvent (cmd)
 		else
 			rMsg = executeCommand(0,c[1])
 		end
+		
 	elseif c[1] == "draw" then
 		drawMonitor(0)
 	elseif c[1] == "quit" then
