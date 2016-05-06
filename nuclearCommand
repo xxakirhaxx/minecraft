@@ -419,7 +419,6 @@ local function init ()
 		
 		if event == "rednet_message" and msg == "nuclearCommand" then
 			addNuclearControlSystem(id)
-			
 			rednet.open(modemSide)
 			rednet.send(id, "start")
 			rednet.close(modemSide)
