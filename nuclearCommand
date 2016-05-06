@@ -260,11 +260,9 @@ local function handleCommandEvent (cmd)
 	--return message
 	local rMsg = ""
 	
-	print(cmd)
 	--put individual words from the command into c
 	for word, w in string.gmatch(cmd, "%a+") do 
 		c[#c+1] = word
-		print(word)
 	end
 	
 	--handle each command
@@ -275,7 +273,7 @@ local function handleCommandEvent (cmd)
 	elseif c[1] == "stop" then
 			
 		if #c > 1 then
-			rMsg = executeCommand(c[2],c[1])
+			rMsg = executeCommand(tonumber(c[2]),c[1])
 		else
 			rMsg = executeCommand(0,c[1])
 		end
@@ -283,7 +281,7 @@ local function handleCommandEvent (cmd)
 	elseif c[1] == "start" then
 	
 		if #c > 1 then
-			rMsg = executeCommand(c[2],c[1])
+			rMsg = executeCommand(tonumber(c[2]),c[1])
 		else
 			rMsg = executeCommand(0,c[1])
 		end
@@ -291,21 +289,21 @@ local function handleCommandEvent (cmd)
 	elseif c[1] == "shutdown" then
 	
 		if #c > 1 then
-			rMsg = executeCommand(c[2],c[1])
+			rMsg = executeCommand(tonumber(c[2]),c[1])
 		else
 			rMsg = executeCommand(0,c[1])
 		end
 	elseif c[1] == "turnon" then
 	
 		if #c > 1 then
-			rMsg = executeCommand(c[2],c[1])
+			rMsg = executeCommand(tonumber(c[2]),c[1])
 		else
 			rMsg = executeCommand(0,c[1])
 		end
 	elseif c[1] == "disconnect" then
 		
 		if #c > 1 then
-			rMsg = executeCommand(c[2],c[1])
+			rMsg = executeCommand(tonumber(c[2]),c[1])
 		else
 			rMsg = executeCommand(0,c[1])
 		end
