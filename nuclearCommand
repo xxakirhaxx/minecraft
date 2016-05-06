@@ -443,21 +443,17 @@ end
 --main function for program
 local function main ()
 	
-	local t = cycle
-	
 	--initialize program
 	init()
 	
 	--loop in eventHandler
 	while true do
 		
-		local n = eventHandler(t)
+		local msg = eventHandler(cycle)
+
+		if type(msg) == "string" then
 		
-		t = n[2]
-		
-		if type(n[1]) == "string" then
-		
-			if n[1] == "quit" then
+			if msg == "quit" then
 				break
 			end
 		
