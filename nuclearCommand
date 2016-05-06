@@ -47,8 +47,8 @@ local function removeNuclearControlSystem (id)
 	
 	for i = 1, #nuclearControlIds do
 		if nuclearControlIds[i] == id then
-			table.remove(nuclearControlSystems[id])
-			table.remove(nuclearControlIds[i])
+			nuclearControlSystems[id] = nil
+			nuclearControlIds[i] = nil
 			return true
 		end
 	end
