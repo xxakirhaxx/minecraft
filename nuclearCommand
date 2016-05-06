@@ -266,6 +266,12 @@ local function handleCommandEvent (cmd)
 		c[#c+1] = word
 	end
 	
+	print(#c)
+	if #c > 1 then
+		print(c[1]," ",c[2])
+	else
+		print(c[1])
+	end
 	--handle each command
 	
 	--quits program
