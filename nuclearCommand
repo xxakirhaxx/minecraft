@@ -308,6 +308,8 @@ local function handleCommandEvent (cmd)
 		end
 	elseif c[1] == "draw" then
 		drawMonitor(0)
+	elseif c[1] == "quit" then
+		rMsg = cmd
 	end
 	
 	
