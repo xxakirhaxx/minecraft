@@ -239,7 +239,7 @@ local function executeCommand (id, cmd)
 		end
 	end
 	
-	if ~received then
+	if not received == false then
 		rMsg = "\""..cmd.."\" command not executed. Nuclear control system was busy."
 	end
 	
@@ -353,7 +353,7 @@ local function addNuclearControlSystem (id)
 		end
 	end
 	
-	if ~exists then
+	if not exists then
 		print("Adding "..id.." to nuclearControlIds")
 		--add id to table
 		nuclearControlIds[#nuclearControlIds + 1] = id
