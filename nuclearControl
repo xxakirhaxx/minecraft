@@ -11,7 +11,6 @@ function sendReactorInfo ()
 	
 	rednet.open("bottom")
 	rednet.send(tonumber(nuclearControlId), reactorInfo)
-	id, msg = rednet.receive()
 	rednet.close("bottom")
 	
 end
@@ -23,9 +22,17 @@ function getNuclearControlId ()
 	
 	rednet.open("bottom")
 	while msg ~= "nuclearControl" do
-		event, id, msg  = os.pullEvent()
+	
+		rednet.open("bottom")
+		id, msg = rednet.receive()
+		rednet.close("bottom"
+		
 		if msg == "turnon" and id == nuclearControlId then
+			
+			rednet.open("bottom")
 			rednet.send(id, "received")
+			rednet.close("bottom")
+			
 			return id
 		elseif msg == "getStats" and id == nuclearControlId then
 			sendReactorInfo()
@@ -106,7 +113,6 @@ function command (id, cmd)
 		rednet.close("bottom")
 		
 		setCurrentMode("shutdown")
-		sendReactorInfo()
 		getNuclearControlId()
 		setCurrentMode(m)
 		
