@@ -364,9 +364,6 @@ local function addNuclearControlSystem (id)
 		nuclearControlSystems[id] = {getHeat = 0, getMaxHeat = 0, getEUOutput = 0, currentMode = ""}
 	end
 	
-	--send start message
-	send(id, start)
-	
 end
 
 --waits for events and performs actions based on them 
@@ -425,6 +422,10 @@ local function init ()
 		
 		if event == "rednet_message" and msg == "nuclearCommand" then
 			addNuclearControlSystem(id)
+			
+			rednet.open(modemSide)
+			rednet.send(id, "start")
+			rednet.close(modemSide)
 		end
 		
 	end
