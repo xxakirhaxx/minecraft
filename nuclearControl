@@ -125,9 +125,15 @@ function command (id, cmd)
 		
 		local msg = ""
 		setCurrentMode("cooldown")
+		
 		while msg ~= "start" do 
 			msg = wait(cycle) 
 		end
+		
+		rednet.open("bottom")
+		rednet.send(id, "received")
+		rednet.close("bottom")
+		
 		setCurrentMode(m)
 	elseif cmd == "disconnect" then
 	

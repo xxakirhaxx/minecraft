@@ -29,7 +29,7 @@ local function send (id, msg)
 		rid, rMsg = rednet.receive(timeout)
 		rednet.close(modemSide)
 		
-		if rid == id and type(rMsg) == "table" then
+		if rid == id and (type(rMsg) == "table" or (type(rMsg) == "string" and rMsg == "received")) then
 			connect = true
 			break
 		end
@@ -260,7 +260,7 @@ local function handleCommandEvent (cmd)
 	--put individual words from the command into c
 	for word in string.gmatch(cmd, "%a+") do 
 		c[#c+1] = word
-		print (c[#c])
+		print (word)
 	end
 	
 	--handle each command
