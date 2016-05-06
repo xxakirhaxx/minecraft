@@ -239,7 +239,9 @@ local function executeCommand (id, cmd)
 		end
 	end
 	
-	if not received == false then
+	if received then
+		rMsg = ""
+	else
 		rMsg = "\""..cmd.."\" command not executed. Nuclear control system was busy."
 	end
 	
@@ -309,7 +311,7 @@ local function handleCommandEvent (cmd)
 	elseif c[1] == "draw" then
 		drawMonitor(0)
 	elseif c[1] == "quit" then
-		rMsg = cmd
+		rMsg = c[1]
 	end
 	
 	
