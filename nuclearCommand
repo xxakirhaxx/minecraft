@@ -73,7 +73,7 @@ local function updateNuclearControlSystemsStats (...)
 		if nuclearControlSystems[id].currentMode ~= "shutdown" then
 			
 			received, msg = send(id, "getStats")
-			if received then
+			if received and type(msg) == "table" then
 				print("Updating: "..id)
 				nuclearControlSystems[id] = msg
 			end
@@ -88,7 +88,7 @@ local function updateNuclearControlSystemsStats (...)
 			if nuclearControlSystems[id].currentMode ~= "shutdown" then
 				received, msg = send(id, "getStats")
 				
-				if received then
+				if received type(msg) == "table" then
 					print("Updating: "..id)
 					nuclearControlSystems[id] = msg
 				end
