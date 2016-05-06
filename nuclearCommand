@@ -261,6 +261,8 @@ local function handleCommandEvent (cmd)
 	--return message
 	local rMsg = ""
 	
+	print(cmd)
+	
 	--put individual words from the command into c
 	for word, w in string.gmatch(cmd, "%a+") do 
 		c[#c+1] = word
