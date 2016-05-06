@@ -25,7 +25,7 @@ function getNuclearControlId ()
 	
 		rednet.open("bottom")
 		id, msg = rednet.receive()
-		rednet.close("bottom"
+		rednet.close("bottom")
 		
 		if msg == "turnon" and id == nuclearControlId then
 			
