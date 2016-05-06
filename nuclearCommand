@@ -394,7 +394,7 @@ local function eventHandler (t)
 	elseif event == "key" then
 		msg = handleCommandEvent(read())
 		print(msg)
-	elseif event == "timer"
+	elseif event == "timer" then
 		msg = handleSystemEvent()
 		print(msg)		
 	end
