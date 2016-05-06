@@ -87,15 +87,15 @@ local function updateNuclearControlSystemsStats (...)
 		
 			id = nuclearControlIds[i]
 			print("Attempting to udate "..id)
-			if nuclearControlSystems[id].currentMode ~= "shutdown" then
+			--if nuclearControlSystems[id].currentMode ~= "shutdown" then
 			
-				received, msg = send(id, "getStats")
+			received, msg = send(id, "getStats")
 				
-				if received and type(msg) == "table" then
-					print("Updating: "..id)
-					nuclearControlSystems[id] = msg
-				end
+			if received and type(msg) == "table" then
+				print("Updating: "..id)
+				nuclearControlSystems[id] = msg
 			end
+			--end
 		end
 		
 	end
