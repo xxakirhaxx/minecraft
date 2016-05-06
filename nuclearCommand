@@ -264,6 +264,7 @@ local function handleCommandEvent (cmd)
 	--put individual words from the command into c
 	for word, w in string.gmatch(cmd, "%a+") do 
 		c[#c+1] = word
+		print(word)
 	end
 	
 	--handle each command
