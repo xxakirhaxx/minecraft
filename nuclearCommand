@@ -368,18 +368,16 @@ end
 --waits for events and performs actions based on them 
 -- t: int
 -- time between performing system events
-local function eventHandler (t)
+local function eventHandler ()
 	local event = ""
 	local id = 0
 	local msg = ""
-	local tid = os.startTimer(t)
+	local tid = os.startTimer(cycle)
 	
 	--get any event
 	rednet.open(modemSide)
 	event, id, msg = os.pullEvent()
 	rednet.close(modemSide)
-	
-	os.cancelTimer(tid)
 
 	
 	--handle events
@@ -392,10 +390,12 @@ local function eventHandler (t)
 	elseif event == "key" then
 		msg = handleCommandEvent(read())
 		if msg ~= "" then print(msg) end
-	elseif event == "timer" then
+	elseif event == "timer" and id == tid then
 		msg = handleSystemEvent()
 		if msg ~= "" then print(msg) end		
 	end
+	
+	os.cancelTimer(tid)
 	
 	return msg
 end 
@@ -450,7 +450,7 @@ local function main ()
 	--loop in eventHandler
 	while true do
 		
-		local msg = eventHandler(cycle)
+		local msg = eventHandler()
 
 		if type(msg) == "string" then
 		
