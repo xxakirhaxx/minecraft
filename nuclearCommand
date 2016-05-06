@@ -6,6 +6,37 @@ local nuclearControlIds = {}
 local currentPage = 0
 local modemSide = "bottom"
 local pageSize = 14
+local timeOutAttempts = 5
+local timeout = 1
+
+--sends a message using nuclear control system protocol
+--id: int
+--nuclear control system id
+--msg: string
+--msg to send to nuclear control system
+--return: boolean, any
+--true if msg sent succesfully false if not, msg is whatever you were expecting back
+local function send (id, msg)
+
+	local rid = 0
+	local rMsg = ""
+	local connect = false
+	
+	for i = 1, timeOutAttempts do
+	
+		rednet.open(modemSide)
+		rednet.send(id,msg)
+		rid, rMsg = rednet.receive(timeout)
+		rednet.close(modemSide)
+		
+		if rid == id and type(rMsg) == "table" then
+			connect = true
+			break
+		end
+	end
+	
+	return connect, rMsg
+end
 
 --Removes a nuclear control system
 --id: int
@@ -33,6 +64,7 @@ local function updateNuclearControlSystemsStats (...)
 	
 	local id = 0
 	local msg = {}
+	local received = false
 	
 	print("Updating nuclear control systems")
 	print("args type: "..type(args))
@@ -43,12 +75,11 @@ local function updateNuclearControlSystemsStats (...)
 		id = args[1]
 		
 		if nuclearControlSystems[id].currentMode ~= "shutdown" then
-			rednet.open(modemSide)
-			rednet.send(id, "getStats")
-			id, msg = rednet.receive()
-			rednet.send(id, "received")
-			rednet.close(modemSide)
-			nuclearControlSystems[id] = msg
+			
+			received, msg = send(id, "getStats")
+			if received then
+				nuclearControlSystems[id] = msg
+			end
 		end
 		
 	else
@@ -60,12 +91,11 @@ local function updateNuclearControlSystemsStats (...)
 			
 			print("Updating: "..id)
 			if nuclearControlSystems[id].currentMode ~= "shutdown" then
-				rednet.open(modemSide)
-				rednet.send(id, "getStats")
-				id, msg = rednet.receive()
-				rednet.send(id, "received")
-				rednet.close(modemSide)
-				nuclearControlSystems[id] = msg
+				received, msg = send(id, "getStats")
+				
+				if received then
+					nuclearControlSystems[id] = msg
+				end
 			end
 		end
 		
@@ -185,37 +215,32 @@ end
 --msg received from nuclear control system
 local function executeCommand (id, cmd)
 
+	local received = false
 	local rMsg = ""
 	
 	--It's poor design, but a very specific action needs to be taken if the cmd is disconnect
 	if id > 0 then
 	
-		while rid ~= nuclearControlIds[i] do
-			local rid = 0
-			rednet.open(modemSide)
-			rednet.send(nuclearControlIds[id], cmd)
-			rid, rMsg = rednet.receive()
-			rednet.close(modemSide)
-		end
+		received, rMsg = send(id, cmd)
 		
-		if cmd == "disconnect" then
+		if cmd == "disconnect" and received == true then
 			removeNuclearControlSystem(id)
 		end
 		
 	else
 		for i = 1, #nuclearControlIds do
-			while rid ~= nuclearControlIds[i] do
-				local rid = 0
-				rednet.open(modemSide)
-				rednet.send(nuclearControlIds[i], cmd)
-				rid, rMsg = rednet.receive()
-				rednet.close(modemSide)
-			end
-			if cmd == "disconnect" then
+			
+			received, rMsg = send(nuclearControlIds[i], cmd)
+			
+			if cmd == "disconnect" and received == true then
 				removeNuclearControlSystem(nuclearControlIds[i])
 			end
 			
 		end
+	end
+	
+	if ~received then
+		rMsg = "\""..cmd.."\" command not executed. Nuclear control system was busy."
 	end
 	
 	return rMsg
@@ -292,9 +317,12 @@ end
 --Handles normal system events
 local function handleSystemEvent ()
 	
-	updateNuclearControlSystemsStats()
+	
+	local msg = updateNuclearControlSystemsStats()
+	
 	drawMonitor(currentPage)
 	
+	return msg
 end
 
 --Handles any rednet events not from nuclear control systems
@@ -325,7 +353,7 @@ local function addNuclearControlSystem (id)
 		end
 	end
 	
-	if exists == false then
+	if ~exists then
 		print("Adding "..id.." to nuclearControlIds")
 		--add id to table
 		nuclearControlIds[#nuclearControlIds + 1] = id
@@ -333,9 +361,7 @@ local function addNuclearControlSystem (id)
 	end
 	
 	--send start message
-	rednet.open(modemSide)
-	rednet.send(id, "start")
-	rednet.close(modemSide)
+	send(id, start)
 	
 end
 
@@ -351,7 +377,6 @@ local function eventHandler (t)
 	--get any event
 	rednet.open(modemSide)
 	event, id, msg = os.pullEvent()
-	print(event, " : " , id, " : ", msg)
 	rednet.close(modemSide)
 	
 	os.cancelTimer(tid)
@@ -360,13 +385,17 @@ local function eventHandler (t)
 	--handle events
 	if isNuclearSystemId(id) then
 		msg = handleNuclearSystemEvent(id, msg)
+		print(msg)
 	elseif event == "rednet_message" then
 		msg = handleRednetMessageEvent(id, msg)
+		print(msg)
 	elseif event == "key" then
 		msg = handleCommandEvent(read())
+		print(msg)
 	end
 	
-	handleSystemEvent()
+	msg = handleSystemEvent()
+	print(msg)
 	
 	return {msg, t}
 end 
@@ -403,9 +432,9 @@ end
 --Handles everything before a shutdown occurs
 local function shutdown ()
 
-	rednet.open(modemSide)
-	rednet.broadcast("shutdown")
-	rednet.close(modemSide)
+	for i = 1, #nuclearControlIds do
+		send(nuclearControlIds[i], "shutdown")
+	end
 	
 end
 
