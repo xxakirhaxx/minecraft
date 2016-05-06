@@ -27,7 +27,7 @@ function getNuclearControlId ()
 		if msg == "turnon" and id == nuclearControlId then
 			rednet.send(id, "received")
 			return id
-		else if msg == "getStats" and id == nuclearControlId then
+		elseif msg == "getStats" and id == nuclearControlId then
 			sendReactorInfo()
 		end
 		
@@ -37,6 +37,7 @@ function getNuclearControlId ()
 	while msg ~= "start" do
 		event, id, msg  = os.pullEvent()
 	end
+	
 	rednet.send(id, "received")
 	rednet.close("bottom")
 	
