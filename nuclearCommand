@@ -265,7 +265,7 @@ local function handleCommandEvent (cmd)
 	for word, w in string.gmatch(cmd, "%a+") do 
 		c[#c+1] = word
 		print("Actual word: ", word)
-		print("Word being stored: ", [#c])
+		print("Word being stored: ", c[#c])
 	end
 	
 	print(#c)
