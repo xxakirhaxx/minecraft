@@ -383,16 +383,16 @@ local function eventHandler (t)
 	--handle events
 	if isNuclearSystemId(id) then
 		msg = handleNuclearSystemEvent(id, msg)
-		print(msg)
+		if msg ~= "" then print(msg) end
 	elseif event == "rednet_message" then
 		msg = handleRednetMessageEvent(id, msg)
-		print(msg)
+		if msg ~= "" then print(msg) end
 	elseif event == "key" then
 		msg = handleCommandEvent(read())
-		print(msg)
+		if msg ~= "" then print(msg) end
 	elseif event == "timer" then
 		msg = handleSystemEvent()
-		print(msg)		
+		if msg ~= "" then print(msg) end		
 	end
 	
 	return msg
