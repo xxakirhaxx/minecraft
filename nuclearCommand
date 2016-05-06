@@ -69,11 +69,12 @@ local function updateNuclearControlSystemsStats (...)
 	if args ~= nil then
 		
 		id = args[1]
+		print("Attempting to udate "..id)
 		
 		if nuclearControlSystems[id].currentMode ~= "shutdown" then
 			
 			received, msg = send(id, "getStats")
-			
+
 			if received and type(msg) == "table" then
 				print("Updating: "..id)
 				nuclearControlSystems[id] = msg
@@ -85,7 +86,7 @@ local function updateNuclearControlSystemsStats (...)
 		for i = 1, #nuclearControlIds do
 		
 			id = nuclearControlIds[i]
-			
+			print("Attempting to udate "..id)
 			if nuclearControlSystems[id].currentMode ~= "shutdown" then
 			
 				received, msg = send(id, "getStats")
@@ -262,7 +263,6 @@ local function handleCommandEvent (cmd)
 	--put individual words from the command into c
 	for word in string.gmatch(cmd, "%a+") do 
 		c[#c+1] = word
-		print (word)
 	end
 	
 	--handle each command
