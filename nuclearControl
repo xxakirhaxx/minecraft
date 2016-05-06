@@ -3,30 +3,6 @@ local cycle = 5
 local currentMode = "energy"
 local nuclearControlId = 0
 
-function getNuclearControlId ()
-	local event = ""
-	local id = 0
-	local msg = ""
-	
-	rednet.open("bottom")
-	while msg ~= "nuclearControl" do
-		event, id, msg  = os.pullEvent()
-		if msg == "turnon" and id == nuclearControlId then
-			return id
-		end
-	end
-	rednet.send(id, "nuclearCommand")
-	while msg ~= "start" do
-		event, id, msg  = os.pullEvent()
-	end
-	rednet.send(id, "received")
-	rednet.close("bottom")
-	
-	return id
-end
-
-nuclearControlId = getNuclearControlId()
-
 function sendReactorInfo ()
 
 	local id = 0
@@ -39,6 +15,35 @@ function sendReactorInfo ()
 	rednet.close("bottom")
 	
 end
+
+function getNuclearControlId ()
+	local event = ""
+	local id = 0
+	local msg = ""
+	
+	rednet.open("bottom")
+	while msg ~= "nuclearControl" do
+		event, id, msg  = os.pullEvent()
+		if msg == "turnon" and id == nuclearControlId then
+			rednet.send(id, "received")
+			return id
+		else if msg == "getStats" and id == nuclearControlId then
+			sendReactorInfo()
+		end
+		
+	end
+	
+	rednet.send(id, "nuclearCommand")
+	while msg ~= "start" do
+		event, id, msg  = os.pullEvent()
+	end
+	rednet.send(id, "received")
+	rednet.close("bottom")
+	
+	return id
+end
+
+nuclearControlId = getNuclearControlId()
 
 function coolDownMode ()
 	redstone.setOutput("back", false)
@@ -153,16 +158,7 @@ function wait (num)
 	setCurrentMode("")
 	
 	if event == "rednet_message" and id == nuclearControlId then
-		command(id, msg)
-	elseif event =="rednet_message" and msg == "nuclearControl" then
-		
-		rednet.open("bottom")
-		rednet.send(id, "nuclearCommand")
-		while msg ~= "start" do
-			event, id, msg  = os.pullEvent()
-		end
-		rednet.close("bottom")
-		
+		command(id, msg)	
 	end
 	
 	os.cancelTimer(tid)
