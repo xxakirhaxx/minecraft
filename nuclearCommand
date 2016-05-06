@@ -264,7 +264,7 @@ local function handleCommandEvent (cmd)
 	print(cmd)
 	
 	--put individual words from the command into c
-	for word, w in string.gmatch(cmd, "%a+") do 
+	for word, w in string.gmatch(cmd, "[%a%d]+") do 
 		c[#c+1] = word
 		print("Actual word: ", word)
 		print(#c)
