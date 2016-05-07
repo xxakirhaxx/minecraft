@@ -396,9 +396,9 @@ local function init ()
 		end
 		
 	end
-
+	
 	print("Initialization Complete!")
-	print("Welcome to Nuclear Command!")
+
 end
 
 --waits for events and performs actions based on them 
@@ -451,6 +451,7 @@ local function main ()
 	
 	--initialize program
 	init()
+	print("Welcome to Nuclear Command!")
 	
 	--loop in eventHandler
 	while true do
