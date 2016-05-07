@@ -406,8 +406,6 @@ local function handleCommandEvent (cmd)
 			rMsg = executeCommand(0,c[1])
 		end
 		
-	elseif c[1] == "quit" then
-		rMsg = c[1]
 	elseif c[1] == "init" then
 		init()
 	elseif c[1] == "show" then
@@ -427,6 +425,7 @@ local function handleCommandEvent (cmd)
 		
 	end
 	
+	updateNuclearControlSystemsStats()
 	drawMonitor(currentPage)
 	
 	return rMsg
