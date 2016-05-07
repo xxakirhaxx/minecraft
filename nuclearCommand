@@ -247,80 +247,6 @@ local function executeCommand (id, cmd)
 	return rMsg
 end
 
---Handles any command events
---cmd: string
---String with the format of <cmd> <arg1> <arg2> <arg3> ...
---return: string
---a string return message (mostly for exiting program)
-local function handleCommandEvent (cmd)
-	
-	--table with element 1 being the command and every element after an arg
-	local c = {}
-	local id = 0
-	--return message
-	local rMsg = ""
-
-	--put individual words from the command into c
-	for word, w in string.gmatch(cmd, "[%a%d]+") do 
-		c[#c+1] = word
-	end
-
-	--handle each command
-	
-	--quits program
-	if c[1] == "quit" then
-		rMsg = c[1]
-	elseif c[1] == "stop" then
-			
-		if #c > 1 then
-			rMsg = executeCommand(tonumber(c[2]),c[1])
-		else
-			rMsg = executeCommand(0,c[1])
-		end
-		
-	elseif c[1] == "start" then
-	
-		if #c > 1 then
-			rMsg = executeCommand(tonumber(c[2]),c[1])
-		else
-			rMsg = executeCommand(0,c[1])
-		end
-		
-	elseif c[1] == "shutdown" then
-	
-		if #c > 1 then
-			rMsg = executeCommand(tonumber(c[2]),c[1])
-		else
-			rMsg = executeCommand(0,c[1])
-		end
-		
-	elseif c[1] == "turnon" then
-	
-		if #c > 1 then
-			rMsg = executeCommand(tonumber(c[2]),c[1])
-		else
-			rMsg = executeCommand(0,c[1])
-		end
-	elseif c[1] == "disconnect" then
-		
-		if #c > 1 then
-			rMsg = executeCommand(tonumber(c[2]),c[1])
-		else
-			rMsg = executeCommand(0,c[1])
-		end
-		
-	elseif c[1] == "draw" then
-		drawMonitor(0)
-	elseif c[1] == "quit" then
-		rMsg = c[1]
-	elseif c[1] == "init" then
-		init()
-	end
-	
-	
-	return rMsg
-end
-
 --Handles normal system events
 local function handleSystemEvent ()
 	
@@ -399,6 +325,80 @@ local function init ()
 	
 	print("Initialization Complete!")
 
+end
+
+--Handles any command events
+--cmd: string
+--String with the format of <cmd> <arg1> <arg2> <arg3> ...
+--return: string
+--a string return message (mostly for exiting program)
+local function handleCommandEvent (cmd)
+	
+	--table with element 1 being the command and every element after an arg
+	local c = {}
+	local id = 0
+	--return message
+	local rMsg = ""
+
+	--put individual words from the command into c
+	for word, w in string.gmatch(cmd, "[%a%d]+") do 
+		c[#c+1] = word
+	end
+
+	--handle each command
+	
+	--quits program
+	if c[1] == "quit" then
+		rMsg = c[1]
+	elseif c[1] == "stop" then
+			
+		if #c > 1 then
+			rMsg = executeCommand(tonumber(c[2]),c[1])
+		else
+			rMsg = executeCommand(0,c[1])
+		end
+		
+	elseif c[1] == "start" then
+	
+		if #c > 1 then
+			rMsg = executeCommand(tonumber(c[2]),c[1])
+		else
+			rMsg = executeCommand(0,c[1])
+		end
+		
+	elseif c[1] == "shutdown" then
+	
+		if #c > 1 then
+			rMsg = executeCommand(tonumber(c[2]),c[1])
+		else
+			rMsg = executeCommand(0,c[1])
+		end
+		
+	elseif c[1] == "turnon" then
+	
+		if #c > 1 then
+			rMsg = executeCommand(tonumber(c[2]),c[1])
+		else
+			rMsg = executeCommand(0,c[1])
+		end
+	elseif c[1] == "disconnect" then
+		
+		if #c > 1 then
+			rMsg = executeCommand(tonumber(c[2]),c[1])
+		else
+			rMsg = executeCommand(0,c[1])
+		end
+		
+	elseif c[1] == "draw" then
+		drawMonitor(0)
+	elseif c[1] == "quit" then
+		rMsg = c[1]
+	elseif c[1] == "init" then
+		init()
+	end
+	
+	
+	return rMsg
 end
 
 --waits for events and performs actions based on them 
