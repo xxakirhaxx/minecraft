@@ -25,11 +25,11 @@ local function send (id, msg)
 	for i = 1, timeOutAttempts do
 	
 		rednet.open(modemSide)
-		rednet.send(id,msg)
+		rednet.send(tonumber(id),msg)
 		rid, rMsg = rednet.receive(timeout)
 		rednet.close(modemSide)
 		
-		if rid == id and (type(rMsg) == "table" or (type(rMsg) == "string" and rMsg == "received")) then
+		if tonumber(rid) == tonumber(id) and (type(rMsg) == "table" or (type(rMsg) == "string" and rMsg == "received")) then
 			connect = true
 			break
 		end
@@ -271,12 +271,12 @@ end
 --nuclear control system id
 local function addNuclearControlSystem (id)
 
-
-	if nuclearControlSystems[id] == nil then
+	
+	if nuclearControlSystems[tonumber(id)] == nil then
 		print("Adding "..id.." to nuclearControlIds")
 		--add id to table
 		nuclearControlIds[#nuclearControlIds + 1] = tonumber(id)
-		nuclearControlSystems[id] = {getHeat = 0, getMaxHeat = 0, getEUOutput = 0, currentMode = ""}
+		nuclearControlSystems[tonumber(id)] = {getHeat = 0, getMaxHeat = 0, getEUOutput = 0, currentMode = ""}
 	end
 	
 end
