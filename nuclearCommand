@@ -8,6 +8,7 @@ local modemSide = "bottom"
 local pageSize = 14
 local timeOutAttempts = 5
 local timeout = 1
+local filter = "all"
 
 --sends a message using nuclear control system protocol
 --id: int
@@ -96,6 +97,42 @@ local function updateNuclearControlSystemsStats (...)
 	
 end
 
+local function drawLine (id, k)
+
+	local x = (k%1) * 48 + 1
+	local y = 4 + math.floor(k/1)
+	local nPos = 0
+	local sPos = 14
+	local euPos = 26
+	local tPos = 38
+	
+	local temp = math.floor(tonumber(nuclearControlSystems[id].getHeat)/tonumber(nuclearControlSystems[id].getMaxHeat))
+	local mode = ""
+	
+	monitor.setCursorPos(x+nPos,y)
+	monitor.write("System #"..id)
+	monitor.setCursorPos(x+sPos,y)
+	
+	if nuclearControlSystems[id].currentMode == "energy" then
+		mode = "ENERGY"
+		monitor.setTextColour(8192)
+	elseif nuclearControlSystems[id].currentMode == "cooldown" then
+		mode = "COOLDOWN"
+		monitor.setTextColour(2048)
+	else
+		mode = "SHUTDOWN"
+		monitor.setTextColour(16384)
+	end
+	
+	monitor.write(mode)
+	monitor.setTextColour(1)
+	
+	monitor.setCursorPos(x+euPos,y)
+	monitor.write("EU: "..nuclearControlSystems[id].getEUOutput)
+	monitor.setCursorPos(x+tPos,y)
+	monitor.write("Temp: "..temp.."%")
+		
+end
 --Draws the monitor
 --page: int
 --current page the monitor is on
@@ -107,11 +144,18 @@ local function drawMonitor(page)
 	local title = "Nuclear Command"
 	local w,h = monitor.getSize()
 	local totalEU = 0
+	local ids = {}
 	
-	if page*pageSize + pageSize < #nuclearControlIds then
+	for i = 1, #nuclearControlIds do
+		if filter == nuclearControlSystems[nuclearControlIds[i]].currentMode or filter == "all" then
+			ids[#ids+1] = nuclearControlIds[i] 
+		end
+	end
+	
+	if page*pageSize + pageSize < #ids then
 		n = page*pageSize + pageSize
 	else
-		n = #nuclearControlIds
+		n = #ids
 	end
 	
 	monitor.clear()
@@ -120,45 +164,19 @@ local function drawMonitor(page)
 	x = math.floor(math.floor(w - string.len(title))/2)
 	monitor.setCursorPos(x,y)
 	monitor.write(title)
-	monitor.setTextScale(1)
+	y = 3
+	x = math.floor(math.floor(w - string.len(filterMsg))/2)
+	monitor.setCursorPos(x,y)
+	monitor.write(filterMsg)
 	
 	for i = page*pageSize + 1, n do
 		
-		local id = nuclearControlIds[i]
-		local k = i
-		x = (k%1) * 48 + 1
-		y = 4 + math.floor(k/1)
-		local nPos = 0
-		local sPos = 14
-		local euPos = 26
-		local tPos = 38
+		local id = ids[i]
 		
-		local temp = math.floor(tonumber(nuclearControlSystems[id].getHeat)/tonumber(nuclearControlSystems[id].getMaxHeat))
-		local mode = ""
+		drawLine(id, i - page*pageSize)
+	
 		totalEU = totalEU + nuclearControlSystems[id].getEUOutput
 		
-		monitor.setCursorPos(x+nPos,y)
-		monitor.write("System #"..id)
-		monitor.setCursorPos(x+sPos,y)
-		
-		if nuclearControlSystems[id].currentMode == "energy" then
-			mode = "ENERGY"
-			monitor.setTextColour(8192)
-		elseif nuclearControlSystems[id].currentMode == "cooldown" then
-			mode = "COOLDOWN"
-			monitor.setTextColour(2048)
-		else
-			mode = "SHUTDOWN"
-			monitor.setTextColour(16384)
-		end
-		
-		monitor.write(mode)
-		monitor.setTextColour(1)
-		
-		monitor.setCursorPos(x+euPos,y)
-		monitor.write("EU: "..nuclearControlSystems[id].getEUOutput)
-		monitor.setCursorPos(x+tPos,y)
-		monitor.write("Temp: "..temp.."%")
 	end
 	
 	local euString = "Total EU being produced: "..totalEU
@@ -379,14 +397,44 @@ local function handleCommandEvent (cmd)
 			rMsg = executeCommand(0,c[1])
 		end
 		
-	elseif c[1] == "draw" then
-		drawMonitor(0)
 	elseif c[1] == "quit" then
 		rMsg = c[1]
 	elseif c[1] == "init" then
 		init()
+	elseif c[1] == "show" then
+		if c[2] == nil
+			filter = "all"
+			filterMsg = "Showing all system entries"
+		elseif c[2] == "energy"
+			filter = "energy"
+			filterMsg = "Showing systems in ENERGY mode"
+		elseif c[2] == "cooldown"
+			filter == "cooldown"
+			filterMsg = "Showing systems in COOLDOWN mode"
+		elseif c[2] == "shutdown"
+			filter == "shutdown"
+			filterMsg = "Showing systems in SHUTDOWN mode"	
+		end
+		
 	end
 	
+	drawMonitor(currentPage)
+	
+	return rMsg
+end
+
+local function handleMonitorTouchEvent ()
+
+	local rMsg = ""
+	local maxPage = math.ceil(#nuclearControlIds / pageSize)
+	
+	if maxPage >= currentPage then
+		currentPage = 0
+	else
+		currentPage = currentPage + 1
+	end
+	
+	drawMonitor(currentPage)
 	
 	return rMsg
 end
@@ -416,10 +464,13 @@ local function eventHandler ()
 		if msg ~= "" then print(msg) end
 	elseif event == "key" then
 		msg = handleCommandEvent(read())
-		if msg ~= "" then print(msg) end
+		if msg ~= "" and msg ~= "quit" then print(msg) end
 	elseif event == "timer" and id == tid then
 		msg = handleSystemEvent()
-		if msg ~= "" then print(msg) end		
+		if msg ~= "" then print(msg) end
+	elseif event == "monitor_touch" then
+		msg = handleMonitorTouchEvent()
+		if msg ~= "" then print(msg) end
 	end
 	
 	os.cancelTimer(tid)
