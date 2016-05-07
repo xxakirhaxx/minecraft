@@ -69,33 +69,27 @@ local function updateNuclearControlSystemsStats (...)
 	if args ~= nil then
 		
 		id = args[1]
-		print("Attempting to udate "..id)
-		
-		if nuclearControlSystems[id].currentMode ~= "shutdown" then
 			
 			received, msg = send(id, "getStats")
 
-			if received and type(msg) == "table" then
+			if received and type(msg) == "table" and msg ~= nil then
 				print("Updating: "..id)
 				nuclearControlSystems[id] = msg
 			end
-		end
 		
 	else
 	
 		for i = 1, #nuclearControlIds do
 		
 			id = nuclearControlIds[i]
-			print("Attempting to udate "..id)
-			--if nuclearControlSystems[id].currentMode ~= "shutdown" then
 			
 			received, msg = send(id, "getStats")
 				
-			if received and type(msg) == "table" then
+			if received and type(msg) == "table" and msg ~= nil then
 				print("Updating: "..id)
 				nuclearControlSystems[id] = msg
 			end
-			--end
+
 		end
 		
 	end
@@ -277,15 +271,7 @@ end
 --nuclear control system id
 local function addNuclearControlSystem (id)
 
-	--local exists = false
-	
-	--for i = 1, #nuclearControlIds do
-	--	if id == i then
-	--		exists = true
-	--		break
-	--	end
-	--end
-	
+
 	if nuclearControlSystems[id] == nil then
 		print("Adding "..id.." to nuclearControlIds")
 		--add id to table
@@ -444,6 +430,8 @@ local function shutdown ()
 	for i = 1, #nuclearControlIds do
 		send(nuclearControlIds[i], "shutdown")
 	end
+	
+	monitor.clear()
 	
 end
 
