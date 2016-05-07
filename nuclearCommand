@@ -313,7 +313,7 @@ local function handleCommandEvent (cmd)
 		drawMonitor(0)
 	elseif c[1] == "quit" then
 		rMsg = c[1]
-	elseif c[1] == "init"
+	elseif c[1] == "init" then
 		init()
 	end
 	
