@@ -123,7 +123,7 @@ function command (id, cmd)
 		rednet.send(id, "received")
 		rednet.close("bottom")
 		
-		local msg = ""
+		msg = ""
 		setCurrentMode("cooldown")
 		
 		while msg ~= "start" do 
@@ -147,6 +147,7 @@ function command (id, cmd)
 		sendReactorInfo()
 	end	
 	
+	return cmd
 end
 
 function wait (num)
@@ -172,7 +173,7 @@ function wait (num)
 	setCurrentMode("")
 	
 	if event == "rednet_message" and id == nuclearControlId then
-		command(id, msg)	
+		msg = command(id, msg)	
 	end
 	
 	os.cancelTimer(tid)
