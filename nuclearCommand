@@ -402,16 +402,16 @@ local function handleCommandEvent (cmd)
 	elseif c[1] == "init" then
 		init()
 	elseif c[1] == "show" then
-		if c[2] == nil
+		if c[2] == nil then
 			filter = "all"
 			filterMsg = "Showing all system entries"
-		elseif c[2] == "energy"
+		elseif c[2] == "energy" then
 			filter = "energy"
 			filterMsg = "Showing systems in ENERGY mode"
-		elseif c[2] == "cooldown"
+		elseif c[2] == "cooldown" then
 			filter == "cooldown"
 			filterMsg = "Showing systems in COOLDOWN mode"
-		elseif c[2] == "shutdown"
+		elseif c[2] == "shutdown" then
 			filter == "shutdown"
 			filterMsg = "Showing systems in SHUTDOWN mode"	
 		end
