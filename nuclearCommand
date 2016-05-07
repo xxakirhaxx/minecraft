@@ -240,14 +240,23 @@ local function executeCommand (id, cmd)
 		end
 		
 	else
-		for i = #nuclearControlIds, 1, -1 do
-			
-			received, rMsg = send(nuclearControlIds[i], cmd)
-			
-			if cmd == "disconnect" and received == true then
-				removeNuclearControlSystem(tonumber(nuclearControlIds[i]))
+	
+		if cmd == "disconnect" then
+			for i = #nuclearControlIds, 1, -1 do
+				
+				received, rMsg = send(nuclearControlIds[i], cmd)
+				
+				if  received then
+					removeNuclearControlSystem(tonumber(nuclearControlIds[i]))
+				end
+				
+			end		
+		else
+			for i = 1, #nuclearControlIds do
+				
+				received, rMsg = send(nuclearControlIds[i], cmd)
+				
 			end
-			
 		end
 		
 		nuclearControlSystems = {}
