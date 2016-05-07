@@ -390,6 +390,7 @@ local function handleCommandEvent (cmd)
 		else
 			rMsg = executeCommand(0,c[1])
 		end
+		
 	elseif c[1] == "disconnect" then
 		
 		if #c > 1 then
