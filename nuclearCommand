@@ -9,6 +9,7 @@ local pageSize = 14
 local timeOutAttempts = 5
 local timeout = 1
 local filter = "all"
+local filterMsg = "Showing all system entries"
 
 --sends a message using nuclear control system protocol
 --id: int
@@ -409,10 +410,10 @@ local function handleCommandEvent (cmd)
 			filter = "energy"
 			filterMsg = "Showing systems in ENERGY mode"
 		elseif c[2] == "cooldown" then
-			filter == "cooldown"
+			filter = "cooldown"
 			filterMsg = "Showing systems in COOLDOWN mode"
 		elseif c[2] == "shutdown" then
-			filter == "shutdown"
+			filter = "shutdown"
 			filterMsg = "Showing systems in SHUTDOWN mode"	
 		end
 		
