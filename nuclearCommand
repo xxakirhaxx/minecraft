@@ -217,7 +217,7 @@ local function executeCommand (id, cmd)
 		received, rMsg = send(id, cmd)
 		
 		if cmd == "disconnect" and received == true then
-			removeNuclearControlSystem(id)
+			removeNuclearControlSystem(tonumber(id))
 		end
 		
 	else
@@ -226,7 +226,7 @@ local function executeCommand (id, cmd)
 			received, rMsg = send(nuclearControlIds[i], cmd)
 			
 			if cmd == "disconnect" and received == true then
-				removeNuclearControlSystem(nuclearControlIds[i])
+				removeNuclearControlSystem(tonumber(nuclearControlIds[i]))
 			end
 			
 		end
@@ -275,7 +275,7 @@ local function addNuclearControlSystem (id)
 	if nuclearControlSystems[id] == nil then
 		print("Adding "..id.." to nuclearControlIds")
 		--add id to table
-		nuclearControlIds[#nuclearControlIds + 1] = id
+		nuclearControlIds[#nuclearControlIds + 1] = tonumber(id)
 		nuclearControlSystems[id] = {getHeat = 0, getMaxHeat = 0, getEUOutput = 0, currentMode = ""}
 	end
 	
