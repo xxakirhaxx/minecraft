@@ -233,7 +233,7 @@ local function executeCommand (id, cmd)
 	--It's poor design, but a very specific action needs to be taken if the cmd is disconnect
 	if id > 0 then
 	
-		received, rMsg = send(id, cmd)
+		received, rMsg = send(tonumber(id), cmd)
 		
 		if cmd == "disconnect" and received == true then
 			removeNuclearControlSystem(tonumber(id))
@@ -244,23 +244,20 @@ local function executeCommand (id, cmd)
 		if cmd == "disconnect" then
 			for i = #nuclearControlIds, 1, -1 do
 				
-				received, rMsg = send(nuclearControlIds[i], cmd)
+				received, rMsg = send(tonumber(nuclearControlIds[i]), cmd)
 				
-				if  received then
+				if received then
 					removeNuclearControlSystem(tonumber(nuclearControlIds[i]))
 				end
 				
-			end		
+			end	
 		else
 			for i = 1, #nuclearControlIds do
 				
-				received, rMsg = send(nuclearControlIds[i], cmd)
+				received, rMsg = send(tonumber(nuclearControlIds[i]), cmd)
 				
 			end
 		end
-		
-		nuclearControlSystems = {}
-		nuclearControlIds = {}
 	end
 	
 	if received then
