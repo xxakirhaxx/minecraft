@@ -277,16 +277,16 @@ end
 --nuclear control system id
 local function addNuclearControlSystem (id)
 
-	local exists = false
+	--local exists = false
 	
-	for i = 1, #nuclearControlIds do
-		if id == i then
-			exists = true
-			break
-		end
-	end
+	--for i = 1, #nuclearControlIds do
+	--	if id == i then
+	--		exists = true
+	--		break
+	--	end
+	--end
 	
-	if not exists then
+	if nuclearControlSystems[id] == nil then
 		print("Adding "..id.." to nuclearControlIds")
 		--add id to table
 		nuclearControlIds[#nuclearControlIds + 1] = id
@@ -305,9 +305,10 @@ local function init ()
 	print("Initializing system...")
 	--Clear Monitor and start initialize timer
 	monitor.clear()
-	os.startTimer(10)
 	
-	while event ~= "timer" do
+	local tid = os.startTimer(10)
+	
+	while event ~= "timer" and id ~= tid do
 		
 		rednet.open(modemSide)
 		rednet.broadcast("nuclearControl")
