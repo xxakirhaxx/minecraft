@@ -313,6 +313,8 @@ local function handleCommandEvent (cmd)
 		drawMonitor(0)
 	elseif c[1] == "quit" then
 		rMsg = c[1]
+	elseif c[1] == "init"
+		init()
 	end
 	
 	
@@ -353,7 +355,7 @@ local function addNuclearControlSystem (id)
 	
 	for i = 1, #nuclearControlIds do
 		if id == i then
-			exist = true
+			exists = true
 			break
 		end
 	end
@@ -366,41 +368,6 @@ local function addNuclearControlSystem (id)
 	end
 	
 end
-
---waits for events and performs actions based on them 
--- t: int
--- time between performing system events
-local function eventHandler ()
-	local event = ""
-	local id = 0
-	local msg = ""
-	local tid = os.startTimer(cycle)
-	
-	--get any event
-	rednet.open(modemSide)
-	event, id, msg = os.pullEvent()
-	rednet.close(modemSide)
-
-	
-	--handle events
-	if isNuclearSystemId(id) then
-		msg = handleNuclearSystemEvent(id, msg)
-		if msg ~= "" then print(msg) end
-	elseif event == "rednet_message" then
-		msg = handleRednetMessageEvent(id, msg)
-		if msg ~= "" then print(msg) end
-	elseif event == "key" then
-		msg = handleCommandEvent(read())
-		if msg ~= "" then print(msg) end
-	elseif event == "timer" and id == tid then
-		msg = handleSystemEvent()
-		if msg ~= "" then print(msg) end		
-	end
-	
-	os.cancelTimer(tid)
-	
-	return msg
-end 
 
 --initialize program
 local function init ()
@@ -433,6 +400,42 @@ local function init ()
 	print("Initialization Complete!")
 	print("Welcome to Nuclear Command!")
 end
+
+--waits for events and performs actions based on them 
+-- t: int
+-- time between performing system events
+local function eventHandler ()
+	local event = ""
+	local id = 0
+	local msg = ""
+	local tid = os.startTimer(cycle)
+	
+	--get any event
+	rednet.open(modemSide)
+	event, id, msg = os.pullEvent()
+	print(event," : ", id, " : ", msg)
+	rednet.close(modemSide)
+
+	
+	--handle events
+	if isNuclearSystemId(id) then
+		msg = handleNuclearSystemEvent(id, msg)
+		if msg ~= "" then print(msg) end
+	elseif event == "rednet_message" then
+		msg = handleRednetMessageEvent(id, msg)
+		if msg ~= "" then print(msg) end
+	elseif event == "key" then
+		msg = handleCommandEvent(read())
+		if msg ~= "" then print(msg) end
+	elseif event == "timer" and id == tid then
+		msg = handleSystemEvent()
+		if msg ~= "" then print(msg) end		
+	end
+	
+	os.cancelTimer(tid)
+	
+	return msg
+end 
 
 --Handles everything before a shutdown occurs
 local function shutdown ()
