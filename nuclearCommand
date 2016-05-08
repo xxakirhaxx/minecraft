@@ -99,7 +99,7 @@ end
 local function drawLine (id, k)
 
 	id = tonumber(id)
-	local x = (k%2) * 34 + 1
+	local x = (k%2) * 35 + 1
 	local y = 4 + math.floor((k - 1)/2)
 	local nPos = 0
 	local sPos = 12
