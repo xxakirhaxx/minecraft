@@ -36,7 +36,7 @@ function getNuclearControlId ()
 			return id
 		elseif msg == "getStats" and id == nuclearControlId then
 			sendReactorInfo()
-		elseif id == nuclearControlId
+		elseif id == nuclearControlId then
 		
 			rednet.open("bottom")
 			rednet.send(id, "received")
