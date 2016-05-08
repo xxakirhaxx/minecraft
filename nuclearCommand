@@ -99,12 +99,12 @@ end
 local function drawLine (id, k)
 
 	id = tonumber(id)
-	local x = (k%2) * 36 + 1
-	local y = 4 + math.floor(k/1)
+	local x = (k%2) * 34 + 1
+	local y = 4 + math.floor((k - 1)/2)
 	local nPos = 0
 	local sPos = 12
 	local euPos = 20
-	local tPos = 28
+	local tPos = 26
 	
 	local temp = math.floor(tonumber(nuclearControlSystems[id].getHeat)/tonumber(nuclearControlSystems[id].getMaxHeat))
 	local mode = ""
