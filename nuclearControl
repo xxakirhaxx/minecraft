@@ -36,6 +36,12 @@ function getNuclearControlId ()
 			return id
 		elseif msg == "getStats" and id == nuclearControlId then
 			sendReactorInfo()
+		elseif id == nuclearControlId
+		
+			rednet.open("bottom")
+			rednet.send(id, "received")
+			rednet.close("bottom")
+			
 		end
 		
 	end
@@ -214,7 +220,7 @@ while true do
 			
 			--Check fuel rod dmg, if dmg is too high shut down 
 			if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
-				while reactor.getStackInSlot(i)["dmg"]/item["max_dmg"] > .95 do
+				while item["dmg"]/item["max_dmg"] > .95 do
 					setCurrentMode("shutdown")
 					wait(cycle)
 				end
