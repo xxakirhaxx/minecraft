@@ -104,13 +104,13 @@ local function drawLine (id, k)
 	local nPos = 0
 	local sPos = 8
 	local euPos = 17
-	local tPos = 23
+	local tPos = 24
 	
 	local temp = math.floor(tonumber(nuclearControlSystems[id].getHeat)/tonumber(nuclearControlSystems[id].getMaxHeat))
 	local mode = ""
 	
 	monitor.setCursorPos(x+nPos,y)
-	monitor.write("Id #"..id)
+	monitor.write("ID #"..id)
 	monitor.setCursorPos(x+sPos,y)
 	
 	if nuclearControlSystems[id].currentMode == "energy" then
