@@ -322,6 +322,12 @@ local function init ()
 	local tid = os.startTimer(10)
 	
 	while event ~= "timer" and id ~= tid do
+		event, id, msg = os.pullEvent()
+	end
+	
+	tid = os.startTimer(10)
+	
+	while event ~= "timer" and id ~= tid do
 		
 		rednet.open(modemSide)
 		rednet.broadcast("nuclearControl")
