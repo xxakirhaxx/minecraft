@@ -1,7 +1,9 @@
 local reactor = peripheral.wrap("back")
+local energyCell = peripheral.wrap("bottom")
 local cycle = 5
 local currentMode = "energy"
 local nuclearControlId = 0
+local modemSide = "front"
 
 function sendReactorInfo ()
 
@@ -9,9 +11,9 @@ function sendReactorInfo ()
 	local msg = ""
 	local reactorInfo = {getHeat = reactor.getHeat(), getMaxHeat = reactor.getMaxHeat(), getEUOutput = reactor.getEUOutput(), currentMode = currentMode}
 	
-	rednet.open("bottom")
+	rednet.open(modemSide)
 	rednet.send(tonumber(nuclearControlId), reactorInfo)
-	rednet.close("bottom")
+	rednet.close(modemSide)
 	
 end
 
@@ -22,38 +24,38 @@ function getNuclearControlId ()
 	
 	while msg ~= "nuclearControl" do
 	
-		rednet.open("bottom")
+		rednet.open(modemSide)
 		id, msg = rednet.receive()
-		rednet.close("bottom")
+		rednet.close(modemSide)
 		
 		print(nuclearControlId, " : ", id, " : ", msg)
 		if msg == "turnon" and id == nuclearControlId then
 			
-			rednet.open("bottom")
+			rednet.open(modemSide)
 			rednet.send(id, "received")
-			rednet.close("bottom")
+			rednet.close(modemSide)
 			
 			return id
 		elseif msg == "getStats" and id == nuclearControlId then
 			sendReactorInfo()
 		elseif id == nuclearControlId then
 		
-			rednet.open("bottom")
+			rednet.open(modemSide)
 			rednet.send(id, "received")
-			rednet.close("bottom")
+			rednet.close(modemSide)
 			
 		end
 		
 	end
 	
-	rednet.open("bottom")
+	rednet.open(modemSide)
 	rednet.send(id, "nuclearCommand")
-	rednet.close("bottom")
+	rednet.close(modemSide)
 	
 	while msg ~= "start" do
-		rednet.open("bottom")
+		rednet.open(modemSide)
 		id, msg = rednet.receive()
-		rednet.close("bottom")
+		rednet.close(modemSide)
 	end
 	
 	return id
@@ -116,9 +118,9 @@ function command (id, cmd)
 	
 	if cmd == "shutdown" then
 		
-		rednet.open("bottom")
+		rednet.open(modemSide)
 		rednet.send(id, "received")
-		rednet.close("bottom")
+		rednet.close(modemSide)
 		
 		setCurrentMode("shutdown")
 		getNuclearControlId()
@@ -126,9 +128,9 @@ function command (id, cmd)
 		
 	elseif cmd == "stop" then
 	
-		rednet.open("bottom")
+		rednet.open(modemSide)
 		rednet.send(id, "received")
-		rednet.close("bottom")
+		rednet.close(modemSide)
 		
 		msg = ""
 		setCurrentMode("cooldown")
@@ -137,16 +139,16 @@ function command (id, cmd)
 			msg = wait(cycle) 
 		end
 		
-		rednet.open("bottom")
+		rednet.open(modemSide)
 		rednet.send(id, "received")
-		rednet.close("bottom")
+		rednet.close(modemSide)
 		
 		setCurrentMode(m)
 	elseif cmd == "disconnect" then
 	
-		rednet.open("bottom")
+		rednet.open(modemSide)
 		rednet.send(id, "received")
-		rednet.close("bottom")
+		rednet.close(modemSide)
 		
 		setCurrentMode("shutdown")
 		os.reboot()
@@ -168,9 +170,9 @@ function wait (num)
 	end
 
 	while true do
-		rednet.open("bottom")
+		rednet.open(modemSide)
 		event, id, msg  = os.pullEvent()
-		rednet.close("bottom")
+		rednet.close(modemSide)
 		
 		if event == "timer" or event == "rednet_message" then
 			break
@@ -227,6 +229,14 @@ while true do
 				setCurrentMode("energy")
 			end
 		end
+	end
+	
+	if energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() >= 1 then
+		while energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() >= 1 do
+			setCurrentMode("cooldown")
+			wait(cycle)
+		end
+		setCurrentMode("energy")
 	end
 	wait(cycle)
 end
