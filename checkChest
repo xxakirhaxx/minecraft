@@ -9,7 +9,7 @@ end
 
 local chest = getPeripheral("ender_chest")
 local frequencies = {}
-local modem = getModem("modem")
+local modem = getPeripheral("modem")
 local getItemId = 0
 local homeFrequency = 1
 local beginFrequency = 2
