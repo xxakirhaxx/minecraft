@@ -9,7 +9,7 @@ end
 
 local chest = peripheral.wrap(getPeripheral("ender_chest"))
 local frequencies = {}
-local modem = peripheral.wrap(getPeripheral("modem"))
+local modem = getPeripheral("modem")
 local getItemId = 0
 local homeFrequency = 1
 local beginFrequency = 2
