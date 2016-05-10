@@ -2,14 +2,14 @@
 function getPeripheral (name)
 	for i = 1, #peripheral.getNames() do
 		if peripheral.getType(peripheral.getNames()[i]) == name then
-			return peripheral.wrap(peripheral.getNames()[i])
+			return peripheral.getNames()[i]
 		end
 	end
 end
 
-local chest = getPeripheral("ender_chest")
+local chest = peripheral.wrap(getPeripheral("ender_chest"))
 local frequencies = {}
-local modem = getPeripheral("modem")
+local modem = getPeripheral(getPeripheral("modem"))
 local getItemId = 0
 local homeFrequency = 1
 local beginFrequency = 2
@@ -70,7 +70,7 @@ function setFrequency (id)
 			while id == getItemId and a ~= "finished" do
 				rednet.open(modem)
 				a, b = rednet.receive()
-				rednet.close()
+				rednet.close(modem)
 				
 				if id == getItemId and msg ~= "finished" then
 					rednet.open(modem)
