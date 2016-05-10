@@ -99,17 +99,17 @@ function main ()
 		id, msg = rednet.receive()
 		rednet.close()
 		
-		if id == getItemId and msg.cmd = "getFrequency" then
+		if id == getItemId and msg.cmd == "getFrequency" then
 			f = getFrequency(msg.id)
 			rednet.open(modem)
 			rednet.send(id, f)
 			rednet.close(modem)
-		elseif id == getItemId and msg.cmd = "releaseFrequency" then
+		elseif id == getItemId and msg.cmd == "releaseFrequency" then
 			releaseFrequency(msg.id)
 			rednet.open(modem)
 			rednet.send(id, "received")
 			rednet.close(modem)
-		elseif id == getItemId and msg.cmd = "setFrequency" then
+		elseif id == getItemId and msg.cmd == "setFrequency" then
 			setFrequency(msg.id)
 			rednet.open(modem)
 			rednet.send(id, "received")
