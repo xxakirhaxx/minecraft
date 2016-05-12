@@ -30,6 +30,7 @@ function init ()
 	rednet.close(modem)
 	
 	getItemId = id
+	chest.setFrequency(homeFrequency)
 	
 end
 
@@ -39,25 +40,43 @@ end
 
 function getFrequency (id)
 	
+	local f = 0
+	
 	for i = beginFrequency, #frequencies do
 		if not frequencies[i] then
 			frequencies[i] = id
-			return i
-		end
-	end
-	
-	frequencies[#frequencies+1] = id
-	
-	return #frequencies
-end
-
-function releaseFrequency (id)
-	for i = beginFrequency, #frequencies do
-		if frequencies[i] == id then
-			frequencies[i] = nil
+			f = i
 			break
 		end
 	end
+	
+	if f == 0 then
+		frequencies[#frequencies+1] = id
+		f = #frequencies
+	end
+	
+	rednet.open(modem)
+	rednet.send(getItemId, f)
+	rednet.close(modem)
+	
+end
+
+function releaseFrequency (id)
+
+	local bool = false
+	
+	for i = beginFrequency, #frequencies do
+		if frequencies[i] == id then
+			frequencies[i] = nil
+			bool = true
+			break
+		end
+	end
+	
+	rednet.open(modem)
+	rednet.send(getItemId, bool)
+	rednet.close(modem)
+	
 end
 
 function setFrequency (id)
@@ -67,21 +86,34 @@ function setFrequency (id)
 			chest.setFrequency(i)
 			local a = 0
 			local b = ""
-			while id == getItemId and a ~= "finished" do
+			
+			--Send true reply if frequency set succesfully
+			rednet.open(modem)
+			rednet.send(getItemId, true)
+			rednet.close(modem)
+			
+			while a ~= getItemId or a ~= "finished" do
 				rednet.open(modem)
 				a, b = rednet.receive()
 				rednet.close(modem)
 				
-				if id == getItemId and msg ~= "finished" then
+				if msg ~= "finished" then
 					rednet.open(modem)
 					rednet.send(a, "busy")
 					rednet.close(modem)
 				end
 			end
+			
 			chest.setFrequency(homeFrequency)
-			break
+			return
 		end
 	end
+	
+	--Reply with false signal if no frequency set
+	rednet.open(modem)
+	rednet.send(getItemId, false)
+	rednet.close(modem)
+	
 end
 
 
@@ -97,23 +129,14 @@ function main ()
 		
 		rednet.open(modem)
 		id, msg = rednet.receive()
-		rednet.close()
+		rednet.close(modem)
 		
 		if id == getItemId and msg.cmd == "getFrequency" then
-			f = getFrequency(msg.id)
-			rednet.open(modem)
-			rednet.send(id, f)
-			rednet.close(modem)
+			getFrequency(msg.id)
 		elseif id == getItemId and msg.cmd == "releaseFrequency" then
 			releaseFrequency(msg.id)
-			rednet.open(modem)
-			rednet.send(id, "received")
-			rednet.close(modem)
 		elseif id == getItemId and msg.cmd == "setFrequency" then
-			setFrequency(msg.id)
-			rednet.open(modem)
-			rednet.send(id, "received")
-			rednet.close(modem)		
+			setFrequency(msg.id)		
 		end
 		
 		chest.setFrequency(homeFrequency)
