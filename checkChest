@@ -8,11 +8,11 @@ function getPeripheral (name)
 end
 
 local chest = peripheral.wrap(getPeripheral("ender_chest"))
-local frequencies = {}
 local modem = getPeripheral("modem")
 local getItemId = 0
 local homeFrequency = 1
 local beginFrequency = 2
+local frequencies = {os.getComputerID()}
 local busy = false
 
 function init ()
@@ -47,7 +47,7 @@ function getFrequency (id)
 	local f = 0
 	
 	for i = beginFrequency, #frequencies do
-		if not frequencies[i] then
+		if frequencies[i] == nil then
 			frequencies[i] = id
 			f = i
 			break
