@@ -169,7 +169,11 @@ function main ()
 				elseif msg.cmd == "closeConnection" then
 					releaseConnection(id)
 				end
-			end	
+			end
+		elseif msg == "getItemId" then
+			rednet.open(modem)
+			rednet.send(id, os.getComputerID())
+			rednet.close(modem)
 		end
 	end
 	
