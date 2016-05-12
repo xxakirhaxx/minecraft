@@ -58,8 +58,6 @@ function sendItem(itemRequestId, itemName, amount)
 	local id = 0
 	local msg = false
 	
-	print("Sending request to checkChest :"..itemRequestId..itemName..amount)
-	
 		rednet.open(modem)
 		rednet.send(checkChestId, {id = itemRequestId, cmd = "openFrequency"})
 		rednet.close(modem)

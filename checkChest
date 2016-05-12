@@ -162,10 +162,7 @@ function main ()
 			openFrequency(msg.id)
 		elseif id == getItemId and msg.cmd == "closeFrequency" then
 			closeFrequency(msg.id)
-		end
-		
-		chest.setFrequency(homeFrequency)
-		
+		end	
 	end
 
 	shutdown()
