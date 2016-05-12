@@ -86,11 +86,14 @@ end
 function openFrequency (id)
 	
 	print("Opening frequency")
+	
 	if busy then
 		rednet.open(modem)
 		rednet.send(a, "busy")
 		rednet.close(modem)
 	else
+		print(frequencies[2])
+		
 		for i = beginFrequency, #frequencies do
 			if frequencies[i] == id then
 				chest.setFrequency(i)
