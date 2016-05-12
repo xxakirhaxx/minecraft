@@ -110,7 +110,7 @@ function sendItem(conn, itemName, amount)
 		end
 		
 		rednet.open(modem)
-		rednet.send(conn.id, {sent = true, itemName = itemName, amount = amount}
+		rednet.send(conn.id, {sent = true, itemName = itemName, amount = amount})
 		rednet.close(modem)
 	end
 	
