@@ -80,17 +80,15 @@ function releaseConnection (id)
 	
 end
 
-function sendItem(conn, itemName, amount)
+function sendItem(itemRequestId, itemName, amount)
 
 	local id = 0
 	local msg = false
 	
-	print("Sending request to checkChest :", conn.id, conn.f, itemName, amount)
-	if conn ~= nil then
+	print("Sending request to checkChest :", itemRequestId, itemName, amount)
 	
-		print("Sending request to checkChest")
 		rednet.open(modem)
-		rednet.send(checkChestId, {id = conn.id, cmd = "openFrequency"})
+		rednet.send(checkChestId, {id = itemRequestId, cmd = "openFrequency"})
 		rednet.close(modem)
 		
 		while not msg or id ~= checkChestId do
@@ -107,7 +105,7 @@ function sendItem(conn, itemName, amount)
 			
 		
 		rednet.open(modem)
-		rednet.send(checkChestId, {id = conn.id, cmd = "closeFrequency"})
+		rednet.send(checkChestId, {id = itemRequestId, cmd = "closeFrequency"})
 		rednet.close(modem)
 		
 		while not msg or id ~= checkChestId do
@@ -117,9 +115,8 @@ function sendItem(conn, itemName, amount)
 		end
 		
 		rednet.open(modem)
-		rednet.send(conn.id, {sent = true, itemName = itemName, amount = amount})
+		rednet.send(itemRequestId, {sent = true, itemName = itemName, amount = amount})
 		rednet.close(modem)
-	end
 	
 end
  
