@@ -87,6 +87,7 @@ function sendItem(conn, itemName, amount)
 	
 	if conn ~= nil then
 	
+		print("Sending request to checkChest")
 		rednet.open(modem)
 		rednet.send(checkChestId, {id = conn.id, cmd = "openFrequency"})
 		rednet.close(modem)
@@ -162,7 +163,7 @@ function main ()
 		
 		if type(msg) == "table" then
 			if msg.cmd ~= nil then
-				if msg.cmd == "openConnection" then
+				if msg.cmd == "openConnection" tc,hen
 					setConnection(id)
 				elseif msg.cmd == "getItem" then
 					sendItem(getConnection(id), msg.itemName, msg.amount)

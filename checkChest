@@ -85,6 +85,7 @@ end
 
 function openFrequency (id)
 	
+	print("Opening frequency")
 	if busy then
 		rednet.open(modem)
 		rednet.send(a, "busy")
