@@ -96,6 +96,7 @@ function openFrequency (id)
 		
 		for i = beginFrequency, #frequencies do
 			if frequencies[i] == id then
+				print("f:"..i)
 				chest.setFrequency(i)
 				
 				busy = true
