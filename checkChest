@@ -106,6 +106,8 @@ function openFrequency (id)
 				rednet.open(modem)
 				rednet.send(getItemId, true)
 				rednet.close(modem)
+				
+				return
 		
 			end
 		end
