@@ -85,6 +85,7 @@ function sendItem(conn, itemName, amount)
 	local id = 0
 	local msg = false
 	
+	print("Sending request to checkChest :", conn.id, conn.f, itemName, amount)
 	if conn ~= nil then
 	
 		print("Sending request to checkChest")
