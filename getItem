@@ -1,0 +1,173 @@
+
+function getPeripheral (name)
+	for i = 1, #peripheral.getNames() do
+		if peripheral.getType(peripheral.getNames()[i]) == name then
+			return peripheral.getNames()[i]
+		end
+	end
+	
+	return nil
+end
+
+local interface = peripheral.wrap(getPeripheral("tileinterface"))
+local modem = getPeripheral("modem")
+local connections = {}
+local connection = function (id, f) return {id = 0, f = 0} end
+local checkChestId = 0
+local interfaceSide = "south"
+
+function getConnection (id)
+
+	for i = 1, #connections do
+		if connections[i].id == id then return connections[i] end
+	end
+	
+	return nil
+end
+
+function setConnection (id)
+
+	local msg = {id = id, cmd = "getFrequency"}
+	local i = 0
+	local f = 0
+	
+	rednet.open(modem)
+	rednet.send(checkChestId, msg)
+	rednet.close(modem)	
+	
+	while i ~= checkChestId or f == 0 do
+		rednet.open(modem)
+		i, f = rednet.receive()
+		rednet.close(modem)
+	end
+	
+	for i = 1, #connections do
+		if id == connections[i].id then
+			return
+		end
+	end
+	
+	connections[#connections+1] = connection(id,f)
+end
+
+function releaseConnection (id)
+
+	local msg = {id = id, cmd = "releaseFrequency"}
+	local i = 0
+	local bool = false
+	
+	rednet.open(modem)
+	rednet.send(checkChestId, msg)
+	rednet.close(modem)
+	
+	while i ~= checkChestId or bool == false do
+		rednet.open(modem)
+		i, bool = rednet.receive()
+		rednet.close(modem)
+	end
+	
+	for i = 1, #connections do
+		if id == connection[i].id then
+			table.remove(connections, i)
+			break
+		end
+	end
+	
+end
+
+function sendItem(conn, itemName, amount)
+
+	local id = 0
+	local msg = false
+	
+	if conn ~= nil then
+	
+		rednet.open(modem)
+		rednet.send(checkChestId, {id = conn.id, cmd = "openFrequency"})
+		rednet.close(modem)
+		
+		while not msg or id ~= checkChestId do
+			rednet.open(modem)
+			id, msg = rednet.receive()
+			rednet.close(modem)
+		end
+		
+		for i = 1, #interface.getAvailableItems() do
+			if itemName == interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().display_name then
+				interface.exportItem(interface.getAvailableItems()[i].fingerprint, interfaceSide, amount)
+			end
+		end
+			
+		
+		rednet.open(modem)
+		rednet.send(checkChestId, {id = conn.id, cmd = "closeFrequency"})
+		rednet.close(modem)
+		
+		while not msg or id ~= checkChestId do
+			rednet.open(modem)
+			id, msg = rednet.receive()
+			rednet.close(modem)
+		end
+		
+		rednet.open(modem)
+		rednet.send(conn.id, {sent = true, itemName = itemName, amount = amount}
+		rednet.close(modem)
+	end
+	
+end
+ 
+function init ()
+
+	print("Initializing")
+	os.sleep(5)
+	local id = 0
+	local msg = ""
+	
+	rednet.open(modem)
+	rednet.broadcast("getItemId")
+	rednet.close(modem)
+	
+	while id == 0 or msg ~= "received" do
+		rednet.open(modem)
+		id, msg = rednet.receive()
+		rednet.close(modem)
+	end
+	
+	checkChestId = id
+	
+	print("Initialization complete")
+end
+
+function shutdown ()
+
+end
+
+function main ()
+
+	init()
+	
+	while true do
+	
+	local id = 0
+	local msg = {}
+	
+	rednet.open(modem)
+	id, msg = rednet.receive()
+	rednet.close(modem)
+	
+	if type(msg) == "table" then
+		
+		if msg.cmd == "openConnection" then
+			setConnection(id)
+		elseif msg.cmd == "getItem" then
+			sendItem(getConnection(id), msg.itemName, msg.amount)
+		elseif msg.cmd == "closeConnection" then
+			releaseConnection(id)
+		end
+	end
+	
+	if
+	end
+	
+	shutdown()
+end

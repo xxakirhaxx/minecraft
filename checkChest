@@ -13,11 +13,14 @@ local modem = getPeripheral("modem")
 local getItemId = 0
 local homeFrequency = 1
 local beginFrequency = 2
+local busy = false
 
 function init ()
 	
 	local id = 0
 	local msg = ""
+	
+	print("Initializing")
 	
 	while msg ~= "getItemId" do
 		rednet.open(modem)
@@ -32,6 +35,7 @@ function init ()
 	getItemId = id
 	chest.setFrequency(homeFrequency)
 	
+	print("Initialization complete")
 end
 
 function shutdown ()
@@ -79,43 +83,54 @@ function releaseFrequency (id)
 	
 end
 
-function setFrequency (id)
+function openFrequency (id)
 	
+	if busy then
+		rednet.open(modem)
+		rednet.send(a, "busy")
+		rednet.close(modem)
+	else
+		for i = beginFrequency, #frequencies do
+			if frequencies[i] == id then
+				chest.setFrequency(i)
+				
+				busy = true
+				
+				--Send true reply if frequency opened succesfully
+				rednet.open(modem)
+				rednet.send(getItemId, true)
+				rednet.close(modem)
+		
+			end
+		end
+		
+		--Reply with false signal if no frequency opened
+		rednet.open(modem)
+		rednet.send(getItemId, false)
+		rednet.close(modem)
+	end
+end
+
+function closeFrequency (id)
+
 	for i = beginFrequency, #frequencies do
 		if frequencies[i] == id then
-			chest.setFrequency(i)
-			local a = 0
-			local b = ""
+			chest.setFrequency(homeFrequency)
+			busy = false
 			
-			--Send true reply if frequency set succesfully
+			--Send true reply if frequency closed succesfully
 			rednet.open(modem)
 			rednet.send(getItemId, true)
-			rednet.close(modem)
+			rednet.close(modem)	
 			
-			while a ~= getItemId or a ~= "finished" do
-				rednet.open(modem)
-				a, b = rednet.receive()
-				rednet.close(modem)
-				
-				if msg ~= "finished" then
-					rednet.open(modem)
-					rednet.send(a, "busy")
-					rednet.close(modem)
-				end
-			end
-			
-			chest.setFrequency(homeFrequency)
-			return
 		end
 	end
 	
-	--Reply with false signal if no frequency set
+	--Reply with false signal if no frequency closed
 	rednet.open(modem)
 	rednet.send(getItemId, false)
 	rednet.close(modem)
-	
 end
-
 
 function main ()
 
@@ -135,8 +150,10 @@ function main ()
 			getFrequency(msg.id)
 		elseif id == getItemId and msg.cmd == "releaseFrequency" then
 			releaseFrequency(msg.id)
-		elseif id == getItemId and msg.cmd == "setFrequency" then
-			setFrequency(msg.id)		
+		elseif id == getItemId and msg.cmd == "openFrequency" then
+			openFrequency(msg.id)
+		elseif id == getItemId and msg.cmd == "closeFrequency" then
+			closeFrequency(msg.id)
 		end
 		
 		chest.setFrequency(homeFrequency)
