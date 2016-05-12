@@ -48,6 +48,11 @@ function setConnection (id)
 	end
 	
 	connections[#connections+1] = connection(id,f)
+	
+	rednet.open(modem)
+	rednet.send(id, f)
+	rednet.close(modem)	
+	
 end
 
 function releaseConnection (id)
@@ -148,25 +153,24 @@ function main ()
 	
 	while true do
 	
-	local id = 0
-	local msg = {}
-	
-	rednet.open(modem)
-	id, msg = rednet.receive()
-	rednet.close(modem)
-	
-	if type(msg) == "table" then
+		local id = 0
+		local msg = {}
 		
-		if msg.cmd == "openConnection" then
-			setConnection(id)
-		elseif msg.cmd == "getItem" then
-			sendItem(getConnection(id), msg.itemName, msg.amount)
-		elseif msg.cmd == "closeConnection" then
-			releaseConnection(id)
+		rednet.open(modem)
+		id, msg = rednet.receive()
+		rednet.close(modem)
+		
+		if type(msg) == "table" then
+			if msg.cmd ~= nil then
+				if msg.cmd == "openConnection" then
+					setConnection(id)
+				elseif msg.cmd == "getItem" then
+					sendItem(getConnection(id), msg.itemName, msg.amount)
+				elseif msg.cmd == "closeConnection" then
+					releaseConnection(id)
+				end
+			end	
 		end
-	end
-	
-	if
 	end
 	
 	shutdown()
