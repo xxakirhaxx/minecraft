@@ -95,6 +95,7 @@ function openFrequency (id)
 		print(frequencies[2])
 		
 		for i = beginFrequency, #frequencies do
+			print(frequencies[i])
 			if frequencies[i] == id then
 				print("f:"..i)
 				chest.setFrequency(i)
