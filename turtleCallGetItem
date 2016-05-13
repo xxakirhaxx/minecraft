@@ -72,6 +72,7 @@ function main ()
 	rednet.send(getItemId, openConnection)
 	rednet.close(modem)
 	
+	print("getItemId: "..getItemId)
 	while frequency == 0 or id ~= getItemId do
 		rednet.open(modem)
 		id, frequency = rednet.receive()
