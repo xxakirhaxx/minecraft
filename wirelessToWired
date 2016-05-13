@@ -1,0 +1,19 @@
+local wireless = "back"
+local wired = "bottom"
+local wiredProt = "wired"
+
+rednet.open(wireless)
+rednet.host(wiredProt, wiredProt)
+rednet.close(wireless)
+
+while true do
+	
+	rednet.open(wireless)
+	local id, msg, dist, protocol = rednet.receive()
+	rednet.close(wireless)
+	
+	rednet.open(wired)
+	rednet.send(rednet.lookup(msg.sProt, msg.sProt), msg, protocol)
+	rednet.close(wired)
+
+end

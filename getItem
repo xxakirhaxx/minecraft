@@ -13,25 +13,35 @@ local interface = peripheral.wrap(getPeripheral("tileinterface"))
 local modem = getPeripheral("modem")
 local checkChestId = 0
 local interfaceSide = "south"
+local getItemProt = "getItem"
+local giveItemProt = "giveItem"
+local checkChestProt = "checkChest"
 
-function openConnection (id)
+function openConnection (rid, id)
 
 	local msg = {id = id, cmd = "getFrequency"}
 	local i = 0
 	local f = 0
+	local dist = 0
+	local protocol = ""
 	
-	rednet.open(modem)
-	rednet.send(checkChestId, msg)
-	rednet.close(modem)	
-	
-	while i ~= checkChestId or f == 0 do
+	repeat
 		rednet.open(modem)
-		i, f = rednet.receive()
+		rednet.send(checkChestId, msg, getItemProt)
 		rednet.close(modem)
-	end
+		
+		rednet.open(modem)
+		i, f, dist, protocol = rednet.receive(checkChestProt)
+		rednet.close(modem)
+
+		if f == 0 then os.sleep(5) end
+		
+	until f ~= 0
 	
+	msg = {id = id, frequency = f}
+
 	rednet.open(modem)
-	rednet.send(id, f)
+	rednet.send(rid, msg, getItemProt)
 	rednet.close(modem)	
 	
 end
@@ -40,93 +50,91 @@ function closeConnection (id)
 
 	local msg = {id = id, cmd = "releaseFrequency"}
 	local i = 0
-	local bool = false
+	local closed = false
+	local dist = 0
+	local protocol = ""
 	
-	rednet.open(modem)
-	rednet.send(checkChestId, msg)
-	rednet.close(modem)
-	
-	while i ~= checkChestId or bool == false do
+	repeat
 		rednet.open(modem)
-		i, bool = rednet.receive()
+		rednet.send(checkChestId, msg, getItemProt)
 		rednet.close(modem)
-	end	
+		
+		rednet.open(modem)
+		i, closed, dist, protocol = rednet.receive(checkChestProt)
+		rednet.close(modem)
+
+		if not closed then os.sleep(5) end
+		
+	until closed == true
+	
 end
 
-function sendItem(itemRequestId, itemName, amount)
+function sendItem(itemRequestId, rid, itemName, amount)
 
 	local id = 0
 	local msg = false
+	local dist = 0
+	local protocol = ""
 	
-		rednet.open(modem)
-		rednet.send(checkChestId, {id = itemRequestId, cmd = "openFrequency"})
-		rednet.close(modem)
 		
-		while not msg or id ~= checkChestId do
-			rednet.open(modem)
-			id, msg = rednet.receive()
-			rednet.close(modem)
-			
-			if id == checkChestId then
-				if not msg then
-					os.sleep(5)
-					rednet.open(modem)
-					rednet.send(checkChestId, {id = itemRequestId, cmd = "openFrequency"})
-					rednet.close(modem)
-				end
+	repeat
+		rednet.open(modem)
+		rednet.send(checkChestId, {id = itemRequestId, cmd = "openFrequency"}, getItemProt)
+		rednet.close(modem)
+				
+		rednet.open(modem)
+		id, msg, dist, protocol = rednet.receive(checkChestProt)
+		rednet.close(modem)	
+
+		if not msg then os.sleep(5) end
+		
+	until msg == true
+
+	for i = 1, #interface.getAvailableItems() do
+		if itemName == interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().display_name then
+			if interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().max_size < amount then
+				amount = interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().max_size
 			end
+			interface.exportItem(interface.getAvailableItems()[i].fingerprint, interfaceSide, amount)
 		end
-		
-		for i = 1, #interface.getAvailableItems() do
-			if itemName == interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().display_name then
-				if interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().max_size < amount then
-					amount = interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().max_size
-				end
-				interface.exportItem(interface.getAvailableItems()[i].fingerprint, interfaceSide, amount)
-			end
-		end
-			
-		
+	end
+
+	repeat
 		rednet.open(modem)
-		rednet.send(checkChestId, {id = itemRequestId, cmd = "closeFrequency"})
+		rednet.send(checkChestId, {id = itemRequestId, cmd = "closeFrequency"}, getItemProt)
 		rednet.close(modem)
-		
-		while not msg or id ~= checkChestId do
-			rednet.open(modem)
-			id, msg = rednet.receive()
-			rednet.close(modem)
-		end
-		
+				
 		rednet.open(modem)
-		rednet.send(itemRequestId, {sent = true, itemName = itemName, amount = amount})
-		rednet.close(modem)
+		id, msg, dist, protocol = rednet.receive(checkChestProt)
+		rednet.close(modem)	
+
+		if not msg then
+			os.sleep(5)
+		end
+	until msg == true	
+		
+		
+	rednet.open(modem)
+	rednet.send(rid, {id = itemRequestId, sent = true, itemName = itemName, amount = amount}, getItemProt)
+	rednet.close(modem)
 	
 end
  
 function init ()
-
+		
 	print("Initializing")
+	
+	rednet.host(getItemProt, getItemProt)
 	os.sleep(5)
-	local id = 0
-	local msg = ""
-	
-	rednet.open(modem)
-	rednet.broadcast("getItemId")
-	rednet.close(modem)
-	
-	while id == 0 or msg ~= "received" do
-		rednet.open(modem)
-		id, msg = rednet.receive()
-		rednet.close(modem)
-	end
-	
-	checkChestId = id
+	checkChestId = rednet.lookup(checkChestProt, checkChestProt)
 	
 	print("Initialization complete")
 end
 
 function shutdown ()
 
+	rednet.unhost(getItemProt, getItemProt)
+	
 end
 
 function main ()
@@ -137,26 +145,24 @@ function main ()
 	
 		local id = 0
 		local msg = {}
+		local dist = 0
+		local protocol = ""
 		
 		rednet.open(modem)
-		id, msg = rednet.receive()
+		id, msg, dist, protocol = rednet.receive(giveItemProt)
 		rednet.close(modem)
+		
 		print("id: "..id.." msg: "..tostring(msg))
-		if type(msg) == "table" then
-			if msg.cmd ~= nil then
-				if msg.cmd == "openConnection" then
-					openConnection(id)
-				elseif msg.cmd == "getItem" then
-					sendItem(id, msg.itemName, msg.amount)
-				elseif msg.cmd == "closeConnection" then
-					closeConnection(id)
-				end
-			end
-		elseif msg == "getItemId" then
-			rednet.open(modem)
-			rednet.send(id, os.getComputerID())
-			rednet.close(modem)
+
+		if msg.cmd == "openConnection" then
+			openConnection(id, msg.id)
+		elseif msg.cmd == "getItem" then
+			sendItem(msg.id, id, msg.itemName, msg.amount)
+		elseif msg.cmd == "closeConnection" then
+			closeConnection(msg.id)
 		end
+
+	
 	end
 	
 	shutdown()

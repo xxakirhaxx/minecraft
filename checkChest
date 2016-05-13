@@ -12,34 +12,26 @@ local modem = getPeripheral("modem")
 local getItemId = 0
 local homeFrequency = 1
 local beginFrequency = 2
+local getItemProt = "getItem"
+local checkChestProt = "checkChest"
 local frequencies = {os.getComputerID()}
 local busy = false
 
 function init ()
-	
-	local id = 0
-	local msg = ""
-	
+		
 	print("Initializing")
 	
-	while msg ~= "getItemId" do
-		rednet.open(modem)
-		id, msg = rednet.receive()
-		rednet.close(modem)
-	end
-	
-	rednet.open(modem)
-	rednet.send(id, "received")
-	rednet.close(modem)
-	
-	getItemId = id
-	chest.setFrequency(homeFrequency)
+	rednet.host(checkChestProt, checkChestProt)
+	os.sleep(5)
+	getItemId = rednet.lookup(getItemProt, getItemProt)
 	
 	print("Initialization complete")
 end
 
 function shutdown ()
 
+	rednet.unhost(checkChestProt, checkChestProt)
+	
 end
 
 function getFrequency (id)
@@ -60,7 +52,7 @@ function getFrequency (id)
 	end
 	
 	rednet.open(modem)
-	rednet.send(getItemId, f)
+	rednet.send(getItemId, f, checkChestProt)
 	rednet.close(modem)
 	
 end
@@ -78,7 +70,7 @@ function releaseFrequency (id)
 	end
 	
 	rednet.open(modem)
-	rednet.send(getItemId, bool)
+	rednet.send(getItemId, bool, checkChestProt)
 	rednet.close(modem)
 	
 end
@@ -87,7 +79,7 @@ function openFrequency (id)
 	
 	if busy then
 		rednet.open(modem)
-		rednet.send(getItemId, false)
+		rednet.send(getItemId, false, checkChestProt)
 		rednet.close(modem)
 	else
 		print(frequencies[2])
@@ -100,7 +92,7 @@ function openFrequency (id)
 				
 				--Send true reply if frequency opened succesfully
 				rednet.open(modem)
-				rednet.send(getItemId, true)
+				rednet.send(getItemId, true, checkChestProt)
 				rednet.close(modem)
 				
 				return
@@ -110,7 +102,7 @@ function openFrequency (id)
 		
 		--Reply with false signal if no frequency opened
 		rednet.open(modem)
-		rednet.send(getItemId, false)
+		rednet.send(getItemId, false, checkChestProt)
 		rednet.close(modem)
 	end
 end
@@ -124,7 +116,7 @@ function closeFrequency (id)
 			
 			--Send true reply if frequency closed succesfully
 			rednet.open(modem)
-			rednet.send(getItemId, true)
+			rednet.send(getItemId, true, checkChestProt)
 			rednet.close(modem)	
 			
 		end
@@ -132,7 +124,7 @@ function closeFrequency (id)
 	
 	--Reply with false signal if no frequency closed
 	rednet.open(modem)
-	rednet.send(getItemId, false)
+	rednet.send(getItemId, false, checkChestProt)
 	rednet.close(modem)
 end
 
@@ -144,19 +136,21 @@ function main ()
 
 		local id = 0
 		local msg = ""
+		local dist = 0
+		local protocol = ""
 		local f = 0
 		
 		rednet.open(modem)
-		id, msg = rednet.receive()
+		id, msg, dist, protocol = rednet.receive(getItemProt)
 		rednet.close(modem)
 		
-		if id == getItemId and msg.cmd == "getFrequency" then
+		if msg.cmd == "getFrequency" then
 			getFrequency(msg.id)
-		elseif id == getItemId and msg.cmd == "releaseFrequency" then
+		elseif msg.cmd == "releaseFrequency" then
 			releaseFrequency(msg.id)
-		elseif id == getItemId and msg.cmd == "openFrequency" then
+		elseif msg.cmd == "openFrequency" then
 			openFrequency(msg.id)
-		elseif id == getItemId and msg.cmd == "closeFrequency" then
+		elseif msg.cmd == "closeFrequency" then
 			closeFrequency(msg.id)
 		end	
 	end
