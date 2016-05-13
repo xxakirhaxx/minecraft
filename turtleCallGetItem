@@ -44,16 +44,6 @@ function main ()
 	
 	if #args < 2 then return end
 
-	if type(args[1]) ~= "string" then return end
-
-	if #args >= 2 then
-		if type(args[2]) ~= "number" then return end
-	end
-
-	if #args >= 3 then
-		if type(args[3]) ~= "number" then return end
-	end
-
 	if #args > 3 then return end
 
 	init()
@@ -65,12 +55,12 @@ function main ()
 	local frequency = 0
 	local amount = 0
 	local itemName = args[1]
-	local slot = args[2]
+	local slot = tonumber(args[2])
 	
 	if args[3] == nil then
 		amount = 1
 	else
-		amount = args[3]
+		amount = tonumber(args[3])
 	end
 
 	if turtle.getItemCount(slot) > 0 then return end
