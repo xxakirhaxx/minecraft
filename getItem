@@ -66,10 +66,22 @@ function sendItem(itemRequestId, itemName, amount)
 			rednet.open(modem)
 			id, msg = rednet.receive()
 			rednet.close(modem)
+			
+			if id == checkChestId then
+				if not msg then
+					os.sleep(5)
+					rednet.open(modem)
+					rednet.send(checkChestId, {id = itemRequestId, cmd = "openFrequency"})
+					rednet.close(modem)
+				end
+			end
 		end
 		
 		for i = 1, #interface.getAvailableItems() do
 			if itemName == interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().display_name then
+				if interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().max_size < amount then
+					amount = interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().max_size
+				end
 				interface.exportItem(interface.getAvailableItems()[i].fingerprint, interfaceSide, amount)
 			end
 		end
