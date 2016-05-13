@@ -49,13 +49,11 @@ function main ()
 		if type(args[2]) ~= "number" then return end
 	end
 	
-	if #args >= 3 then return
+	if #args >= 3 then
 		if type(args[3]) ~= "number" then return end
 	end
 	
-	if #args > 3 then
-		return 
-	end
+	if #args > 3 then return end
 	
 	init()
 	
