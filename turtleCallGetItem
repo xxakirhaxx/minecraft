@@ -74,7 +74,7 @@ function main ()
 	
 	if turtle.getItemCount(slot) > 0 then return end
 	
-	local request = {cmd = "getItem" itemName = itemName, amount = amount}
+	local request = {cmd = "getItem", itemName = itemName, amount = amount}
 	local closeConnection = {cmd = "closeConnection"}
 	
 	rednet.open(modem)
@@ -108,6 +108,7 @@ function main ()
 	
 	turtle.select(slot)
 	turtle.suckDown(amount)
+	chest.setFrequency(0)
 	
 	rednet.open(modem)
 	rednet.send(getItemId, closeConnection)
