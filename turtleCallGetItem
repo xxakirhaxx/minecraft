@@ -10,32 +10,13 @@ end
 
 local chest = peripheral.wrap(getPeripheral("ender_chest"))
 local modem = getPeripheral("modem")
-local getItemId = 0
 local getItemProt = "getItem"
 local giveItemProt = "giveItem"
 local wiredProt = "wired"
 
-function getId ()
-
-	local id = 0
-	local getItemId = 0
-	
-	rednet.open(modem)
-	rednet.broadcast("getItemId")
-	rednet.close(modem)
-	
-	while id ~= getItemId or (id == 0 and getItemId == 0) do
-		rednet.open(modem)
-		id, getItemId = rednet.receive()
-		rednet.close(modem)
-	end
-	
-	return getItemId
-end
 
 function init ()
 
-	getItemId = rednet.lookup(getItemProt, getItemProt)
 	
 end
 
