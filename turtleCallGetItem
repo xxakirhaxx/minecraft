@@ -118,3 +118,5 @@ function main ()
 	
 	shutdown()
 end
+
+main()
