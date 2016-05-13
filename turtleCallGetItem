@@ -77,7 +77,7 @@ function main ()
 		id, frequency = rednet.receive()
 		rednet.close(modem)
 	end
-	
+	print("Connection opened, frequency: "..frequency)
 	chest.setFrequency(frequency)
 	
 	rednet.open(modem)
@@ -96,7 +96,7 @@ function main ()
 			end
 		end
 	end
-	
+	print("Request received")
 	turtle.select(slot)
 	turtle.suckDown(amount)
 	chest.setFrequency(0)
