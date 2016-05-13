@@ -12,6 +12,9 @@ while true do
 	local id, msg, dist, protocol = rednet.receive()
 	rednet.close(wireless)
 	
+	print(msg.sProt)
+	print(protocol)
+	
 	rednet.open(wired)
 	rednet.send(rednet.lookup(msg.sProt, msg.sProt), msg, protocol)
 	rednet.close(wired)
