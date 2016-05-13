@@ -1,3 +1,5 @@
+local args = { ... }
+
 function getPeripheral (name)
 	for i = 1, #peripheral.getNames() do
 		if peripheral.getType(peripheral.getNames()[i]) == name then
@@ -9,7 +11,6 @@ end
 local chest = peripheral.wrap(getPeripheral("ender_chest"))
 local modem = getPeripheral("modem")
 local getItemId = 0
-local args = {}
 
 function getId ()
 
@@ -42,19 +43,19 @@ end
 function main ()
 	
 	if #args < 2 then return end
-	print("1")
+
 	if type(args[1]) ~= "string" then return end
-	print("1")
+
 	if #args >= 2 then
 		if type(args[2]) ~= "number" then return end
 	end
-	print("1")
+
 	if #args >= 3 then
 		if type(args[3]) ~= "number" then return end
 	end
-	print("1")
+
 	if #args > 3 then return end
-	print("1")
+
 	init()
 	
 	local id = 0
@@ -71,9 +72,9 @@ function main ()
 	else
 		amount = args[3]
 	end
-	print("1")
+
 	if turtle.getItemCount(slot) > 0 then return end
-	print("1")
+
 	local request = {cmd = "getItem", itemName = itemName, amount = amount}
 	local closeConnection = {cmd = "closeConnection"}
 	
