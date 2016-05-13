@@ -141,7 +141,7 @@ function main ()
 		rednet.open(modem)
 		id, msg = rednet.receive()
 		rednet.close(modem)
-		
+		print("id: "..id.." msg: "..tostring(msg))
 		if type(msg) == "table" then
 			if msg.cmd ~= nil then
 				if msg.cmd == "openConnection" then
