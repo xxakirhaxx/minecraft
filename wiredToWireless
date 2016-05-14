@@ -2,6 +2,9 @@ local wireless = "back"
 local wired = "bottom"
 local wirelessProt = "wireless"
 
+rednet.close(wireless)
+rednet.close(wired)
+
 rednet.open(wired)
 rednet.host(wirelessProt, wirelessProt)
 rednet.close(wired)
