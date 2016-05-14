@@ -26,11 +26,11 @@ end
 
 function send (sProt, msg)
 
+	rednet.open(modem)
 	local id = tonumber(rednet.lookup(wiredProt, wiredProt))
 	local rid = tonumber(os.getComputerID())
 	local protocol = giveItemProt
 	
-	rednet.open(modem)
 	rednet.send(id, {id = rid, sProt = sProt,  msg = msg}, protocol)
 	rednet.close(modem)
 
@@ -79,7 +79,6 @@ function main ()
 	local request = {cmd = "getItem", itemName = itemName, amount = amount}
 	local closeConnection = {cmd = "closeConnection"}
 	
-	print(rednet.lookup(wiredProt, wiredProt))
 	print(giveItemProt)
 	
 	send(giveItemProt, openConnection)
