@@ -7,18 +7,9 @@ function getPeripheral (name)
 	end
 end
 
-local chest = peripheral.wrap(getPeripheral("ender_chest"))
-local modem = getPeripheral("modem")
-local getItemId = 0
-local homeFrequency = 1
-local beginFrequency = 2
-local getItemProt = "getItem"
-local checkChestProt = "checkChest"
-local frequencies = {tonumber(os.getComputerID())}
-local busy = false
-
 function send (id, msg, protocol,...)
 
+	local modem = getPeripheral("modem")
 	local lookup = nil
 	local sProt = nil
 	
@@ -29,13 +20,14 @@ function send (id, msg, protocol,...)
 	if lookup ~= nil then id = tonumber(rednet.lookup(lookup, lookup)) end
 	local rid = tonumber(os.getComputerID())
 	
-	rednet.send(id, {id = tonumber(rid), sProt = sProt,  msg = msg}, protocol)
+	rednet.send(tonumber(id), {id = tonumber(rid), sProt = sProt,  msg = msg}, tostring(protocol))
 	rednet.close(modem)
 
 end
 
 function receive (protocol)
 
+	local modem = getPeripheral("modem")
 	local id = 0
 	local msg = {}
 	local p = ""
@@ -43,12 +35,12 @@ function receive (protocol)
 	repeat
 		rednet.open(modem)
 		id, msg, p = rednet.receive()
-		rednet.close()
+		rednet.close(modem)
 		
 		if p == "dns" then
-			rednet.open(wireless)
-			rednet.send(id, tostring(os.getComputerID()), p)
-			rednet.close(wireless)		
+			rednet.open(modem)
+			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(p))
+			rednet.close(modem)		
 		end
 		
 	until p == protocol
@@ -56,22 +48,31 @@ function receive (protocol)
 	return msg
 end
 
+local chest = peripheral.wrap(getPeripheral("ender_chest"))
+local getItemId = 0
+local homeFrequency = 1
+local beginFrequency = 2
+local getItemProt = "getItem"
+local checkChestProt = "checkChest"
+local frequencies = {tonumber(os.getComputerID())}
+local busy = false
+
 function init ()
 		
 	print("Initializing")
 	
-	rednet.open(modem)
+	rednet.open(getPeripheral("modem"))
 	rednet.host(checkChestProt, checkChestProt)
-	rednet.close(modem)
+	rednet.close(getPeripheral("modem"))
 	
 	print("Initialization complete")
 end
 
 function shutdown ()
 
-	rednet.open(modem)
+	rednet.open(getPeripheral("modem"))
 	rednet.unhost(checkChestProt, checkChestProt)
-	rednet.close(modem)
+	rednet.close(getPeripheral("modem"))
 	
 end
 

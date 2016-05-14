@@ -1,5 +1,6 @@
 local args = { ... }
 
+
 function getPeripheral (name)
 	for i = 1, #peripheral.getNames() do
 		if peripheral.getType(peripheral.getNames()[i]) == name then
@@ -8,8 +9,48 @@ function getPeripheral (name)
 	end
 end
 
+function send (id, msg, protocol,...)
+
+	local modem = getPeripheral("modem")
+	local lookup = nil
+	local sProt = nil
+	
+	if select(1,...) ~= nil then lookup = select(1,...) end
+	if select(2,...) ~= nil then sProt = select(2,...) end
+	
+	rednet.open(modem)
+	if lookup ~= nil then id = tonumber(rednet.lookup(lookup, lookup)) end
+	local rid = tonumber(os.getComputerID())
+	
+	rednet.send(tonumber(id), {id = tonumber(rid), sProt = sProt,  msg = msg}, tostring(protocol))
+	rednet.close(modem)
+
+end
+
+function receive (protocol)
+
+	local modem = getPeripheral("modem")
+	local id = 0
+	local msg = {}
+	local p = ""
+	
+	repeat
+		rednet.open(modem)
+		id, msg, p = rednet.receive()
+		rednet.close(modem)
+		
+		if p == "dns" then
+			rednet.open(modem)
+			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(p))
+			rednet.close(modem)		
+		end
+		
+	until p == protocol
+	
+	return msg
+end
+
 local chest = peripheral.wrap(getPeripheral("ender_chest"))
-local modem = getPeripheral("modem")
 local getItemProt = "getItem"
 local giveItemProt = "giveItem"
 local wiredProt = "wired"
@@ -22,45 +63,6 @@ end
 
 function shutdown ()
 
-end
-
-function send (id, msg, protocol,...)
-
-	local lookup = nil
-	local sProt = nil
-	
-	if select(1,...) ~= nil then lookup = select(1,...) end
-	if select(2,...) ~= nil then sProt = select(2,...) end
-	
-	rednet.open(modem)
-	if lookup ~= nil then id = tonumber(rednet.lookup(lookup, lookup)) end
-	local rid = tonumber(os.getComputerID())
-	
-	rednet.send(id, {id = tonumber(rid), sProt = sProt,  msg = msg}, protocol)
-	rednet.close(modem)
-
-end
-
-function receive (protocol)
-
-	local id = 0
-	local msg = {}
-	local p = ""
-	
-	repeat
-		rednet.open(modem)
-		id, msg, p = rednet.receive()
-		rednet.close()
-		
-		if p == "dns" then
-			rednet.open(wireless)
-			rednet.send(id, tostring(os.getComputerID()), p)
-			rednet.close(wireless)		
-		end
-		
-	until p == protocol
-	
-	return msg
 end
 
 function main ()
