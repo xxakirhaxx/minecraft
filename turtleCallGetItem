@@ -18,15 +18,6 @@ local wiredToWirelessId = 0
 
 function init ()
 
-	local id = 0
-	local dist = 0
-	local protocol = ""
-	
-	rednet.open(modem)
-	rednet.broadcast(wiredProt, wiredProt)
-	id, wiredToWirelessId, dist, protocol = rednet.receive(wiredProt)
-	rednet.close(modem)
-	
 end
 
 function shutdown ()
