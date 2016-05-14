@@ -13,10 +13,19 @@ local modem = getPeripheral("modem")
 local getItemProt = "getItem"
 local giveItemProt = "giveItem"
 local wiredProt = "wired"
+local wiredToWirelessId = 0
 
 
 function init ()
 
+	local id = 0
+	local dist = 0
+	local protocol = ""
+	
+	rednet.open(modem)
+	rednet.broadcast("id", wiredProt)
+	id, wiredToWirelessId, dist, protocol = rednet.receive(wiredProt)
+	rednet.close(modem)
 	
 end
 
@@ -58,7 +67,7 @@ function main ()
 	print(giveItemProt)
 	
 	rednet.open(modem)
-	rednet.send(rednet.lookup(wiredProt, wiredProt), openConnection, giveItemProt)
+	rednet.send(wiredToWirelessId, openConnection, giveItemProt)
 	rednet.close(modem)
 	
 	repeat
@@ -70,7 +79,7 @@ function main ()
 	chest.setFrequency(frequency)
 	
 	rednet.open(modem)
-	rednet.send(rednet.lookup(wiredProt, wiredProt), request, giveItemProt)
+	rednet.send(wiredToWirelessId, request, giveItemProt)
 	rednet.close(modem)
 	
 
@@ -90,7 +99,7 @@ function main ()
 	chest.setFrequency(0)
 	
 	rednet.open(modem)
-	rednet.send(rednet.lookup(wiredProt, wiredProt), closeConnection, giveItemProt)
+	rednet.send(wiredToWirelessId, closeConnection, giveItemProt)
 	rednet.close(modem)
 	
 	
