@@ -18,6 +18,7 @@ while true do
 		rednet.close(wireless)
 	else
 		rednet.open(wired)
+		print(tonumber(rednet.lookup(tostring(msg.sProt), tostring(msg.sProt))))
 		rednet.send(tonumber(rednet.lookup(tostring(msg.sProt), tostring(msg.sProt))), msg, tostring(protocol))
 		rednet.close(wired)
 	end
