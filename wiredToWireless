@@ -2,9 +2,6 @@ local wireless = "back"
 local wired = "bottom"
 local wirelessProt = "wireless"
 
-rednet.close(wireless)
-rednet.close(wired)
-
 rednet.open(wired)
 rednet.host(wirelessProt, wirelessProt)
 rednet.close(wired)
@@ -12,7 +9,7 @@ rednet.close(wired)
 while true do
 	
 	rednet.open(wired)
-	local id, msg, dist, protocol = rednet.receive()
+	local id, msg, protocol = rednet.receive()
 	rednet.close(wired)
 	
 	rednet.open(wireless)
