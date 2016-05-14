@@ -44,7 +44,7 @@ function receive (protocol)
 	
 	rednet.open(modem)
 	id, msg, p = rednet.receive(protocol)
-	rednet.close
+	rednet.close()
 	
 	return msg
 end
