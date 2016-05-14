@@ -37,7 +37,7 @@ function main ()
 	local dist = 0
 	local protocol = ""
 	local bool = false
-	local openConnection = {id = os.getComputerID(), sProt = getItemProt, cmd = "openConnection"}
+	local openConnection = {id = tonumber(os.getComputerID()), sProt = getItemProt, cmd = "openConnection"}
 	local frequency = 0
 	local amount = 0
 	local itemName = args[1]
@@ -51,8 +51,11 @@ function main ()
 
 	if turtle.getItemCount(slot) > 0 then return end
 
-	local request = {id = os.getComputerID(), sProt = getItemProt, cmd = "getItem", itemName = itemName, amount = amount}
-	local closeConnection = {id = os.getComputerID(), sProt = getItemProt, cmd = "closeConnection"}
+	local request = {id = tonumber(os.getComputerID()), sProt = getItemProt, cmd = "getItem", itemName = itemName, amount = amount}
+	local closeConnection = {id = tonumber(os.getComputerID()), sProt = getItemProt, cmd = "closeConnection"}
+	
+	print(rednet.lookup(wiredProt, wiredProt))
+	print(giveItemProt)
 	
 	rednet.open(modem)
 	rednet.send(rednet.lookup(wiredProt, wiredProt), openConnection, giveItemProt)
