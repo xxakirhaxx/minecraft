@@ -23,7 +23,7 @@ function init ()
 	local protocol = ""
 	
 	rednet.open(modem)
-	rednet.broadcast("id", wiredProt)
+	rednet.broadcast(wiredProt, wiredProt)
 	id, wiredToWirelessId, dist, protocol = rednet.receive(wiredProt)
 	rednet.close(modem)
 	
