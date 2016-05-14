@@ -18,7 +18,7 @@ while true do
 		rednet.close(wireless)
 	else
 		rednet.open(wired)
-		rednet.send(rednet.lookup(msg.sProt, msg.sProt), msg, protocol)
+		rednet.send(tonumber(rednet.lookup(msg.sProt, msg.sProt)), msg, protocol)
 		rednet.close(wired)	
 	end
 
