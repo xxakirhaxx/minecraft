@@ -12,8 +12,14 @@ while true do
 	local id, msg, protocol = rednet.receive()
 	rednet.close(wired)
 	
-	rednet.open(wireless)
-	rednet.send(msg.id, msg, protocol)
-	rednet.close(wireless)
+	if protocol == "dns" then
+		rednet.open(wireless)
+		rednet.send(id, tostring(os.getComputerID()), protocol)
+		rednet.close(wireless)
+	else
+		rednet.open(wireless)
+		rednet.send(tonumber(msg.id), msg, protocol)
+		rednet.close(wireless)
+	end
 
 end
