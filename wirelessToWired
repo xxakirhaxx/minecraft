@@ -2,22 +2,21 @@ local wireless = "back"
 local wired = "bottom"
 local wiredProt = "wired"
 
+	rednet.open(wireless)
+	rednet.host(wiredProt, wiredProt)
+	rednet.close(wireless)
+	
 while true do
 	
 	rednet.open(wireless)
-	local id, msg, dist, protocol = rednet.receive()
+	local id, msg, protocol = rednet.receive()
 	rednet.close(wireless)
 	
-	if type(msg) == "string" then
-		if msg == "wired" then
-			rednet.open(wireless)
-			rednet.send(id, os.getComputerID(), protocol)
-			rednet.close(wireless)
-		end
+	if protocol == "dns" then
+		rednet.open(wireless)
+		rednet.send(id, tostring(os.getComputerID()), protocol)
+		rednet.close(wireless)
 	else
-		print(msg.sProt)
-		print(protocol)
-	
 		rednet.open(wired)
 		rednet.send(rednet.lookup(msg.sProt, msg.sProt), msg, protocol)
 		rednet.close(wired)	
