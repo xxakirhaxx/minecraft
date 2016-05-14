@@ -24,14 +24,19 @@ function shutdown ()
 
 end
 
-function send (sProt, msg)
+function send (id, msg, protocol,...)
 
-	rednet.open(modem)
-	local id = tonumber(rednet.lookup(wiredProt, wiredProt))
-	local rid = tonumber(os.getComputerID())
-	local protocol = giveItemProt
+	local lookup = nil
+	local sProt = nil
 	
-	rednet.send(id, {id = rid, sProt = sProt,  msg = msg}, protocol)
+	if select(1,...) ~= nil then lookup = select(1,...) end
+	if select(2,...) ~= nil then sProt = select(2,...) end
+	
+	rednet.open(modem)
+	if lookup ~= nil then id = tonumber(rednet.lookup(lookup, lookup)) end
+	local rid = tonumber(os.getComputerID())
+	
+	rednet.send(id, {id = tonumber(rid), sProt = sProt,  msg = msg}, protocol)
 	rednet.close(modem)
 
 end
@@ -42,9 +47,18 @@ function receive (protocol)
 	local msg = {}
 	local p = ""
 	
-	rednet.open(modem)
-	id, msg, p = rednet.receive(protocol)
-	rednet.close()
+	repeat
+		rednet.open(modem)
+		id, msg, p = rednet.receive()
+		rednet.close()
+		
+		if p == "dns" then
+			rednet.open(wireless)
+			rednet.send(id, tostring(os.getComputerID()), p)
+			rednet.close(wireless)		
+		end
+		
+	until p == protocol
 	
 	return msg
 end
@@ -81,7 +95,7 @@ function main ()
 	
 	print(giveItemProt)
 	
-	send(giveItemProt, openConnection)
+	send(0, openConnection, giveItemProt, wiredProt, getItemProt)
 
 	
 	repeat
@@ -90,7 +104,7 @@ function main ()
 	
 	chest.setFrequency(frequency)
 	
-	send(giveItemProt, request)
+	send(0, request, giveItemProt, wiredProt, getItemProt)
 	
 	repeat
 		msg = receive(getItemProt)
@@ -105,7 +119,7 @@ function main ()
 	turtle.suckDown(amount)
 	chest.setFrequency(0)
 	
-	send(giveItemProt, closeConnection)
+	send(0, closeConnection, giveItemProt, wiredProt, getItemProt)
 	
 	shutdown()
 end

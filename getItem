@@ -9,6 +9,7 @@ function getPeripheral (name)
 	return nil
 end
 
+
 local interface = peripheral.wrap(getPeripheral("tileinterface"))
 local modem = getPeripheral("modem")
 local checkChestId = 0
@@ -16,104 +17,127 @@ local interfaceSide = "south"
 local getItemProt = "getItem"
 local giveItemProt = "giveItem"
 local checkChestProt = "checkChest"
+local wirelessProt = "wireless"
 
-function openConnection (rid, id)
+function send (id, msg, protocol,...)
 
-	local msg = {id = id, cmd = "getFrequency"}
-	local i = 0
-	local f = 0
-	local protocol = ""
+	local lookup = nil
+	local sProt = nil
+	
+	if select(1,...) ~= nil then lookup = select(1,...) end
+	if select(2,...) ~= nil then sProt = select(2,...) end
+	
+	rednet.open(modem)
+	if lookup ~= nil then id = tonumber(rednet.lookup(lookup, lookup)) end
+	local rid = tonumber(os.getComputerID())
+	
+	rednet.send(id, {id = tonumber(rid), sProt = sProt,  msg = msg}, protocol)
+	rednet.close(modem)
+
+end
+
+function receive (protocol)
+
+	local id = 0
+	local msg = {}
+	local p = ""
 	
 	repeat
 		rednet.open(modem)
-		rednet.send(checkChestId, msg, getItemProt)
-		rednet.close(modem)
+		id, msg, p = rednet.receive()
+		rednet.close()
 		
-		rednet.open(modem)
-		i, f, protocol = rednet.receive(checkChestProt)
-		rednet.close(modem)
-
-		if f == 0 then os.sleep(5) end
+		if p == "dns" then
+			rednet.open(wireless)
+			rednet.send(id, tostring(os.getComputerID()), p)
+			rednet.close(wireless)		
+		end
 		
-	until f ~= 0
+	until p == protocol
 	
-	msg = {id = id, msg = {frequency = f}}
+	return msg
+end
 
-	rednet.open(modem)
-	rednet.send(rid, msg, getItemProt)
-	rednet.close(modem)	
+function openConnection (msg)
+
+	local m = {id = msg.id, cmd = "getFrequency"}
+	local i = 0
+	local frequency = 0
+	local protocol = ""
+	
+	repeat
+
+		send(checkChestId, m, getItemProt)
+		
+		frequency = rednet.receive(checkChestProt)
+
+		if frequency.msg.frequency == 0 then os.sleep(5) end
+		
+	until frequency.msg.frequency ~= 0
+	
+	m = {frequency = frequency}
+
+	send(0, m, getItemProt, wirelessProt)
 	
 end
 
-function closeConnection (id)
+function closeConnection (msg)
 
-	local msg = {id = id, cmd = "releaseFrequency"}
+	local m = {id = msg.id, cmd = "releaseFrequency"}
 	local i = 0
 	local closed = false
 	local protocol = ""
 	
 	repeat
-		rednet.open(modem)
-		rednet.send(checkChestId, msg, getItemProt)
-		rednet.close(modem)
+		send(checkChestId, m, getItemProt)
 		
-		rednet.open(modem)
-		i, closed, protocol = rednet.receive(checkChestProt)
-		rednet.close(modem)
+		closed = receive(checkChestProt)
 
-		if not closed then os.sleep(5) end
+		if not closed.msg.success then os.sleep(5) end
 		
-	until closed == true
+	until closed.msg.success == true
 	
 end
 
-function sendItem(itemRequestId, rid, itemName, amount)
+function sendItem(msg)
 
 	local id = 0
-	local msg = false
+	local m = {}
 	local protocol = ""
 	
 		
 	repeat
-		rednet.open(modem)
-		rednet.send(checkChestId, {id = itemRequestId, cmd = "openFrequency"}, getItemProt)
-		rednet.close(modem)
-				
-		rednet.open(modem)
-		id, msg, protocol = rednet.receive(checkChestProt)
-		rednet.close(modem)	
 
-		if not msg then os.sleep(5) end
+		send(0,{id = msg.id, cmd = "openFrequency"}, getItemProt, checkChestProt)
+				
+		m = receive(checkChestProt)
+
+		if not m.msg.success then os.sleep(5) end
 		
-	until msg == true
+	until m.msg.success == true
 
 	for i = 1, #interface.getAvailableItems() do
-		if itemName == interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().display_name then
-			if interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().max_size < amount then
-				amount = interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().max_size
+		if msg.msg.itemName == interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().display_name then
+			if interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().max_size < msg.msg.amount then
+				msg.msg.amount = interface.getItemDetail(interface.getAvailableItems()[i].fingerprint).basic().max_size
 			end
-			interface.exportItem(interface.getAvailableItems()[i].fingerprint, interfaceSide, amount)
+			interface.exportItem(interface.getAvailableItems()[i].fingerprint, interfaceSide, msg.msg.amount)
 		end
 	end
 
 	repeat
-		rednet.open(modem)
-		rednet.send(checkChestId, {id = itemRequestId, cmd = "closeFrequency"}, getItemProt)
-		rednet.close(modem)
-				
-		rednet.open(modem)
-		id, msg, protocol = rednet.receive(checkChestProt)
-		rednet.close(modem)	
 
-		if not msg then
-			os.sleep(5)
-		end
-	until msg == true	
+		send(0,{id = msg.id, cmd = "closeFrequency"}, getItemProt, checkChestProt)
+				
+		m = receive(checkChestProt)
+
+		if not m.msg.success then os.sleep(5) end
 		
+	until m.msg.success == true
 		
-	rednet.open(modem)
-	rednet.send(rid, {id = itemRequestId, msg = {sent = true, itemName = itemName, amount = amount}}, getItemProt)
-	rednet.close(modem)
+	m = {sent = true, itemName = itemName, amount = amount}
+	
+	send(0, m, getItemProt, wirelessProt)
 	
 end
  
@@ -121,16 +145,18 @@ function init ()
 		
 	print("Initializing")
 	
+	rednet.open(modem)
 	rednet.host(getItemProt, getItemProt)
-	os.sleep(5)
-	checkChestId = rednet.lookup(checkChestProt, checkChestProt)
+	rednet.close(modem)
 	
 	print("Initialization complete")
 end
 
 function shutdown ()
 
+	rednet.open(modem)
 	rednet.unhost(getItemProt, getItemProt)
+	rednet.close(modem)
 	
 end
 
@@ -140,25 +166,20 @@ function main ()
 	
 	while true do
 	
-		local id = 0
 		local msg = {}
-		local protocol = ""
 		
-		rednet.open(modem)
-		id, msg, protocol = rednet.receive(giveItemProt)
-		rednet.close(modem)
+		msg = receive(giveItemProt)
 		
 		print("id: "..id.." msg: "..tostring(msg))
-
+		
 		if msg.msg.cmd == "openConnection" then
-			openConnection(id, msg.id)
+			openConnection(msg)
 		elseif msg.msg.cmd == "getItem" then
-			sendItem(msg.id, id, msg.msg.itemName, msg.msg.amount)
+			sendItem(msg)
 		elseif msg.msg.cmd == "closeConnection" then
-			closeConnection(msg.id)
+			closeConnection(msg)
 		end
-
-	
+			
 	end
 	
 	shutdown()
