@@ -33,6 +33,31 @@ function shutdown ()
 
 end
 
+function send (sProt, msg)
+
+	local id = tonumber(rednet.lookup(wiredProt, wiredProt))
+	local rid = tonumber(os.getComputerID())
+	local protocol = giveItemProt
+	
+	rednet.open(modem)
+	rednet.send(id, {id = rid, sProt = sProt,  msg = msg}, protocol)
+	rednet.close(modem)
+
+end
+
+function receive (protocol)
+
+	local id = 0
+	local msg = {}
+	local p = ""
+	
+	rednet.open(modem)
+	id, msg, p = rednet.receive(protocol)
+	rednet.close
+	
+	return msg
+end
+
 function main ()
 	
 	if #args < 2 then return end
@@ -46,7 +71,7 @@ function main ()
 	local dist = 0
 	local protocol = ""
 	local bool = false
-	local openConnection = {id = tonumber(os.getComputerID()), sProt = getItemProt, cmd = "openConnection"}
+	local openConnection = {cmd = "openConnection"}
 	local frequency = 0
 	local amount = 0
 	local itemName = args[1]
@@ -60,48 +85,37 @@ function main ()
 
 	if turtle.getItemCount(slot) > 0 then return end
 
-	local request = {id = tonumber(os.getComputerID()), sProt = getItemProt, cmd = "getItem", itemName = itemName, amount = amount}
-	local closeConnection = {id = tonumber(os.getComputerID()), sProt = getItemProt, cmd = "closeConnection"}
+	local request = {cmd = "getItem", itemName = itemName, amount = amount}
+	local closeConnection = {cmd = "closeConnection"}
 	
 	print(rednet.lookup(wiredProt, wiredProt))
 	print(giveItemProt)
 	
-	rednet.open(modem)
-	rednet.send(wiredToWirelessId, openConnection, giveItemProt)
-	rednet.close(modem)
+	send(giveItemProt, openConnection)
+
 	
 	repeat
-		rednet.open(modem)
-		id, msg, dist, protocol = rednet.receive(getItemProt)
-		rednet.close(modem)
-	until msg.frequency ~= 0
+		msg = receive(getItemProt)
+	until msg.msg.frequency ~= 0
 	
 	chest.setFrequency(frequency)
 	
-	rednet.open(modem)
-	rednet.send(wiredToWirelessId, request, giveItemProt)
-	rednet.close(modem)
+	send(giveItemProt, request)
 	
-
 	repeat
-		rednet.open(modem)
-		id, msg, dist, protocol = rednet.receive(getItemProt)
-		rednet.close(modem)
-	
-		if type(msg) ~= "table" then msg = {sent = false} end
+		msg = receive(getItemProt)
 		
-		if msg.sent == nil then msg = {sent = false} end
+		if type(msg.msg) ~= "table" then msg.msg = {sent = false} end
+		
+		if msg.msg.sent == nil then msg.msg = {sent = false} end
 
-	until msg.sent == true
+	until msg.msg.sent == true
 	
 	turtle.select(slot)
 	turtle.suckDown(amount)
 	chest.setFrequency(0)
 	
-	rednet.open(modem)
-	rednet.send(wiredToWirelessId, closeConnection, giveItemProt)
-	rednet.close(modem)
-	
+	send(giveItemProt, closeConnection)
 	
 	shutdown()
 end

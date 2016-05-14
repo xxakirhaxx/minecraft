@@ -136,12 +136,11 @@ function main ()
 
 		local id = 0
 		local msg = ""
-		local dist = 0
 		local protocol = ""
 		local f = 0
 		
 		rednet.open(modem)
-		id, msg, dist, protocol = rednet.receive(getItemProt)
+		id, msg, protocol = rednet.receive(getItemProt)
 		rednet.close(modem)
 		
 		if msg.cmd == "getFrequency" then

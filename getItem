@@ -22,7 +22,6 @@ function openConnection (rid, id)
 	local msg = {id = id, cmd = "getFrequency"}
 	local i = 0
 	local f = 0
-	local dist = 0
 	local protocol = ""
 	
 	repeat
@@ -31,14 +30,14 @@ function openConnection (rid, id)
 		rednet.close(modem)
 		
 		rednet.open(modem)
-		i, f, dist, protocol = rednet.receive(checkChestProt)
+		i, f, protocol = rednet.receive(checkChestProt)
 		rednet.close(modem)
 
 		if f == 0 then os.sleep(5) end
 		
 	until f ~= 0
 	
-	msg = {id = id, frequency = f}
+	msg = {id = id, msg = {frequency = f}}
 
 	rednet.open(modem)
 	rednet.send(rid, msg, getItemProt)
@@ -51,7 +50,6 @@ function closeConnection (id)
 	local msg = {id = id, cmd = "releaseFrequency"}
 	local i = 0
 	local closed = false
-	local dist = 0
 	local protocol = ""
 	
 	repeat
@@ -60,7 +58,7 @@ function closeConnection (id)
 		rednet.close(modem)
 		
 		rednet.open(modem)
-		i, closed, dist, protocol = rednet.receive(checkChestProt)
+		i, closed, protocol = rednet.receive(checkChestProt)
 		rednet.close(modem)
 
 		if not closed then os.sleep(5) end
@@ -73,7 +71,6 @@ function sendItem(itemRequestId, rid, itemName, amount)
 
 	local id = 0
 	local msg = false
-	local dist = 0
 	local protocol = ""
 	
 		
@@ -83,7 +80,7 @@ function sendItem(itemRequestId, rid, itemName, amount)
 		rednet.close(modem)
 				
 		rednet.open(modem)
-		id, msg, dist, protocol = rednet.receive(checkChestProt)
+		id, msg, protocol = rednet.receive(checkChestProt)
 		rednet.close(modem)	
 
 		if not msg then os.sleep(5) end
@@ -105,7 +102,7 @@ function sendItem(itemRequestId, rid, itemName, amount)
 		rednet.close(modem)
 				
 		rednet.open(modem)
-		id, msg, dist, protocol = rednet.receive(checkChestProt)
+		id, msg, protocol = rednet.receive(checkChestProt)
 		rednet.close(modem)	
 
 		if not msg then
@@ -115,7 +112,7 @@ function sendItem(itemRequestId, rid, itemName, amount)
 		
 		
 	rednet.open(modem)
-	rednet.send(rid, {id = itemRequestId, sent = true, itemName = itemName, amount = amount}, getItemProt)
+	rednet.send(rid, {id = itemRequestId, msg = {sent = true, itemName = itemName, amount = amount}}, getItemProt)
 	rednet.close(modem)
 	
 end
@@ -145,20 +142,19 @@ function main ()
 	
 		local id = 0
 		local msg = {}
-		local dist = 0
 		local protocol = ""
 		
 		rednet.open(modem)
-		id, msg, dist, protocol = rednet.receive(giveItemProt)
+		id, msg, protocol = rednet.receive(giveItemProt)
 		rednet.close(modem)
 		
 		print("id: "..id.." msg: "..tostring(msg))
 
-		if msg.cmd == "openConnection" then
+		if msg.msg.cmd == "openConnection" then
 			openConnection(id, msg.id)
-		elseif msg.cmd == "getItem" then
-			sendItem(msg.id, id, msg.itemName, msg.amount)
-		elseif msg.cmd == "closeConnection" then
+		elseif msg.msg.cmd == "getItem" then
+			sendItem(msg.id, id, msg.msg.itemName, msg.msg.amount)
+		elseif msg.msg.cmd == "closeConnection" then
 			closeConnection(msg.id)
 		end
 
