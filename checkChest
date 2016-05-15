@@ -7,6 +7,14 @@ function getPeripheral (name)
 	end
 end
 
+local d = true
+
+function dbug (s)
+
+	if d then print(s) end
+	
+end
+
 function getUniqueHostName ()
 
 	local i = 1
@@ -115,6 +123,8 @@ end
 
 function getFrequency (id)
 	
+	dbug("getFrequency id: "..tostring(id))
+	
 	local f = 0
 	
 	for i = beginFrequency, #frequencies do
@@ -130,12 +140,15 @@ function getFrequency (id)
 		f = #frequencies
 	end
 	
+	dbug("Sending to 0 frequency: "..tostring(f).." prot: "..checkChestProt.." lookup: "..getItemProt)
 	send(0, {frequency = f}, checkChestProt, getItemProt)
 	
 end
 
 function releaseFrequency (id)
 
+	dbug("releaseFrequency id: "..tostring(id))
+	
 	local bool = false
 	
 	for i = beginFrequency, #frequencies do
@@ -146,13 +159,17 @@ function releaseFrequency (id)
 		end
 	end
 	
+	dbug("Sending to 0 success: "..tostring(bool).." prot: "..checkChestProt.." lookup: "..getItemProt)
 	send(0, {success = bool}, checkChestProt, getItemProt)
 	
 end
 
 function openFrequency (id)
 	
+	dbug("openFrequency id: "..tostring(id))
+	
 	if busy then
+		dbug("Sending to 0 success: false prot: "..checkChestProt.." lookup: "..getItemProt)
 		send(0, {success = false}, checkChestProt, getItemProt)
 	else
 		print(frequencies[2])
@@ -164,6 +181,7 @@ function openFrequency (id)
 				busy = true
 				
 				--Send true reply if frequency opened succesfully
+				dbug("Sending to 0 success: true prot: "..checkChestProt.." lookup: "..getItemProt)
 				send(0, {success = true}, checkChestProt, getItemProt)
 				
 				return
@@ -172,24 +190,30 @@ function openFrequency (id)
 		end
 		
 		--Reply with false signal if no frequency opened
+		dbug("Sending to 0 success: false prot: "..checkChestProt.." lookup: "..getItemProt)
 		send(0, {success = false}, checkChestProt, getItemProt)
 	end
 end
 
 function closeFrequency (id)
 
+	dbug("closeFrequency id: "..tostring(id))
+	
 	for i = beginFrequency, #frequencies do
 		if frequencies[i] == id then
 			chest.setFrequency(homeFrequency)
 			busy = false
 			
 			--Send true reply if frequency closed succesfully
+			dbug("Sending to 0 success: true prot: "..checkChestProt.." lookup: "..getItemProt)
 			send(0, {success = true}, checkChestProt, getItemProt)
 			
+			return
 		end
 	end
 	
 	--Reply with false signal if no frequency closed
+	dbug("Sending to 0 success: false prot: "..checkChestProt.." lookup: "..getItemProt)
 	send(0, {success = false}, checkChestProt, getItemProt)
 
 end
@@ -207,6 +231,7 @@ function main ()
 		
 		msg = rednet.receive()
 
+		dbug("Received msg: "..tostring(msg))
 		
 		if msg.msg.cmd == "getFrequency" then
 			getFrequency(msg.msg.id)

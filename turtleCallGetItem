@@ -9,6 +9,14 @@ function getPeripheral (name)
 	end
 end
 
+local d = true
+
+function dbug (s)
+
+	if d then print(s) end
+	
+end
+
 function getUniqueHostName ()
 
 	local i = 1
@@ -133,22 +141,29 @@ function main ()
 	local request = {cmd = "getItem", itemName = itemName, amount = amount}
 	local closeConnection = {cmd = "closeConnection"}
 	
-	print(giveItemProt)
-	
 	hostName = startHost()
+	
+	dbug("Sending 0 "..tostring(openConnection).." "..tostring(giveItemProt).." "..tostring(wiredProt).." "..tostring(getItemProt).." "..tostring(hostName))
+	
 	send(0, openConnection, giveItemProt, wiredProt, getItemProt, hostName)
 
-	
+	dbug("Waiting for response...")
 	repeat
 		msg = receive(getItemProt)
 	until msg.msg.frequency ~= 0
 	endHost(hostName)
 	
+	dbug("Response received with msg: "..tostring(msg))
+	
 	chest.setFrequency(frequency)
 	
 	hostName = startHost()
+	
+	dbug("Sending 0 "..tostring(request).." "..tostring(giveItemProt).." "..tostring(wiredProt).." "..tostring(getItemProt).." "..tostring(hostName))
+	
 	send(0, request, giveItemProt, wiredProt, getItemProt, hostName)
 	
+	dbug("Waiting for response...")
 	repeat
 		msg = receive(getItemProt)
 		
@@ -159,9 +174,13 @@ function main ()
 	until msg.msg.sent == true
 	endHost(hostName)
 	
+	dbug("Response received with msg: "..tostring(msg))
+	
 	turtle.select(slot)
 	turtle.suckDown(amount)
 	chest.setFrequency(0)
+	
+	dbug("Sending 0 "..tostring(closeConnection).." "..tostring(giveItemProt).." "..tostring(wiredProt).." "..tostring(getItemProt))
 	
 	send(0, closeConnection, giveItemProt, wiredProt, getItemProt)
 	

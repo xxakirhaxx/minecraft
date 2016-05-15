@@ -6,6 +6,14 @@ function getPeripheral (name)
 	end
 end
 
+local d = true
+
+function dbug (s)
+
+	if d then print(s) end
+	
+end
+
 function getUniqueHostName ()
 
 	local i = 1
@@ -85,7 +93,6 @@ function receive (protocol)
 end
 
 local interface = peripheral.wrap(getPeripheral("tileinterface"))
-local checkChestId = 0
 local interfaceSide = "south"
 local getItemProt = "getItem"
 local giveItemProt = "giveItem"
@@ -94,6 +101,8 @@ local wirelessProt = "wireless"
 
 function openConnection (msg)
 
+	dbug("openConnection: "..tostring(msg))
+	
 	local m = {id = msg.id, cmd = "getFrequency"}
 	local i = 0
 	local frequency = 0
@@ -101,7 +110,9 @@ function openConnection (msg)
 	
 	repeat
 
-		send(checkChestId, m, getItemProt)
+		dbug("Sending 0 msg: "..tostring(m).." protocol: "..tostring(getItemProt).." lookup: "..tostring(checkChestProt))
+		
+		send(0, m, getItemProt, checkChestProt)
 		
 		frequency = rednet.receive(checkChestProt)
 
@@ -111,19 +122,26 @@ function openConnection (msg)
 	
 	m = {frequency = frequency}
 
+		dbug("Sending 0 msg: "..tostring(m).." protocol: "..tostring(getItemProt).." lookup: "..tostring(wirelessProt).." sProt: "..tostring(msg.rProt))
+		
 	send(0, m, getItemProt, wirelessProt, msg.rProt)
 	
 end
 
 function closeConnection (msg)
 
+	dbug("closeConnection: "..tostring(msg))
+	
 	local m = {id = msg.id, cmd = "releaseFrequency"}
 	local i = 0
 	local closed = false
 	local protocol = ""
 	
 	repeat
-		send(checkChestId, m, getItemProt)
+	
+		dbug("Sending 0 msg: "..tostring(m).." protocol: "..tostring(getItemProt).." lookup: "..tostring(checkChestProt))
+		
+		send(0, m, getItemProt, checkChestProt)
 		
 		closed = receive(checkChestProt)
 
@@ -135,6 +153,8 @@ end
 
 function sendItem(msg)
 
+	dbug("sendItem: "..tostring(msg))
+	
 	local id = 0
 	local m = {}
 	local protocol = ""
@@ -142,7 +162,11 @@ function sendItem(msg)
 		
 	repeat
 
-		send(0,{id = msg.id, cmd = "openFrequency"}, getItemProt, checkChestProt)
+		m = {id = msg.id, cmd = "openFrequency"}
+		
+		dbug("Sending 0 msg: "..tostring(m).." protocol: "..tostring(getItemProt).." lookup: "..tostring(checkChestProt))
+		
+		send(0, m, getItemProt, checkChestProt)
 				
 		m = receive(checkChestProt)
 
@@ -161,7 +185,11 @@ function sendItem(msg)
 
 	repeat
 
-		send(0,{id = msg.id, cmd = "closeFrequency"}, getItemProt, checkChestProt)
+		m = {id = msg.id, cmd = "closeFrequency"}
+		
+		dbug("Sending 0 msg: "..tostring(m).." protocol: "..tostring(getItemProt).." lookup: "..tostring(checkChestProt))
+		
+		send(0, m, getItemProt, checkChestProt)
 				
 		m = receive(checkChestProt)
 
@@ -170,6 +198,8 @@ function sendItem(msg)
 	until m.msg.success == true
 		
 	m = {sent = true, itemName = itemName, amount = amount}
+	
+	dbug("Sending 0 msg: "..tostring(m).." protocol: "..tostring(getItemProt).." lookup: "..tostring(wirelessProt).." sProt: "..tostring(msg.rProt))
 	
 	send(0, m, getItemProt, wirelessProt, msg.rProt)
 	
@@ -204,7 +234,7 @@ function main ()
 		
 		msg = receive(giveItemProt)
 		
-		print("id: "..id.." msg: "..tostring(msg))
+		dbug("Received message "..tostring(msg))
 		
 		if msg.msg.cmd == "openConnection" then
 			openConnection(msg)
