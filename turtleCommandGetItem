@@ -69,6 +69,7 @@ local turtleGetItemIdPickUpProt = "turtleGetItemIdPickUp"
 function openFrequency (id)
 
 	local success = false
+	local id = 0
 	local f = 0
 	local msg = {}
 	local hostName = ""
@@ -85,7 +86,7 @@ function openFrequency (id)
 			
 			send(getItemIdList[i], {cmd = "openFrequency", hostName = hostName}, turtleGetItemProt, f)
 			
-			msg = receive(turtleGetItemProt)
+			id, msg = receive(turtleGetItemProt)
 			
 			print(tostring(getItemIdList[i]).." : "..tostring(msg.msg.success))
 			getItemIdList[i] = nil
@@ -104,6 +105,7 @@ end
 function closeFrequency (id, f)
 
 	local success = false
+	local id = 0
 	local msg = {}
 	local hostName = tostring(turtleGetItemProt)..tostring(f)
 	
@@ -113,7 +115,7 @@ function closeFrequency (id, f)
 			
 			send(f, {cmd = "closeFrequency", hostName = hostName}, turtleGetItemProt, f)
 			
-			msg = receive(turtleGetItemProt)
+			id, msg = receive(turtleGetItemProt)
 			
 			success = msg.msg.success
 			
@@ -126,7 +128,7 @@ function closeFrequency (id, f)
 	
 	if not success then
 		send(f, {cmd = "closeFrequency", hostName = hostName}, turtleGetItemProt, f)
-		msg = receive(turtleGetItemProt)
+		id, msg = receive(turtleGetItemProt)
 		
 		success = msg.msg.success
 		
