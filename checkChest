@@ -65,6 +65,8 @@ function send (id, msg, protocol,...)
 	if lookup ~= nil then id = tonumber(rednet.lookup(lookup, lookup)) end
 	local rid = tonumber(os.getComputerID())
 	
+	dbug("id: "..tostring(tonumber(id)).." protocol: "..tostring(protocol))
+	
 	rednet.send(tonumber(id), {id = tonumber(rid), sProt = tostring(sProt), rProt = tostring(rProt), msg = msg}, tostring(protocol))
 	rednet.close(modem)
 
@@ -141,6 +143,7 @@ function getFrequency (id)
 	end
 	
 	dbug("Sending to 0 frequency: "..tostring(f).." prot: "..checkChestProt.." lookup: "..getItemProt)
+	
 	send(0, {frequency = f}, checkChestProt, getItemProt)
 	
 end
