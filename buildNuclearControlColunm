@@ -1,0 +1,405 @@
+local args = {...}
+
+function getItem (itemName, slot, amount)
+	shell.run("getItem \""..tostring(itemName).."\" "..tostring(slot).." "..tostring(amount))
+end
+
+function refuel ()
+
+	while turtle.getFuelLevel() < turtle.getFuelLimit()
+		turtle.select(1)
+		getItem("Lava Bucket", 1, 1)
+		turtle.refuel()
+		turtle.drop()
+	end
+				
+end
+
+function forwardAndPlaceDown(slot)
+
+	turtle.forward()
+	if slot ~= 0 then
+		turtle.select(slot)
+		turtle.placeDown()
+	end
+	
+end
+
+function buildNormalSection (y)
+
+	refuel()
+	
+	getItem("Block of Iron", 1, 42)
+	getItem("Clear Glass", 2, 36)
+	getItem("Warp Itemduct (Opaque)", 3, 14)
+	getItem("Cryo-Stabilized Fluxduct", 4, 5)
+	getItem("Networking Cable", 5, 4)
+	getItem("Reactor Chamber", 6, 6)
+	getItem("Nuclear Reactor", 7, 1)
+	getItem("Resonant Energy Cell", 8, 1)
+	getItem("RF Producer", 9, 1)
+	getItem("Energy Bridge", 10, 1)
+	getItem("IC2 EV Consumer", 11, 1)
+	getItem("Red Lamp", 12, 1)
+	getItem("Blue Lamp", 13, 1)
+	getItem("Green Lamp", 14, 1)
+	
+	for i = 1, (y - 1)*4 do
+		turtle.up()
+	end
+	
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(3)
+	
+	turtle.turnRight()
+	forwardAndPlaceDown(5)
+	turtle.turnRight()
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(2)
+	
+	turtle.turnLeft()
+	forwardAndPlaceDown(2)
+	turtle.turnLeft()
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1)
+	
+	turtle.turnRight()
+	forwardAndPlaceDown(8)
+	turtle.turnRight()
+	forwardAndPlaceDown(9)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(2)
+	
+	turtle.turnLeft()
+	forwardAndPlaceDown(2)
+	turtle.turnLeft()
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(11)
+	forwardAndPlaceDown(10)
+	forwardAndPlaceDown(4)
+	
+	turtle.turnRight()
+	forwardAndPlaceDown(4)
+	turtle.turnRight()
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(2)
+	
+	turtle.turnLeft()
+	forwardAndPlaceDown(1)
+	turtle.turnLeft()
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(3)
+	
+	for i = 1, 6 do
+		turtle.back()
+	end
+	
+	turtle.turnLeft()
+	
+	for i = 1, 6 do
+		turtle.forward()
+	end
+	
+	turtle.turnRight()
+	turtle.up()
+	
+	
+	
+	
+	
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(3)
+	forwardAndPlaceDown(3)
+	
+	turtle.turnRight()
+	forwardAndPlaceDown(5)
+	turtle.turnRight()
+	forwardAndPlaceDown(3)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(2)
+	
+	turtle.turnLeft()
+	forwardAndPlaceDown(2)
+	turtle.turnLeft()
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(3)
+	forwardAndPlaceDown(12)
+	
+	turtle.turnRight()
+	forwardAndPlaceDown(0)
+	turtle.turnRight()
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(7)
+	--NUCLEAR REACTOR BUILD--
+	turtle.select(6)
+	turtle.back()
+	turtle.placeDown()
+	turtle.forward()
+	turtle.turnLeft()
+	turtle.forward()
+	turtle.placeDown()
+	turtle.back()
+	turtle.back()
+	turtle.down()
+	turtle.down()
+	turtle.place()
+	turtle.up()
+	turtle.up()
+	turtle.placeDown()
+	turtle.forward()
+	turtle.turnRight()
+	turtle.forward()
+	turtle.placeDown()
+	--END NUCLEAR REACTOR BUILD--
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(2)
+	
+	turtle.turnLeft()
+	forwardAndPlaceDown(2)
+	turtle.turnLeft()
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(3)
+	forwardAndPlaceDown(13)
+	
+	turtle.turnRight()
+	forwardAndPlaceDown(4)
+	turtle.turnRight()
+	forwardAndPlaceDown(3)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(2)
+	
+	turtle.turnLeft()
+	forwardAndPlaceDown(1)
+	turtle.turnLeft()
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(3)
+	forwardAndPlaceDown(3)
+	
+	for i = 1, 6 do
+		turtle.back()
+	end
+	
+	turtle.turnLeft()
+	
+	for i = 1, 6 do
+		turtle.forward()
+	end
+	
+	turtle.turnRight()
+	turtle.up()
+	
+	
+	
+	
+	
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(3)
+	
+	turtle.turnRight()
+	forwardAndPlaceDown(5)
+	turtle.turnRight()
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(2)
+	
+	turtle.turnLeft()
+	forwardAndPlaceDown(2)
+	turtle.turnLeft()
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1)
+	
+	turtle.turnRight()
+	forwardAndPlaceDown(14)
+	turtle.turnRight()
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(6)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(2)
+	
+	turtle.turnLeft()
+	forwardAndPlaceDown(2)
+	turtle.turnLeft()
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1)
+	
+	turtle.turnRight()
+	forwardAndPlaceDown(4)
+	turtle.turnRight()
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(2)
+	
+	turtle.turnLeft()
+	forwardAndPlaceDown(1)
+	turtle.turnLeft()
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(3)
+	
+	for i = 1, 6 do
+		turtle.back()
+	end
+	
+	turtle.turnLeft()
+	
+	for i = 1, 6 do
+		turtle.forward()
+	end
+	
+	turtle.turnRight()
+	turtle.up()
+	
+	
+	
+	
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(3)
+	
+	turtle.turnRight()
+	forwardAndPlaceDown(5)
+	turtle.turnRight()
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(2)
+	
+	turtle.turnLeft()
+	forwardAndPlaceDown(2)
+	turtle.turnLeft()
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1)
+	
+	turtle.turnRight()
+	forwardAndPlaceDown(1)
+	turtle.turnRight()
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(2)
+	
+	turtle.turnLeft()
+	forwardAndPlaceDown(2)
+	turtle.turnLeft()
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1)
+	
+	turtle.turnRight()
+	forwardAndPlaceDown(4)
+	turtle.turnRight()
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(0)
+	forwardAndPlaceDown(2)
+	
+	turtle.turnLeft()
+	forwardAndPlaceDown(1)
+	turtle.turnLeft()
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(2)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(3)
+	
+	for i = 1, 6 do
+		turtle.back()
+	end
+	
+	turtle.turnLeft()
+	
+	for i = 1, 6 do
+		turtle.forward()
+	end
+	
+	turtle.turnRight()
+	
+	for i  = 1, (y - 1)*4 do
+		turtle.down()
+	end
+	
+	turtle.down()
+	turtle.down()
+	turtle.down()
+end
+
+
+function main ()
+
+	if #args < 1 then return end
+	
+	local nSection = tonumber(args[1])
+	local sSection = 0
+	
+	if #args >= 2 then sSection = args[2] end
+	
+	turtle.up()
+	turtle.select(1)
+	turtle.placeDown()
+	
+	for i = 1, nSection do
+		buildNormalSection(i)
+	end
+end
+
+main()
