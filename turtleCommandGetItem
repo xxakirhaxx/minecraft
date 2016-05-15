@@ -87,6 +87,7 @@ function openFrequency (id)
 			
 			msg = receive(turtleGetItemProt)
 			
+			print(tostring(getItemIdList[i]).." : "..tostring(msg.msg.success))
 			getItemIdList[i] = nil
 			success = msg.msg.success
 			
