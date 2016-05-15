@@ -54,7 +54,7 @@ function getItem (itemName, slot, amount)
 	if getItemId == nil then return end
 	
 	local id = tonumber(getItemId)
-	local request = {itemName = tostring(itemName), amount = tonumber(amount)}
+	local request = {cmd = "getItem" itemName = tostring(itemName), amount = tonumber(amount)}
 	
 	dbug("Requesting item from id: "..tostring(id).." itemName: "..tostring(itemName).." amount: "..tostring(amount))
 	send(id, request, turtleGetItemProt)
