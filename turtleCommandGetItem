@@ -19,7 +19,7 @@ function dns ()
 	rednet.open(getPeripheral("modem"))
 	local id, msg, protocol = rednet.receive("dns")
 	rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
-	rednet.open(getPeripheral("modem"))
+	rednet.close(getPeripheral("modem"))
 	
 end
 

@@ -19,7 +19,7 @@ function dns ()
 	rednet.open("left")
 	local id, msg, protocol = rednet.receive("dns")
 	rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
-	rednet.open("left")
+	rednet.close("left")
 	
 end
 
@@ -169,7 +169,11 @@ function main ()
 	local id = 0
 	local msg = {}
 	
+	dbug("Waiting for msg")
+	
 	id, msg = receive(turtleGetItemProt)
+	
+	dbug("Signal from id: "..tostring(id).." msg: "..tostring(msg.msg.cmd))
 	
 	if msg.msg.cmd == "openFrequency" then
 		openFrequency(id, msg.msg.hostName, msg.frequency)
