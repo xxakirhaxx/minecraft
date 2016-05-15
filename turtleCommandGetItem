@@ -59,6 +59,7 @@ function receive (protocol)
 	return id, msg
 end
 
+local d = true
 local getItemIdList = {}
 local fList = {}
 local turtleGetItemProt = "turtleGetItem"
@@ -79,7 +80,7 @@ function openFrequency (id)
 			f = getItemIdList[i]
 			hostName = tostring(turtleGetItemProt)..tostring(f)
 			
-			dbug("Frequency found! f: "..tostring(getItemIdList[i].." hostName: "..hostName.." protocol: "..tostring(turtleGetItemProt))
+			dbug("Frequency found! f: "..tostring(getItemIdList[i]).." hostName: "..hostName.." protocol: "..tostring(turtleGetItemProt))
 			
 			send(getItemIdList[i], {cmd = "openFrequency", hostName = hostName}, turtleGetItemProt, f)
 			
