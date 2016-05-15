@@ -473,7 +473,7 @@ function main ()
 	
 	if #args >= 2 then sSection = args[2] end
 	
-	while command_id = nil do
+	while command_id == nil do
 		rednet.open(modem)
 		command_id = rednet.lookup(tostring(turtleGetItemProt), tostring(turtleGetItemProt))
 		rednet.close(modem)
