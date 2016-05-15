@@ -6,7 +6,7 @@ end
 
 function refuel ()
 
-	while turtle.getFuelLevel() < turtle.getFuelLimit() do
+	while turtle.getFuelLevel() < 5000 do
 		turtle.select(1)
 		getItem("Lava Bucket", 1, 1)
 		turtle.refuel()
