@@ -6,6 +6,8 @@ function getPeripheral (name)
 	end
 end
 
+local d = true
+
 function dbug (s)
 
 	if d then print(s) end
@@ -59,7 +61,6 @@ function receive (protocol)
 	return id, msg
 end
 
-local d = true
 local interface = peripheral.wrap("right")
 local turtleGetItemProt = "turtleGetItem"
 local turtleGetItemIdPickUpProt = "turtleGetItemIdPickUp"
