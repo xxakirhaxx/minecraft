@@ -122,7 +122,7 @@ function openConnection (msg)
 		
 	until frequency.msg.frequency ~= 0
 	
-	m = {frequency = frequency}
+	m = {frequency = frequency.msg.frequency}
 
 		dbug("Sending 0 msg: "..tostring(m).." protocol: "..tostring(getItemProt).." lookup: "..tostring(wirelessProt).." sProt: "..tostring(msg.rProt))
 		
