@@ -116,7 +116,7 @@ function openConnection (msg)
 		
 		send(0, m, getItemProt, checkChestProt)
 		
-		frequency = rednet.receive(checkChestProt)
+		frequency = receive(checkChestProt)
 
 		if frequency.msg.frequency == 0 then os.sleep(5) end
 		
