@@ -150,10 +150,11 @@ function main ()
 	dbug("Waiting for response...")
 	repeat
 		msg = receive(getItemProt)
-	until msg.msg.frequency ~= 0
+		frequency = msg.msg.frequency
+	until frequency ~= 0
 	endHost(hostName)
 	
-	dbug("Response received with msg: "..tostring(msg))
+	dbug("Response received with frequency: "..tostring(frequency))
 	
 	chest.setFrequency(frequency)
 	
