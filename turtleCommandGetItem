@@ -88,7 +88,6 @@ function openFrequency (rid)
 			
 			id, msg = receive(turtleGetItemProt)
 			
-			print(tostring(getItemIdList[i]).." : "..tostring(msg.msg.success))
 			getItemIdList[i] = nil
 			success = msg.msg.success
 			
@@ -96,7 +95,7 @@ function openFrequency (rid)
 		end
 	end
 	
-	dbug("Sending to id: "..tostring(id).." hostName: "..tostring(hostName).." f: "..tostring(f))
+	dbug("Sending to id: "..tostring(rid).." hostName: "..tostring(hostName).." f: "..tostring(f))
 	
 	send(rid, {success = success, hostName = hostName}, turtleGetItemProt, f)
 	
@@ -138,7 +137,7 @@ function closeFrequency (rid, f)
 		end
 	end
 	
-	dbug("Sending to id: "..tostring(id).." success: true")
+	dbug("Sending to id: "..tostring(rid).." success: true")
 	
 	send(rid, {success = success}, turtleGetItemProt, f)
 end
