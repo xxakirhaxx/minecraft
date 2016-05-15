@@ -1,7 +1,62 @@
 local args = {...}
 
+function getPeripheral (name)
+	for i = 1, #peripheral.getNames() do
+		if peripheral.getType(peripheral.getNames()[i]) == name then
+			return peripheral.getNames()[i]
+		end
+	end
+end
+
+function send (id, msg, protocol,...)
+
+	local modem = getPeripheral("modem")
+	
+	local frequency = 0
+	
+	if select(1,...) ~= nil then frequency = select(1,...) end
+
+	rednet.open(modem)
+	rednet.send(tonumber(id), {frequency = tonumber(frequency), msg = msg}, tostring(protocol))
+	rednet.close(modem)
+
+end
+
+function receive (protocol)
+
+	local modem = getPeripheral("modem")
+	local id = 0
+	local msg = {}
+	local p = ""
+	
+	rednet.open(modem)
+	id, msg, p = rednet.receive(protocol)
+	rednet.close(modem)
+	
+	return id, msg
+end
+
+local chest = peripheral.wrap(getPeripheral("ender_chest"))
+local modem = getPeripheral("modem")
+local turtleGetItemProt = "turtleGetItem"
+local getItemId = nil
+
 function getItem (itemName, slot, amount)
-	shell.run("getItem \""..tostring(itemName).."\" "..tostring(slot).." "..tostring(amount))
+	
+	if getItemId == nil then return end
+	
+	local id = tonumber(getItemId)
+	local request = {itemName = tostring(itemName), amount = tonumber(amount)}
+	
+	send(id, request, turtleGetItemProt)
+	
+	repeat
+		id, msg = receive(turtleGetItemProt)
+	until msg.msg.success
+	
+	turtle.select(tonumber(slot))
+	turtle.suckDown(tonumber(amount))
+	
 end
 
 function refuel ()
@@ -383,9 +438,21 @@ function buildNormalSection (y)
 	turtle.down()
 end
 
+function buildSkeletonSection (i)
+
+end
 
 function main ()
 
+	local command_id = 0
+	local frequency = 0
+	local hostName = ""
+	local id = 0
+	local msg = {}
+	local open = {cmd = "openFrequency"}
+	local close = {cmd = "closeFrequency"}
+	
+	
 	if #args < 1 then return end
 	
 	local nSection = tonumber(args[1])
@@ -393,9 +460,41 @@ function main ()
 	
 	if #args >= 2 then sSection = args[2] end
 	
+	rednet.open(modem)
+	command_id = rednet.lookup(tostring(turtleGetItemProt), tostring(turtleGetItemProt))
+	rednet.close(modem)
+	
+	send(command_id, open, turtleGetItemProt)
+	
+	repeat
+		id, msg = receive(turtleGetItemProt)
+	until msg.msg.success
+	
+	hostName = tostring(msg.msg.hostName)
+	frequency = tonumber(msg.frequency)
+	
+	chest.setFrequency(frequency)
+	
+	rednet.open(modem)
+	getItemId = rednet.lookup(tostring(hostName), tostring(hostName))
+	rednet.close(modem)
+	
 	for i = 1, nSection do
 		buildNormalSection(i)
 	end
+	
+	for i = 1, sSection do
+		buildSkeletonSection(i)
+	end
+	
+	send(command_id, close, turtleGetItemProt, frequency)
+	
+	repeat
+		id, msg = receive(turtleGetItemProt)
+	until msg.msg.success
+	
+	chest.setFrequency(0)
+	
 end
 
 main()

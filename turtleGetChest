@@ -1,0 +1,12 @@
+
+while true do
+	rednet.open("back")
+	local id, msg = rednet.receive()
+	rednet.close("back")
+	
+	if tonumber(msg) > 0 then
+		peripheral.wrap("left").setFrequency(tonumber(msg))
+	else
+		peripheral.wrap("left").setFrequency(0)
+	end
+end

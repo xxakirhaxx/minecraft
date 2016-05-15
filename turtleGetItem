@@ -1,0 +1,182 @@
+function getPeripheral (name)
+	for i = 1, #peripheral.getNames() do
+		if peripheral.getType(peripheral.getNames()[i]) == name then
+			return peripheral.getNames()[i]
+		end
+	end
+end
+
+function dbug (s)
+
+	if d then print(s) end
+	
+end
+
+function dns ()
+
+	rednet.open("left")
+	local id, msg, protocol = rednet.receive("dns")
+	rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
+	rednet.open("left")
+	
+end
+
+function broadcast (msg, protocol)
+
+	local modem = "back"
+	
+	rednet.open(modem)
+	rednet.broadcast(msg)
+	rednet.close(modem)
+	
+end
+
+function send (id, msg, protocol,...)
+
+	local modem = "left"
+	
+	local frequency = 0
+	
+	if select(1,...) ~= nil then frequency = select(1,...) end
+
+	rednet.open(modem)
+	rednet.send(tonumber(id), {frequency = tonumber(frequency), msg = msg}, tostring(protocol))
+	rednet.close(modem)
+
+end
+
+function receive (protocol)
+
+	local modem = "left"
+	local id = 0
+	local msg = {}
+	local p = ""
+	
+	rednet.open(modem)
+	id, msg, p = rednet.receive(protocol)
+	rednet.close(modem)
+	
+	return id, msg
+end
+
+local interface = peripheral.wrap("right")
+local turtleGetItemProt = "turtleGetItem"
+local turtleGetItemIdPickUpProt = "turtleGetItemIdPickUp"
+local open = false
+local direction = ""
+
+function openFrequency (id, h,f)
+
+	local success = false
+	local hostName = tostring(h)
+	local frequency = tonumber(f)
+	
+	dbug("Opening frequency: "..tostring(f).." with hostName: "..tostring(hostName))
+	
+	rednet.open("left")
+	rednet.host(hostName, hostName)
+	rednet.close("left")
+	
+	broadcast(f)
+	
+	success = true
+	
+	dbug("Sending to id: "..tostring(id).." hostName: "..tostring(hostName).." success: true")
+	
+	send(id, {success = success, hostName = hostName}, turtleGetItemProt, f)
+	
+end
+
+function closeFrequency (id, h,f)
+
+	local success = false
+	local hostName = tostring(h)
+	local frequency = tonumber(f)
+	
+	dbug("Closing frequency: "..tostring(f).." with hostName: "..tostring(hostName))
+	
+	rednet.open("left")
+	rednet.unhost(hostName, hostName)
+	rednet.close("left")
+	
+	broadcast(0)
+	
+	success = true
+	
+	dbug("Sending to id: "..tostring(id).." hostName: "..tostring(hostName).." success: true")
+	
+	send(id, {success = success, hostName = hostName}, turtleGetItemProt, f)
+end
+
+function getItem(id, itemName, amount)
+
+	local success = false
+	
+	for i = 1, #interface.getAvailableItems() do
+	
+		local fingerprint = interface.getAvailableItems()[i].fingerprint
+		local display_name = interface.getItemDetail(fingerprint).basic().display_name
+		local max_size = interface.getItemDetail(fingerprint).basic().max_size
+		local qty = interface.getItemDetail(fingerprint).basic().qty
+		
+		if display_name == itemName then
+		
+			if max_size < amount then amount = lookUpMaxStackSize end
+			if qty < amount then interface.requestCrafting(fingerprint, tonumber(amount - qty)) end
+			
+			interface.export(fingerprint, direction, tonumber(amount))
+			
+			success = true
+			
+		end	
+	end
+	
+	send(id, {success = success}, turtleGetItemProt)
+end
+
+function init ()
+
+	local event = ""
+	local id = 0
+	local msg = {}
+	local protocol = ""
+	local tid = 0
+	local num = 10
+	
+	dbug("Initiating")
+	
+	id, msg = receive(turtleGetItemIdPickUpProt)
+	
+	send(id, {}, turtleGetItemIdPickUpProt, 0)
+
+	dbug("Initialization finished. Picked up command id: "..tostring(id))
+end
+
+function shutdown ()
+
+end
+
+function main ()
+
+	local id = 0
+	local msg = {}
+	
+	id, msg = receive(turtleGetItemProt)
+	
+	if msg.msg.cmd == "openFrequency" then
+		openFrequency(id, msg.msg.hostName, msg.frequency)
+	elseif msg.msg.cmd == "closeFrequency" then
+		closeFrequency(id, msg.msg.hostName, msg.frequency)
+	elseif msg.msg.cmd == "getItem" then
+		getItem(id, msg.msg.itemName, msg.msg.amount)
+	end
+	
+end
+
+init ()
+
+while true do
+	parallel.waitForAny(main(), dns())
+end
+
+shutdown ()
