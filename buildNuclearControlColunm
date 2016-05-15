@@ -63,7 +63,7 @@ function getItem (itemName, slot, amount)
 		id, msg = receive(turtleGetItemProt)
 	until msg.msg.success
 	
-	dbug("Received "..tostring(amount).." "..tostring(itemName)..")
+	dbug("Received "..tostring(amount).." "..tostring(itemName))
 	
 	turtle.select(tonumber(slot))
 	turtle.suckDown(tonumber(amount))
