@@ -6,27 +6,31 @@ rednet.open(wireless)
 rednet.host(wiredProt, wiredProt)
 rednet.close(wireless)
 	
-while true do
-	
-	rednet.open(wireless)
-	local id, msg, protocol = rednet.receive()
-	rednet.close(wireless)
-	
-	local rid = 0
-	
-	if msg.id ~= 0 then rid = tonumber(msg.id) end
-	rednet.open(wired)
-	if msg.sProt ~= nil then rid = tonumber(rednet.lookup(tostring(msg.sProt), tostring(msg.sProt))) end
-	rednet.close(wired)
-	
-	if protocol == "dns" then
+function main ()
+	while true do
+		
 		rednet.open(wireless)
-		rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
+		local id, msg, protocol = rednet.receive()
 		rednet.close(wireless)
-	else
+		
+		local rid = 0
+		
+		if msg.id ~= 0 then rid = tonumber(msg.id) end
 		rednet.open(wired)
-		rednet.send(tonumber(rid), msg, tostring(protocol))
+		if msg.sProt ~= nil then rid = tonumber(rednet.lookup(tostring(msg.sProt), tostring(msg.sProt))) end
 		rednet.close(wired)
-	end
+		
+		if protocol == "dns" then
+			rednet.open(wireless)
+			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
+			rednet.close(wireless)
+		else
+			rednet.open(wired)
+			rednet.send(tonumber(rid), msg, tostring(protocol))
+			rednet.close(wired)
+		end
 
+	end
 end
+
+parallel.waitForAny(main(),main(),main(),main())
