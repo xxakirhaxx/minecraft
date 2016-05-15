@@ -16,10 +16,12 @@ end
 
 function dns ()
 
-	rednet.open("left")
+	local modem = "left"
+	
+	rednet.open(modem)
 	local id, msg, protocol = rednet.receive("dns")
 	rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
-	rednet.close("left")
+	rednet.close(modem)
 	
 end
 
