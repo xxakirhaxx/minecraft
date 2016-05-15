@@ -457,7 +457,7 @@ end
 
 function main ()
 
-	local command_id = 0
+	local command_id = nil
 	local frequency = 0
 	local hostName = ""
 	local id = 0
@@ -473,9 +473,11 @@ function main ()
 	
 	if #args >= 2 then sSection = args[2] end
 	
-	rednet.open(modem)
-	command_id = rednet.lookup(tostring(turtleGetItemProt), tostring(turtleGetItemProt))
-	rednet.close(modem)
+	while command_id = nil do
+		rednet.open(modem)
+		command_id = rednet.lookup(tostring(turtleGetItemProt), tostring(turtleGetItemProt))
+		rednet.close(modem)
+	end
 	
 	dbug("Sending to id: "..tostring(command_id).." msg: "..tostring(open.cmd).." protocol: "..tostring(turtlegetItemProt))
 	
@@ -494,9 +496,11 @@ function main ()
 	
 	chest.setFrequency(frequency)
 	
-	rednet.open(modem)
-	getItemId = rednet.lookup(tostring(hostName), tostring(hostName))
-	rednet.close(modem)
+	while getItemId == nil do
+		rednet.open(modem)
+		getItemId = rednet.lookup(tostring(hostName), tostring(hostName))
+		rednet.close(modem)
+	end
 	
 	dbug("Found getItemId: "..tostring(getItemId))
 	
