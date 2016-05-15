@@ -229,7 +229,7 @@ function main ()
 		local protocol = ""
 		local f = 0
 		
-		msg = rednet.receive()
+		msg = receive(getItemProt)
 
 		dbug("Received msg: "..tostring(msg))
 		
