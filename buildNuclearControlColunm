@@ -517,7 +517,7 @@ function main ()
 		id, msg = receive(turtleGetItemProt)
 	until msg.msg.success
 	
-	dbug("Response received from id: "..tostring(id).." success: "..tostring(msg.msg.success)
+	dbug("Response received from id: "..tostring(id).." success: "..tostring(msg.msg.success))
 	
 	chest.setFrequency(0)
 	
