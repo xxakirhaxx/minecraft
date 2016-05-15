@@ -6,7 +6,7 @@ end
 
 function refuel ()
 
-	while turtle.getFuelLevel() < turtle.getFuelLimit()
+	while turtle.getFuelLevel() < turtle.getFuelLimit() do
 		turtle.select(1)
 		getItem("Lava Bucket", 1, 1)
 		turtle.refuel()
@@ -392,10 +392,6 @@ function main ()
 	local sSection = 0
 	
 	if #args >= 2 then sSection = args[2] end
-	
-	turtle.up()
-	turtle.select(1)
-	turtle.placeDown()
 	
 	for i = 1, nSection do
 		buildNormalSection(i)
