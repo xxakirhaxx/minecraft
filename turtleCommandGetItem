@@ -66,7 +66,7 @@ local fList = {}
 local turtleGetItemProt = "turtleGetItem"
 local turtleGetItemIdPickUpProt = "turtleGetItemIdPickUp"
 
-function openFrequency (id)
+function openFrequency (rid)
 
 	local success = false
 	local id = 0
@@ -98,11 +98,11 @@ function openFrequency (id)
 	
 	dbug("Sending to id: "..tostring(id).." hostName: "..tostring(hostName).." f: "..tostring(f))
 	
-	send(id, {success = success, hostName = msg.msg.hostName}, turtleGetItemProt, f)
+	send(rid, {success = success, hostName = hostName}, turtleGetItemProt, f)
 	
 end
 
-function closeFrequency (id, f)
+function closeFrequency (rid, f)
 
 	local success = false
 	local id = 0
@@ -140,7 +140,7 @@ function closeFrequency (id, f)
 	
 	dbug("Sending to id: "..tostring(id).." success: true")
 	
-	send(id, {success = success}, turtleGetItemProt, f)
+	send(rid, {success = success}, turtleGetItemProt, f)
 end
 
 function init ()
