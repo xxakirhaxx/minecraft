@@ -6,6 +6,15 @@ function getPeripheral (name)
 	end
 end
 
+function dns ()
+
+	rednet.open(getPeripheral("modem"))
+	local id, msg, p = rednet.receive()
+	rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(p))
+	rednet.open(getPeripheral("modem"))
+	
+end
+
 local d = false
 
 function dbug (s)
