@@ -106,7 +106,7 @@ function getItem(id, itemName, amount)
 	
 	for i = 1, #interface.getAvailableItems() do
 	
-		if interface.getAvailableItems()[i] ~= nil
+		if interface.getAvailableItems()[i] ~= nil then
 			local fingerprint = interface.getAvailableItems()[i].fingerprint
 			local display_name = interface.getItemDetail(fingerprint).basic().display_name
 			local max_size = interface.getItemDetail(fingerprint).basic().max_size
