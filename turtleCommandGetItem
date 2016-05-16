@@ -76,21 +76,19 @@ function openFrequency (rid)
 	dbug("Opening Frequency for id: "..tostring(id))
 	
 	for i = 1, #getItemIdList do
-		if getItemIdList[i] ~= nil then
+		f = getItemIdList[i]
+			
+		dbug("Frequency found! f: "..tostring(getItemIdList[i]).." protocol: "..tostring(turtleGetItemProt))
+			
+		send(getItemIdList[i], {cmd = "openFrequency"}, turtleGetItemProt, f)
+			
+		id, msg = receive(turtleGetItemProt)
+			
+		table.remove(getItemIdList, i)
 		
-			f = getItemIdList[i]
+		success = msg.msg.success
 			
-			dbug("Frequency found! f: "..tostring(getItemIdList[i]).." protocol: "..tostring(turtleGetItemProt))
-			
-			send(getItemIdList[i], {cmd = "openFrequency"}, turtleGetItemProt, f)
-			
-			id, msg = receive(turtleGetItemProt)
-			
-			getItemIdList[i] = nil
-			success = msg.msg.success
-			
-			break
-		end
+		break
 	end
 	
 	dbug("Sending to id: "..tostring(rid).." f: "..tostring(f))
@@ -106,34 +104,18 @@ function closeFrequency (rid, f)
 	local msg = {}
 	local hostName = tostring(turtleGetItemProt)..tostring(f)
 	
-	dbug("Opening Frequency for id: "..tostring(id).." f: "..tostring(f))
-	for i = 1, #getItemIdList do
-		if getItemIdList[i] == nil then
-			
-			send(f, {cmd = "closeFrequency"}, turtleGetItemProt, f)
-			
-			id, msg = receive(turtleGetItemProt)
-			
-			success = msg.msg.success
-			
-			if success then
-				getItemIdList[i] = f
-				break
-			end
-		end
-	end
+	dbug("Closing Frequency for id: "..tostring(id).." f: "..tostring(f))
 	
-	if not success then
-		send(f, {cmd = "closeFrequency"}, turtleGetItemProt, f)
-		id, msg = receive(turtleGetItemProt)
+	send(f, {cmd = "closeFrequency"}, turtleGetItemProt, f)
+	id, msg = receive(turtleGetItemProt)
 		
-		success = msg.msg.success
+	success = msg.msg.success
 		
-		if success then
-			getItemIdList[#getItemIdList+1] = f
-			success = true
-		end
+	if success then
+		getItemIdList[#getItemIdList+1] = f
+		success = true
 	end
+
 	
 	dbug("Sending to id: "..tostring(rid).." success: true")
 	

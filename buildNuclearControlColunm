@@ -478,7 +478,7 @@ function main ()
 		rednet.close(modem)
 	end
 	
-	dbug("Sending to id: "..tostring(command_id).." msg: "..tostring(open.cmd).." protocol: "..tostring(turtlegetItemProt))
+	dbug("Sending to id: "..tostring(command_id).." msg: "..tostring(open.cmd).." protocol: "..tostring(turtleGetItemProt))
 	
 	send(command_id, open, turtleGetItemProt)
 	
