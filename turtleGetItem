@@ -66,29 +66,27 @@ local turtleGetItemIdPickUpProt = "turtleGetItemIdPickUp"
 local open = false
 local direction = "north"
 
-function openFrequency (id, f)
+function openFrequency (id)
 
 	local success = false
-	local frequency = tonumber(f)
 	
 	dbug("Opening frequency: "..tostring(frequency))
 	
-	broadcast(frequency)
+	broadcast(os.getComputerID())
 	
 	success = true
 	
-	dbug("Sending to id: "..tostring(id).." frequency: "..tostring(frequency).." success: true")
+	dbug("Sending to id: "..tostring(id).." frequency: "..tostring(os.getComputerID()).." success: true")
 	
 	send(id, {success = success}, turtleGetItemProt, frequency)
 	
 end
 
-function closeFrequency (id, f)
+function closeFrequency (id)
 
 	local success = false
-	local frequency = tonumber(frequency)
 	
-	dbug("Closing frequency: "..tostring(frequency))
+	dbug("Closing frequency: "..tostring(os.getComputerID()))
 	
 	broadcast(0)
 	
@@ -96,7 +94,7 @@ function closeFrequency (id, f)
 	
 	dbug("Sending to id: "..tostring(id).." success: true")
 	
-	send(id, {success = success}, turtleGetItemProt, f)
+	send(id, {success = success}, turtleGetItemProt, os.getComputerID())
 end
 
 function getItem(id, itemName, amount)
@@ -165,9 +163,9 @@ function main ()
 	dbug("Signal from id: "..tostring(id).." msg: "..tostring(msg.msg.cmd))
 	
 	if msg.msg.cmd == "openFrequency" then
-		openFrequency(id, msg.msg.hostName, msg.frequency)
+		openFrequency(id)
 	elseif msg.msg.cmd == "closeFrequency" then
-		closeFrequency(id, msg.msg.hostName, msg.frequency)
+		closeFrequency(id)
 	elseif msg.msg.cmd == "getItem" then
 		getItem(id, msg.msg.itemName, msg.msg.amount)
 	end
