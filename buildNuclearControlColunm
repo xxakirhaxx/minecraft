@@ -458,7 +458,7 @@ function it ()
 		i = i + 1
 		return i
 	end	
-	return iter()
+	return iter
 end
 
 function fillNuclearReactor ()
@@ -639,6 +639,8 @@ function main ()
 	
 	chest.setFrequency(frequency)
 	
+	refuel()
+	
 	for i = 1, nSection do
 		--buildNormalSection(i)
 	end
@@ -648,7 +650,6 @@ function main ()
 	turtle.equipRight()
 	turtle.digDown()
 	turtle.equipRight()
-	
 	for i = 1, nSection*4 do
 		turtle.up()
 	end
