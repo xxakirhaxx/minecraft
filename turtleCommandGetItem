@@ -73,7 +73,7 @@ function openFrequency (rid)
 	local f = 0
 	local msg = {}
 	
-	dbug("Opening Frequency for id: "..tostring(id))
+	dbug("Opening Frequency for id: "..tostring(rid))
 	
 	for i = 1, #getItemIdList do
 		f = getItemIdList[i]

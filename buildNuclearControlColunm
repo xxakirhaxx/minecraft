@@ -59,11 +59,11 @@ function getItem (itemName, slot, amount)
 	local request = {cmd = cmd, itemName = tostring(itemName), amount = tonumber(amount)}
 	
 	dbug("Requesting item from id: "..tostring(id).." cmd: "..tostring(cmd).." itemName: "..tostring(itemName).." amount: "..tostring(amount))
-	send(id, request, turtleGetItemProt)
 	
 	repeat
+		send(id, request, turtleGetItemProt)
 		id, msg = receive(turtleGetItemProt)
-	until msg.msg.success
+	until msg.msg.success == true
 	
 	dbug("Received "..tostring(amount).." "..tostring(itemName))
 	

@@ -113,7 +113,7 @@ function getItem(id, itemName, amount,...)
 			local qty = interface.getItemDetail(fingerprint).basic().qty
 			local dmg = interface.getItemDetail(fingerprint).basic().dmg
 			
-			if display_name == itemName and dmg <= 5 then
+			if display_name == itemName then
 			
 				if max_size < amount then amount = lookUpMaxStackSize end
 				
