@@ -88,7 +88,7 @@ function closeFrequency (id)
 	
 	dbug("Closing frequency: "..tostring(os.getComputerID()))
 	
-	broadcast(0)
+	broadcast(nil)
 	
 	success = true
 	
@@ -136,20 +136,6 @@ end
 
 function init ()
 
-	local event = ""
-	local id = 0
-	local msg = {}
-	local protocol = ""
-	local tid = 0
-	local num = 10
-	
-	dbug("Initiating")
-	
-	id, msg = receive(turtleGetItemIdPickUpProt)
-	
-	send(id, {}, turtleGetItemIdPickUpProt, 0)
-
-	dbug("Initialization finished. Command id: "..tostring(id))
 end
 
 function shutdown ()
@@ -173,6 +159,8 @@ function main ()
 		closeFrequency(id)
 	elseif msg.msg.cmd == "getItem" then
 		getItem(id, msg.msg.itemName, msg.msg.amount)
+	elseif msg.msg.cmd == "initTurtleGetItem" then
+		send(id, {id = os.getComputerID()}, turtleGetItemProt)
 	end
 	
 end

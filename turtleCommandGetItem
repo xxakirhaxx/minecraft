@@ -103,7 +103,7 @@ function closeFrequency (rid, f)
 	local id = 0
 	local msg = {}
 	
-	dbug("Closing Frequency for id: "..tostring(id).." f: "..tostring(f))
+	dbug("Closing Frequency for id: "..tostring(rid).." f: "..tostring(f))
 	
 	send(f, {cmd = "closeFrequency"}, turtleGetItemProt)
 	id, msg = receive(turtleGetItemProt)
@@ -141,7 +141,7 @@ function init ()
 
 	dbug("Broadcasting empty msg on turtleGetItemIdPickUpProt")
 	
-	broadcast({}, turtleGetItemIdPickUpProt)
+	broadcast({cmd = "initTurtleGetItem"}, turtleGetItemProt)
 	
 	tid = os.startTimer(num)
 	
@@ -156,7 +156,7 @@ function init ()
 		
 		if event == "timer" then 
 			break
-		elseif event == "rednet_message" and protocol == turtleGetItemIdPickUpProt then
+		elseif event == "rednet_message" and protocol == turtleGetItemProt then
 			getItemIdList[#getItemIdList+1] = id
 		end
 	end
