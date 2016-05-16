@@ -54,7 +54,9 @@ function receive (protocol)
 			rednet.open(modem)
 			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(p))
 			rednet.close(modem)
-		until p == protocol
+		end
+		
+	until p == protocol
 	
 	return id, msg
 end
