@@ -106,23 +106,24 @@ function getItem(id, itemName, amount)
 	
 	for i = 1, #interface.getAvailableItems() do
 	
-		
-		local fingerprint = interface.getAvailableItems()[i].fingerprint
-		local display_name = interface.getItemDetail(fingerprint).basic().display_name
-		local max_size = interface.getItemDetail(fingerprint).basic().max_size
-		local qty = interface.getItemDetail(fingerprint).basic().qty
-		
-		if display_name == itemName then
-		
-			if max_size < amount then amount = lookUpMaxStackSize end
-			if qty < amount then interface.requestCrafting(fingerprint, tonumber(amount - qty)) end
+		if interface.getAvailableItems()[i] ~= nil
+			local fingerprint = interface.getAvailableItems()[i].fingerprint
+			local display_name = interface.getItemDetail(fingerprint).basic().display_name
+			local max_size = interface.getItemDetail(fingerprint).basic().max_size
+			local qty = interface.getItemDetail(fingerprint).basic().qty
 			
-			dbug(tostring(itemName).." found! Exporting "..tostring(amount).." of them.")
-			interface.exportItem(fingerprint, direction, tonumber(amount))
+			if display_name == itemName then
 			
-			success = true
-			
-		end	
+				if max_size < amount then amount = lookUpMaxStackSize end
+				if qty < amount then interface.requestCrafting(fingerprint, tonumber(amount - qty)) end
+				
+				dbug(tostring(itemName).." found! Exporting "..tostring(amount).." of them.")
+				interface.exportItem(fingerprint, direction, tonumber(amount))
+				
+				success = true
+				
+			end
+		end
 	end
 	
 	dbug("Sending to id: "..tostring(id).." success: true")
