@@ -451,8 +451,141 @@ function buildNormalSection (y)
 	turtle.down()
 end
 
-function buildSkeletonSection (i)
-
+function fillNuclearReactor ()
+	
+	refuel()
+	
+	local i = {}
+	
+	turtle.select(1)
+	
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	
+	for i = 1, (y - 1)*4 do
+		turtle.up()
+	end
+	
+	for i = 1, #i do
+		turtle.select(i)
+		turtle.drop()
+	end
+	
+	for i = 1, (y - 1)*4 do
+		turtle.down()
+	end
+	
+	i = {}
+	
+	turtle.select(1)
+	
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Quad Fuel Rod (Uranium)", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Quad Fuel Rod (Uranium)", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Quad Fuel Rod (Uranium)", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	
+	for i = 1, (y - 1)*4 do
+		turtle.up()
+	end
+	
+	for i = 1, #i do
+		turtle.select(i)
+		turtle.drop()
+	end
+	
+	for i = 1, (y - 1)*4 do
+		turtle.down()
+	end
+	
+	i = {}
+	
+	turtle.select(1)
+	
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Quad Fuel Rod (Uranium)", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	
+	for i = 1, (y - 1)*4 do
+		turtle.up()
+	end
+	
+	for i = 1, #i do
+		turtle.select(i)
+		turtle.drop()
+	end
+	
+	for i = 1, (y - 1)*4 do
+		turtle.down()
+	end
+	
+	i = {}
+	
+	turtle.select(1)
+	
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	getItem("Advanced Heat Vent", #i[#i+1], 1)
+	getItem("Component Heat Exchanger", #i[#i+1], 1)
+	
+	for i = 1, (y - 1)*4 do
+		turtle.up()
+	end
+	
+	for i = 1, #i do
+		turtle.select(i)
+		turtle.drop()
+	end
+	
+	for i = 1, (y - 1)*4 do
+		turtle.down()
+	end
+	
+	i = {}
+	
+	turtle.select(1)
+	
+	
 end
 
 function main ()
@@ -497,12 +630,42 @@ function main ()
 	chest.setFrequency(frequency)
 	
 	for i = 1, nSection do
-		buildNormalSection(i)
+		--buildNormalSection(i)
 	end
 	
-	for i = 1, sSection do
-		buildSkeletonSection(i)
+	getItem("Diamond Pickaxe", 1, 1)
+	turtle.select(1)
+	turtle.equipRight()
+	turtle.digDown()
+	turtle.equipRight()
+	
+	for i = 1, nSection*4 do
+		turtle.up()
 	end
+	
+	turtle.turnRight()
+	turtle.forward()
+	turtle.forward()
+	turtle.forward()
+	turtle.turnLeft()
+	turtle.forward()
+	turtle.forward()
+	
+	for i = 1, nSection*4 do
+		turtle.down()
+	end
+	
+	turtle.placeDown()
+	turtle.select(2)
+	chest.setFrequency(0)
+	turtle.dropDown()
+	chest.setFrequency(frequency)
+	turtle.select(1)
+	
+	for i = 1, nSection do
+		fillNuclearReactor(i)
+	end
+
 	
 	dbug("Sending to id: "..tostring(command_id).." msg: "..tostring(close.cmd).." protocol: "..tostring(turtlegetItemProt))
 	
