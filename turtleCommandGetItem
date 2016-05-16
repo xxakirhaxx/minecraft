@@ -80,7 +80,7 @@ function openFrequency (rid)
 			
 		dbug("Frequency found! f: "..tostring(getItemIdList[i]).." protocol: "..tostring(turtleGetItemProt))
 			
-		send(getItemIdList[i], {cmd = "openFrequency"}, turtleGetItemProt, f)
+		send(getItemIdList[i], {cmd = "openFrequency"}, turtleGetItemProt)
 			
 		id, msg = receive(turtleGetItemProt)
 			
@@ -102,11 +102,10 @@ function closeFrequency (rid, f)
 	local success = false
 	local id = 0
 	local msg = {}
-	local hostName = tostring(turtleGetItemProt)..tostring(f)
 	
 	dbug("Closing Frequency for id: "..tostring(id).." f: "..tostring(f))
 	
-	send(f, {cmd = "closeFrequency"}, turtleGetItemProt, f)
+	send(f, {cmd = "closeFrequency"}, turtleGetItemProt)
 	id, msg = receive(turtleGetItemProt)
 		
 	success = msg.msg.success

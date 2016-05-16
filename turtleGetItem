@@ -70,7 +70,7 @@ function openFrequency (id)
 
 	local success = false
 	
-	dbug("Opening frequency: "..tostring(frequency))
+	dbug("Opening frequency: "..tostring(os.getComputerID()))
 	
 	broadcast(os.getComputerID())
 	
@@ -78,7 +78,7 @@ function openFrequency (id)
 	
 	dbug("Sending to id: "..tostring(id).." frequency: "..tostring(os.getComputerID()).." success: true")
 	
-	send(id, {success = success}, turtleGetItemProt, frequency)
+	send(id, {success = success}, turtleGetItemProt, os.getComputerID())
 	
 end
 
@@ -126,7 +126,7 @@ function getItem(id, itemName, amount)
 	end
 	
 	dbug("Sending to id: "..tostring(id).." success: true")
-	send(id, {success = success}, turtleGetItemProt)
+	send(id, {success = success}, turtleGetItemProt, os.getComputerID())
 end
 
 function init ()
