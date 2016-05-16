@@ -1,0 +1,196 @@
+function getPeripheral (name)
+	for i = 1, #peripheral.getNames() do
+		if peripheral.getType(peripheral.getNames()[i]) == name then
+			return peripheral.getNames()[i]
+		end
+	end
+end
+
+local d = true
+
+function dbug (s)
+
+	if d then print(s) end
+	
+end
+
+function broadcast (msg, protocol)
+
+	local modem = "back"
+	
+	rednet.open(modem)
+	rednet.broadcast(msg)
+	rednet.close(modem)
+	
+end
+
+function send (id, msg, protocol,...)
+
+	local modem = "left"
+	
+	local frequency = 0
+	
+	if select(1,...) ~= nil then frequency = select(1,...) end
+
+	rednet.open(modem)
+	rednet.send(tonumber(id), {frequency = tonumber(frequency), msg = msg}, tostring(protocol))
+	rednet.close(modem)
+
+end
+
+function receive (protocol)
+
+	local modem = "left"
+	local id = 0
+	local msg = {}
+	local p = ""
+	
+	repeat
+		rednet.open(modem)
+		id, msg, p = rednet.receive()
+		rednet.close(modem)
+	
+		if p == "dns" then
+			rednet.open(modem)
+			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(p))
+			rednet.close(modem)
+		end
+	until p == protocol
+	
+	return id, msg
+end
+
+local interface = peripheral.wrap("right")
+local turtleGetItemProt = "turtleGetItem"
+local turtleGetItemIdPickUpProt = "turtleGetItemIdPickUp"
+local open = false
+local direction = "east"
+
+function openFrequency (id)
+
+	local success = false
+	
+	dbug("Opening frequency: "..tostring(os.getComputerID()))
+	
+	broadcast(os.getComputerID())
+	
+	success = true
+	
+	dbug("Sending to id: "..tostring(id).." frequency: "..tostring(os.getComputerID()).." success: true")
+	
+	send(id, {success = success}, turtleGetItemProt, os.getComputerID())
+	
+end
+
+function closeFrequency (id)
+
+	local success = false
+	
+	dbug("Closing frequency: "..tostring(os.getComputerID()))
+	
+	broadcast(nil)
+	
+	success = true
+	
+	dbug("Sending to id: "..tostring(id).." success: true")
+	
+	send(id, {success = success}, turtleGetItemProt, os.getComputerID())
+end
+
+function getItem(id, itemName, amount,...)
+
+	local success = false
+	
+	dbug("Item request received from id: "..tostring(id))
+	dbug("Looking for itemName: "..tostring(itemName).." amount: "..tostring(amount))
+	
+	for i = 1, #interface.getAvailableItems() do
+	
+		if interface.getAvailableItems()[i] ~= nil then
+			local fingerprint = interface.getAvailableItems()[i].fingerprint
+			local display_name = interface.getItemDetail(fingerprint).basic().display_name
+			local max_size = interface.getItemDetail(fingerprint).basic().max_size
+			local qty = interface.getItemDetail(fingerprint).basic().qty
+			local dmg = interface.getItemDetail(fingerprint).basic().dmg
+			
+			if display_name == itemName and dmg <= 5 then
+			
+				if max_size < amount then amount = lookUpMaxStackSize end
+				
+				if qty < amount then
+					
+					--Other turtles might take what you're creating so I had to add in this little bit of ugliness
+					--Wait 5 minutes
+					--If you still don't have what you need in 5 minutes, request crafting again
+					--Just pray that this turtle isn't inadvertantly crafting for every turtle forever
+					
+					local t = 0
+					
+					interface.requestCrafting(fingerprint, tonumber(amount))
+					
+					repeat
+						t = t + 1
+						os.sleep(5)
+						
+						if t >= 60 then
+							t = 0
+							interface.requestCrafting(fingerprint, tonumber(amount))
+						end
+						
+					until interface.getItemDetail(fingerprint).basic().qty == amount
+				end
+				
+				dbug(tostring(itemName).." found! Exporting "..tostring(amount).." of them.")
+				
+				interface.exportItem(fingerprint, direction, tonumber(amount))
+				
+				success = true
+				
+				break
+				
+			end
+		end
+	end
+	
+	dbug("Sending to id: "..tostring(id).." success: true")
+	send(id, {success = success}, turtleGetItemProt, os.getComputerID())
+end
+
+function init ()
+
+end
+
+function shutdown ()
+
+end
+
+function main ()
+
+	local id = 0
+	local msg = {}
+	
+	dbug("Waiting for msg")
+	
+	id, msg = receive(turtleGetItemProt)
+	
+	dbug("Signal from id: "..tostring(id).." msg: "..tostring(msg.msg.cmd))
+	
+	if msg.msg.cmd == "openFrequency" then
+		openFrequency(id)
+	elseif msg.msg.cmd == "closeFrequency" then
+		closeFrequency(id)
+	elseif msg.msg.cmd == "getItem" then
+		getItem(id, msg.msg.itemName, msg.msg.amount)
+	elseif msg.msg.cmd == "initTurtleGetItem" then
+		send(id, {id = os.getComputerID()}, turtleGetItemProt)
+	end
+	
+end
+
+init ()
+
+while true do
+	main()
+end
+
+shutdown ()
