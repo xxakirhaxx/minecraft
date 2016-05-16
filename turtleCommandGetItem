@@ -139,9 +139,11 @@ function init ()
 	rednet.host(tostring(turtleGetItemProt),tostring(turtleGetItemProt))
 	rednet.close(modem)
 
-	dbug("Broadcasting empty msg on turtleGetItemIdPickUpProt")
+	msg = {msg = {cmd = "initTurtleGetItem"}}
 	
-	broadcast({msg = {cmd = "initTurtleGetItem"}}, turtleGetItemProt)
+	dbug("Broadcasting cmd: "..msg.msg.cmd.." on turtleGetItemProt")
+	
+	broadcast(msg, turtleGetItemProt)
 	
 	tid = os.startTimer(num)
 	
