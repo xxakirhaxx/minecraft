@@ -454,7 +454,7 @@ function buildNormalSection (y)
 	turtle.down()
 end
 
-function fillNuclearReactor ()
+function fillNuclearReactor (y)
 	
 	refuel()
 	

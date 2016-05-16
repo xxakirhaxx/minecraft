@@ -122,6 +122,8 @@ function getItem(id, itemName, amount)
 				
 				success = true
 				
+				break
+				
 			end
 		end
 	end
