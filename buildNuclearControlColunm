@@ -451,46 +451,34 @@ function buildNormalSection (y)
 	turtle.down()
 end
 
-function it ()
-	local i = 0
-	function iter ()
-		
-		i = i + 1
-		return i
-	end	
-	return iter
-end
-
 function fillNuclearReactor ()
 	
 	refuel()
 	
-	local i = it()
-	
 	turtle.select(1)
 	
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
+	getItem("Component Heat Exchanger", 1, 1)
+	getItem("Advanced Heat Vent", 2, 1)
+	getItem("Component Heat Exchanger", 3, 1)
+	getItem("Advanced Heat Vent", 4, 1)
+	getItem("Component Heat Exchanger", 5, 1)
+	getItem("Advanced Heat Vent", 6, 1)
+	getItem("Component Heat Exchanger", 7, 1)
+	getItem("Advanced Heat Vent", 8, 1)
+	getItem("Component Heat Exchanger", 9, 1)
+	getItem("Advanced Heat Vent", 10, 1)
+	getItem("Advanced Heat Vent", 11, 1)
+	getItem("Component Heat Exchanger", 12, 1)
+	getItem("Advanced Heat Vent", 13, 1)
+	getItem("Advanced Heat Vent", 14, 1)
+	getItem("Advanced Heat Vent", 15, 1)
+	getItem("Component Heat Exchanger", 16, 1)
 	
 	for i = 1, (y - 1)*4 do
 		turtle.up()
 	end
 	
-	for i = 1, i() - 1 do
+	for i = 1, 16 do
 		turtle.select(i)
 		turtle.drop()
 	end
@@ -499,32 +487,30 @@ function fillNuclearReactor ()
 		turtle.down()
 	end
 	
-	i = it()
-	
 	turtle.select(1)
 	
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Quad Fuel Rod (Uranium)", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Quad Fuel Rod (Uranium)", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Quad Fuel Rod (Uranium)", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
+	getItem("Advanced Heat Vent", 1, 1)
+	getItem("Advanced Heat Vent", 2, 1)
+	getItem("Component Heat Exchanger", 3, 1)
+	getItem("Component Heat Exchanger", 4, 1)
+	getItem("Quad Fuel Rod (Uranium)", 5, 1)
+	getItem("Component Heat Exchanger", 6, 1)
+	getItem("Component Heat Exchanger", 7, 1)
+	getItem("Component Heat Exchanger", 8, 1)
+	getItem("Quad Fuel Rod (Uranium)", 9, 1)
+	getItem("Component Heat Exchanger", 10, 1)
+	getItem("Component Heat Exchanger", 11, 1)
+	getItem("Component Heat Exchanger", 12, 1)
+	getItem("Component Heat Exchanger", 13, 1)
+	getItem("Quad Fuel Rod (Uranium)", 14, 1)
+	getItem("Component Heat Exchanger", 15, 1)
+	getItem("Component Heat Exchanger", 16, 1)
 	
 	for i = 1, (y - 1)*4 do
 		turtle.up()
 	end
 	
-	for i = 1, i() - 1 do
+	for i = 1, 16 do
 		turtle.select(i)
 		turtle.drop()
 	end
@@ -533,26 +519,24 @@ function fillNuclearReactor ()
 		turtle.down()
 	end
 	
-	i = it()
-	
 	turtle.select(1)
 	
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Quad Fuel Rod (Uranium)", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
+	getItem("Component Heat Exchanger", 1, 1)
+	getItem("Quad Fuel Rod (Uranium)", 2, 1)
+	getItem("Component Heat Exchanger", 3, 1)
+	getItem("Component Heat Exchanger", 4, 1)
+	getItem("Advanced Heat Vent", 5, 1)
+	getItem("Advanced Heat Vent", 6, 1)
+	getItem("Component Heat Exchanger", 7, 1)
+	getItem("Advanced Heat Vent", 8, 1)
+	getItem("Advanced Heat Vent", 9, 1)
+	getItem("Advanced Heat Vent", 10, 1)
+	getItem("Component Heat Exchanger", 11, 1)
+	getItem("Advanced Heat Vent", 12, 1)
+	getItem("Advanced Heat Vent", 13, 1)
+	getItem("Component Heat Exchanger", 14, 1)
+	getItem("Advanced Heat Vent", 15, 1)
+	getItem("Component Heat Exchanger", 16, 1)
 	
 	for i = 1, (y - 1)*4 do
 		turtle.up()
@@ -567,22 +551,20 @@ function fillNuclearReactor ()
 		turtle.down()
 	end
 	
-	i = it()
-	
 	turtle.select(1)
 	
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
-	getItem("Advanced Heat Vent", i(), 1)
-	getItem("Component Heat Exchanger", i(), 1)
+	getItem("Advanced Heat Vent", 1, 1)
+	getItem("Component Heat Exchanger", 2, 1)
+	getItem("Advanced Heat Vent", 3, 1)
+	getItem("Component Heat Exchanger", 4, 1)
+	getItem("Advanced Heat Vent", 5, 1)
+	getItem("Component Heat Exchanger", 6, 1)
 	
 	for i = 1, (y - 1)*4 do
 		turtle.up()
 	end
 	
-	for i = 1, i() - 1 do
+	for i = 1, 6 do
 		turtle.select(i)
 		turtle.drop()
 	end
@@ -590,8 +572,6 @@ function fillNuclearReactor ()
 	for i = 1, (y - 1)*4 do
 		turtle.down()
 	end
-	
-	i = it()
 	
 	turtle.select(1)
 	
