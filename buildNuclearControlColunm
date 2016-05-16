@@ -48,6 +48,7 @@ local chest = peripheral.wrap(getPeripheral("ender_chest"))
 local modem = getPeripheral("modem")
 local turtleGetItemProt = "turtleGetItem"
 local getItemId = nil
+local frequency = 0
 
 function getItem (itemName, slot, amount)
 	
@@ -78,7 +79,9 @@ function refuel ()
 		turtle.select(1)
 		getItem("Lava Bucket", 1, 1)
 		turtle.refuel()
-		turtle.drop()
+		chest.setFrequency(0)
+		turtle.dropDown()
+		chest.setFrequency(frequency)
 	end
 				
 end
@@ -581,7 +584,6 @@ end
 function main ()
 
 	local command_id = nil
-	local frequency = 0
 	local id = 0
 	local msg = {}
 	local open = {cmd = "openFrequency"}
