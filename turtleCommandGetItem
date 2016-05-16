@@ -141,7 +141,7 @@ function init ()
 
 	dbug("Broadcasting empty msg on turtleGetItemIdPickUpProt")
 	
-	broadcast({cmd = "initTurtleGetItem"}, turtleGetItemProt)
+	broadcast({msg = {cmd = "initTurtleGetItem"}}, turtleGetItemProt)
 	
 	tid = os.startTimer(num)
 	
