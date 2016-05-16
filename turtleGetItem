@@ -116,7 +116,14 @@ function getItem(id, itemName, amount,...)
 			if display_name == itemName and dmg <= 5 then
 			
 				if max_size < amount then amount = lookUpMaxStackSize end
-				if qty < amount then interface.requestCrafting(fingerprint, tonumber(amount - qty)) end
+				
+				if qty < amount then 
+					interface.requestCrafting(fingerprint, tonumber(amount))
+					
+					repeat
+						os.sleep(5)
+					until interface.getItemDetail(fingerprint).basic().qty == amount
+				end
 				
 				dbug(tostring(itemName).." found! Exporting "..tostring(amount).." of them.")
 				
