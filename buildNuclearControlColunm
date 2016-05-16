@@ -624,7 +624,7 @@ function main ()
 	refuel()
 	
 	for i = 1, nSection do
-		--buildNormalSection(i)
+		buildNormalSection(i)
 	end
 	
 	getItem("Diamond Pickaxe", 1, 1)
