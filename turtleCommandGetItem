@@ -14,15 +14,6 @@ function dbug (s)
 	
 end
 
-function dns ()
-
-	rednet.open(getPeripheral("modem"))
-	local id, msg, protocol = rednet.receive("dns")
-	rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
-	rednet.close(getPeripheral("modem"))
-	
-end
-
 function broadcast (msg, protocol)
 
 	local modem = getPeripheral("modem")
@@ -54,9 +45,16 @@ function receive (protocol)
 	local msg = {}
 	local p = ""
 	
-	rednet.open(modem)
-	id, msg, p = rednet.receive(protocol)
-	rednet.close(modem)
+	repeat
+		rednet.open(modem)
+		id, msg, p = rednet.receive(protocol)
+		rednet.close(modem)
+	
+		if p == "dns" then
+			rednet.open(modem)
+			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(p))
+			rednet.close(modem)
+		until p == protocol
 	
 	return id, msg
 end
@@ -72,7 +70,6 @@ function openFrequency (rid)
 	local id = 0
 	local f = 0
 	local msg = {}
-	local hostName = ""
 	
 	dbug("Opening Frequency for id: "..tostring(id))
 	
@@ -80,11 +77,10 @@ function openFrequency (rid)
 		if getItemIdList[i] ~= nil then
 		
 			f = getItemIdList[i]
-			hostName = tostring(turtleGetItemProt)..tostring(f)
 			
-			dbug("Frequency found! f: "..tostring(getItemIdList[i]).." hostName: "..hostName.." protocol: "..tostring(turtleGetItemProt))
+			dbug("Frequency found! f: "..tostring(getItemIdList[i]).." protocol: "..tostring(turtleGetItemProt))
 			
-			send(getItemIdList[i], {cmd = "openFrequency", hostName = hostName}, turtleGetItemProt, f)
+			send(getItemIdList[i], {cmd = "openFrequency"}, turtleGetItemProt, f)
 			
 			id, msg = receive(turtleGetItemProt)
 			
@@ -95,9 +91,9 @@ function openFrequency (rid)
 		end
 	end
 	
-	dbug("Sending to id: "..tostring(rid).." hostName: "..tostring(hostName).." f: "..tostring(f))
+	dbug("Sending to id: "..tostring(rid).." f: "..tostring(f))
 	
-	send(rid, {success = success, hostName = hostName}, turtleGetItemProt, f)
+	send(rid, {success = success}, turtleGetItemProt, f)
 	
 end
 
@@ -112,7 +108,7 @@ function closeFrequency (rid, f)
 	for i = 1, #getItemIdList do
 		if getItemIdList[i] == nil then
 			
-			send(f, {cmd = "closeFrequency", hostName = hostName}, turtleGetItemProt, f)
+			send(f, {cmd = "closeFrequency"}, turtleGetItemProt, f)
 			
 			id, msg = receive(turtleGetItemProt)
 			
@@ -126,7 +122,7 @@ function closeFrequency (rid, f)
 	end
 	
 	if not success then
-		send(f, {cmd = "closeFrequency", hostName = hostName}, turtleGetItemProt, f)
+		send(f, {cmd = "closeFrequency"}, turtleGetItemProt, f)
 		id, msg = receive(turtleGetItemProt)
 		
 		success = msg.msg.success
@@ -205,7 +201,7 @@ end
 init ()
 
 while true do
-	parallel.waitForAny(main(), dns())
+	main()
 end
 
 shutdown ()

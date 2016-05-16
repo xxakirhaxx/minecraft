@@ -459,7 +459,6 @@ function main ()
 
 	local command_id = nil
 	local frequency = 0
-	local hostName = ""
 	local id = 0
 	local msg = {}
 	local open = {cmd = "openFrequency"}
@@ -489,20 +488,13 @@ function main ()
 		id, msg = receive(turtleGetItemProt)
 	until msg.msg.success
 	
-	dbug("Response received from id: "..tostring(id).." hostName: "..tostring(msg.msg.hostName).." frequency: "..tostring(msg.frequency))
+	dbug("Response received from id: "..tostring(id).." frequency: "..tostring(msg.frequency))
 	
+	getItemId = tonumber(msg.frequency)
 	hostName = tostring(msg.msg.hostName)
 	frequency = tonumber(msg.frequency)
 	
 	chest.setFrequency(frequency)
-	
-	while getItemId == nil do
-		rednet.open(modem)
-		getItemId = rednet.lookup(tostring(hostName), tostring(hostName))
-		rednet.close(modem)
-	end
-	
-	dbug("Found getItemId: "..tostring(getItemId))
 	
 	for i = 1, nSection do
 		buildNormalSection(i)

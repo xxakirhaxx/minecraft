@@ -14,17 +14,6 @@ function dbug (s)
 	
 end
 
-function dns ()
-
-	local modem = "left"
-	
-	rednet.open(modem)
-	local id, msg, protocol = rednet.receive("dns")
-	rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
-	rednet.close(modem)
-	
-end
-
 function broadcast (msg, protocol)
 
 	local modem = "back"
@@ -56,9 +45,16 @@ function receive (protocol)
 	local msg = {}
 	local p = ""
 	
-	rednet.open(modem)
-	id, msg, p = rednet.receive(protocol)
-	rednet.close(modem)
+	repeat
+		rednet.open(modem)
+		id, msg, p = rednet.receive()
+		rednet.close(modem)
+	
+		if p == "dns" then
+			rednet.open(modem)
+			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(p))
+			rednet.close(modem)
+		until p == protocol
 	
 	return id, msg
 end
@@ -67,49 +63,39 @@ local interface = peripheral.wrap("right")
 local turtleGetItemProt = "turtleGetItem"
 local turtleGetItemIdPickUpProt = "turtleGetItemIdPickUp"
 local open = false
-local direction = ""
+local direction = "north"
 
-function openFrequency (id, h,f)
+function openFrequency (id, f)
 
 	local success = false
-	local hostName = tostring(h)
 	local frequency = tonumber(f)
 	
-	dbug("Opening frequency: "..tostring(f).." with hostName: "..tostring(hostName))
+	dbug("Opening frequency: "..tostring(frequency))
 	
-	rednet.open("left")
-	rednet.host(hostName, hostName)
-	rednet.close("left")
-	
-	broadcast(f)
+	broadcast(frequency)
 	
 	success = true
 	
-	dbug("Sending to id: "..tostring(id).." hostName: "..tostring(hostName).." success: true")
+	dbug("Sending to id: "..tostring(id).." frequency: "..tostring(frequency).." success: true")
 	
-	send(id, {success = success, hostName = hostName}, turtleGetItemProt, f)
+	send(id, {success = success}, turtleGetItemProt, frequency)
 	
 end
 
-function closeFrequency (id, h,f)
+function closeFrequency (id, f)
 
 	local success = false
-	local hostName = tostring(h)
-	local frequency = tonumber(f)
+	local frequency = tonumber(frequency)
 	
-	dbug("Closing frequency: "..tostring(f).." with hostName: "..tostring(hostName))
-	
-	rednet.open("left")
-	rednet.unhost(hostName, hostName)
-	rednet.close("left")
+	dbug("Closing frequency: "..tostring(frequency))
 	
 	broadcast(0)
 	
 	success = true
 	
-	dbug("Sending to id: "..tostring(id).." hostName: "..tostring(hostName).." success: true")
+	dbug("Sending to id: "..tostring(id).." success: true")
 	
-	send(id, {success = success, hostName = hostName}, turtleGetItemProt, f)
+	send(id, {success = success}, turtleGetItemProt, f)
 end
 
 function getItem(id, itemName, amount)
@@ -159,7 +145,7 @@ function init ()
 	
 	send(id, {}, turtleGetItemIdPickUpProt, 0)
 
-	dbug("Initialization finished. Picked up command id: "..tostring(id))
+	dbug("Initialization finished. Command id: "..tostring(id))
 end
 
 function shutdown ()
@@ -190,7 +176,7 @@ end
 init ()
 
 while true do
-	parallel.waitForAny(main(), dns())
+	main()
 end
 
 shutdown ()
