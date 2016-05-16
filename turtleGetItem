@@ -117,11 +117,26 @@ function getItem(id, itemName, amount,...)
 			
 				if max_size < amount then amount = lookUpMaxStackSize end
 				
-				if qty < amount then 
+				if qty < amount then
+					
+					--Other turtles might take what you're creating so I had to add in this little bit of ugliness
+					--Wait 5 minutes
+					--If you still don't have what you need in 5 minutes, request crafting again
+					--Just pray that this turtle isn't inadvertantly crafting for every turtle forever
+					
+					local t = 0
+					
 					interface.requestCrafting(fingerprint, tonumber(amount))
 					
 					repeat
+						t = t + 1
 						os.sleep(5)
+						
+						if t >= 60 then
+							t = 0
+							interface.requestCrafting(fingerprint, tonumber(amount))
+						end
+						
 					until interface.getItemDetail(fingerprint).basic().qty == amount
 				end
 				
