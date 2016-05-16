@@ -97,7 +97,7 @@ function closeFrequency (id)
 	send(id, {success = success}, turtleGetItemProt, os.getComputerID())
 end
 
-function getItem(id, itemName, amount)
+function getItem(id, itemName, amount,...)
 
 	local success = false
 	
@@ -111,13 +111,15 @@ function getItem(id, itemName, amount)
 			local display_name = interface.getItemDetail(fingerprint).basic().display_name
 			local max_size = interface.getItemDetail(fingerprint).basic().max_size
 			local qty = interface.getItemDetail(fingerprint).basic().qty
+			local dmg = interface.getItemDetail(fingerprint).basic().dmg
 			
-			if display_name == itemName then
+			if display_name == itemName and dmg <= 5 then
 			
 				if max_size < amount then amount = lookUpMaxStackSize end
 				if qty < amount then interface.requestCrafting(fingerprint, tonumber(amount - qty)) end
 				
 				dbug(tostring(itemName).." found! Exporting "..tostring(amount).." of them.")
+				
 				interface.exportItem(fingerprint, direction, tonumber(amount))
 				
 				success = true
