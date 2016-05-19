@@ -104,18 +104,19 @@ function getItem(id, itemName, amount,...)
 	dbug("Item request received from id: "..tostring(id))
 	dbug("Looking for itemName: "..tostring(itemName).." amount: "..tostring(amount))
 	
-	for i = 1, #interface.getAvailableItems() do
+	local items = interface.getAvailableItems("proxy")
 	
-		if interface.getAvailableItems()[i] ~= nil then
-			local fingerprint = interface.getAvailableItems()[i].fingerprint
-			local display_name = interface.getItemDetail(fingerprint).basic().display_name
-			local max_size = interface.getItemDetail(fingerprint).basic().max_size
-			local qty = interface.getItemDetail(fingerprint).basic().qty
-			local dmg = interface.getItemDetail(fingerprint).basic().dmg
+	for i = 1, #items do
+	
+			local fingerprint = items[i].fingerprint
+			local display_name = items[i].item.basic().display_name
+			local max_size = items[i].item.basic().max_size
+			local qty = items[i].item.basic().qty
+			local dmg = items[i].item.basic().dmg
 			
 			if display_name == itemName then
 			
-				if max_size < amount then amount = lookUpMaxStackSize end
+				if max_size < amount then amount = max_size end
 				
 				if qty < amount then
 					
@@ -137,7 +138,7 @@ function getItem(id, itemName, amount,...)
 							interface.requestCrafting(fingerprint, tonumber(amount))
 						end
 						
-					until interface.getItemDetail(fingerprint).basic().qty >= amount
+					until getItemDetail(fingerprint).basic().qty >= amount
 				end
 				
 				dbug(tostring(itemName).." found! Exporting "..tostring(amount).." of them.")
