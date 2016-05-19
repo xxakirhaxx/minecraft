@@ -108,52 +108,53 @@ function getItem(id, itemName, amount,...)
 	
 	for i = 1, #items do
 	
-			local fingerprint = items[i].fingerprint
-			local display_name = items[i].item.basic().display_name
-			local max_size = items[i].item.basic().max_size
-			local qty = items[i].item.basic().qty
-			local dmg = items[i].item.basic().dmg
-			
-			if display_name == itemName then
-			
-				if max_size < amount then amount = max_size end
-				
-				if qty < amount then
-					
-					--Other turtles might take what you're creating so I had to add in this little bit of ugliness
-					--Wait 5 minutes
-					--If you still don't have what you need in 5 minutes, request crafting again
-					--Just pray that this turtle isn't inadvertantly crafting for every turtle forever
-					
-					local t = 0
-					
-					interface.requestCrafting(fingerprint, tonumber(amount))
-					
-					repeat
-						t = t + 1
-						os.sleep(5)
-						
-						if t >= 60 then
-							t = 0
-							interface.requestCrafting(fingerprint, tonumber(amount))
-						end
-						
-					until getItemDetail(fingerprint).basic().qty >= amount
-				end
-				
-				dbug(tostring(itemName).." found! Exporting "..tostring(amount).." of them.")
-				
-				interface.exportItem(fingerprint, direction, tonumber(amount))
-				
-				success = true
-				
-				break
-				
+		local fingerprint = items[i].fingerprint
+		local display_name = items[i].item.basic().display_name
+		local max_size = items[i].item.basic().max_size
+		local qty = items[i].item.basic().qty
+		local dmg = items[i].item.basic().dmg
+		
+		if display_name == itemName then
+		
+			if max_size < amount then 
+				amount = max_size 
 			end
+			
+			if qty < amount then
+				
+				--Other turtles might take what you're creating so I had to add in this little bit of ugliness
+				--Wait 5 minutes
+				--If you still don't have what you need in 5 minutes, request crafting again
+				--Just pray that this turtle isn't inadvertantly crafting for every turtle forever
+				
+				local t = 0
+				
+				interface.requestCrafting(fingerprint, tonumber(amount))
+				
+				repeat
+					t = t + 1
+					os.sleep(5)
+					
+					if t >= 60 then
+						t = 0
+						interface.requestCrafting(fingerprint, tonumber(amount))
+					end
+					
+				until getItemDetail(fingerprint).basic().qty >= amount
+			end
+			
+			dbug(tostring(itemName).." found! Exporting "..tostring(amount).." of them.")
+			
+			interface.exportItem(fingerprint, direction, tonumber(amount))
+			
+			success = true
+			
+			break
+			
 		end
 	end
 	
-	dbug("Sending to id: "..tostring(id).." success: true")
+	dbug("Sending to id: "..tostring(id).." success: "..tostring(success))
 	send(id, {success = success}, turtleGetItemProt, os.getComputerID())
 end
 
