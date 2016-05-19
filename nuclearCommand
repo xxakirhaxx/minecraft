@@ -174,8 +174,12 @@ local function drawMonitor(page)
 		local id = ids[i]
 		
 		drawLine(id, i - page*pageSize)
+		
+	end
 	
-		totalEU = totalEU + nuclearControlSystems[id].getEUOutput
+	for i = 1, #nuclearControlIds do
+	
+		totalEU = totalEU + nuclearControlSystems[tonumber(nuclearControlIds[i]).getEUOutput
 		
 	end
 	
