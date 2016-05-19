@@ -442,7 +442,7 @@ local function handleMonitorTouchEvent ()
 	
 	if maxPage < currentPage then
 		currentPage = 0
-	else
+	end
 	
 	drawMonitor(currentPage)
 	
