@@ -179,7 +179,7 @@ local function drawMonitor(page)
 	
 	for i = 1, #nuclearControlIds do
 	
-		totalEU = totalEU + nuclearControlSystems[tonumber(nuclearControlIds[i]).getEUOutput
+		totalEU = totalEU + nuclearControlSystems[tonumber(nuclearControlIds[i])].getEUOutput
 		
 	end
 	
