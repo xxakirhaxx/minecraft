@@ -434,11 +434,11 @@ local function handleMonitorTouchEvent ()
 	local rMsg = ""
 	local maxPage = math.ceil(#nuclearControlIds / pageSize)
 	
-	if maxPage >= currentPage then
+	currentPage = currentPage + 1
+	
+	if maxPage < currentPage then
 		currentPage = 0
 	else
-		currentPage = currentPage + 1
-	end
 	
 	drawMonitor(currentPage)
 	
