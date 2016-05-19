@@ -140,7 +140,7 @@ function getItem(id, itemName, amount,...)
 						interface.requestCrafting(fingerprint, tonumber(amount))
 					end
 					
-				until getItemDetail(fingerprint).basic().qty >= amount
+				until interface.getItemDetail(fingerprint).basic().qty >= amount
 			end
 			
 			dbug(tostring(itemName).." found! Exporting "..tostring(amount).." of them.")

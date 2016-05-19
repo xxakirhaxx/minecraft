@@ -593,9 +593,9 @@ function main ()
 	if #args < 1 then return end
 	
 	local nSection = tonumber(args[1])
-	local sSection = 0
+	local startAtSection = 1
 	
-	if #args >= 2 then sSection = args[2] end
+	if #args >= 2 then startAtSection = args[2] end
 	
 	while command_id == nil do
 		rednet.open(modem)
@@ -623,7 +623,7 @@ function main ()
 	
 	refuel()
 	
-	for i = 1, nSection do
+	for i = startAtSection, nSection do
 		buildNormalSection(i)
 	end
 	
