@@ -50,7 +50,7 @@ local turtleGetItemProt = "turtleGetItem"
 local getItemId = nil
 local frequency = 0
 
-function getItem (itemName, slot, amount)
+function getItem (itemName, slot, amount,...)
 	
 	if getItemId == nil then return end
 	
@@ -86,14 +86,43 @@ function refuel ()
 				
 end
 
-function forwardAndPlaceDown(slot)
+function forwardAndPlaceDown(slot, torch)
 
+	local obstruction, item = turtle.inspectDown()
+	local moveDown = false
+	
+	if obstruction == true then
+		if item == "minecraft:torch" then
+			moveDown = true
+		end
+	end
+	
 	turtle.forward()
+	if moveDown == true then turtle.down() end
+	
+	obstruction, item = turtle.inspectDown()
+	
+	if obstruction == true then
+		turtle.select(15)
+		turtle.digDown()
+		
+		if item.name == "minecraft:torch" then
+			turtle.transferTo(16)
+		else
+			turtle.drop(15)
+		end
+	end
+	
 	if slot ~= 0 then
 		turtle.select(slot)
 		turtle.placeDown()
 	end
 	
+	if torch == true then
+		turtle.up()
+		turtle.select(16)
+		turtle.placeDown()
+	end
 end
 
 function buildNormalSection (y)
@@ -621,19 +650,18 @@ function main ()
 	
 	chest.setFrequency(frequency)
 	
+	getItem("Diamond Pickaxe", 1, 1)
+	turtle.select(1)
+	turtle.equipRight()
+	
 	refuel()
 	
 	for i = startAtSection, nSection do
 		buildNormalSection(i)
 	end
 	
-	getItem("Diamond Pickaxe", 1, 1)
 	turtle.select(1)
-	turtle.equipRight()
 	turtle.digDown()
-	turtle.select(2)
-	turtle.equipRight()
-	turtle.select(1)
 	
 	for i = 1, nSection*4 do
 		turtle.up()
@@ -652,12 +680,7 @@ function main ()
 	end
 	
 	turtle.placeDown()
-	turtle.select(2)
-	chest.setFrequency(0)
-	turtle.dropDown()
-	chest.setFrequency(frequency)
-	turtle.select(1)
-	
+
 	for i = 1, nSection do
 		fillNuclearReactor(i)
 	end
