@@ -213,6 +213,7 @@ function buildLightCol(section)
 		turtle.up()
 	end
 	
+	turtle.forward()
 	turtle.turnLeft()
 	turtle.back()
 	turtle.down()
