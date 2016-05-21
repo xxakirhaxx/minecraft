@@ -216,6 +216,8 @@ function buildNormalSection (y)
 	forwardAndPlaceDown(1)
 	forwardAndPlaceDown(3)
 	
+	turtle.up()
+	
 	for i = 1, 6 do
 		turtle.back()
 	end
@@ -227,7 +229,6 @@ function buildNormalSection (y)
 	end
 	
 	turtle.turnRight()
-	turtle.up()
 	
 	
 	
@@ -314,6 +315,8 @@ function buildNormalSection (y)
 	forwardAndPlaceDown(3)
 	forwardAndPlaceDown(3)
 	
+	turtle.up()
+	
 	for i = 1, 6 do
 		turtle.back()
 	end
@@ -325,7 +328,7 @@ function buildNormalSection (y)
 	end
 	
 	turtle.turnRight()
-	turtle.up()
+
 	
 	
 	
@@ -392,6 +395,8 @@ function buildNormalSection (y)
 	forwardAndPlaceDown(1)
 	forwardAndPlaceDown(3)
 	
+	turtle.up()
+	
 	for i = 1, 6 do
 		turtle.back()
 	end
@@ -403,7 +408,7 @@ function buildNormalSection (y)
 	end
 	
 	turtle.turnRight()
-	turtle.up()
+
 	
 	
 	
@@ -469,6 +474,8 @@ function buildNormalSection (y)
 	forwardAndPlaceDown(1)
 	forwardAndPlaceDown(3)
 	
+	turtle.up()
+	
 	for i = 1, 6 do
 		turtle.back()
 	end
@@ -488,6 +495,8 @@ function buildNormalSection (y)
 	turtle.down()
 	turtle.down()
 	turtle.down()
+	turtle.down()
+	
 end
 
 function fillNuclearReactor (y)
