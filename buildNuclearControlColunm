@@ -699,7 +699,11 @@ function main ()
 	end
 	
 	turtle.placeDown()
-
+	chest.setFrequency(0)
+	turtle.select(16)
+	turtle.dropDown()
+	chest.setFrequency(frequency)
+	turtle.select(1)
 	
 	for i = 1, nSection do
 		fillNuclearReactor(i)
