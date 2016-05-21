@@ -59,7 +59,7 @@ function emptyChest ()
 	end
 end
 
-function getItem (itemName, slot, amount,...)
+function getItem (itemName, slot, amount)
 	
 	if getItemId == nil then return end
 	
@@ -670,7 +670,6 @@ function main ()
 	dbug("Response received from id: "..tostring(id).." frequency: "..tostring(msg.frequency))
 	
 	getItemId = tonumber(msg.frequency)
-	hostName = tostring(msg.msg.hostName)
 	frequency = tonumber(msg.frequency)
 	
 	chest.setFrequency(frequency)

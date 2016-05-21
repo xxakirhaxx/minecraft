@@ -1,0 +1,271 @@
+local args = {...}
+
+function getPeripheral (name)
+	for i = 1, #peripheral.getNames() do
+		if peripheral.getType(peripheral.getNames()[i]) == name then
+			return peripheral.getNames()[i]
+		end
+	end
+end
+
+local d = true
+
+function dbug (s)
+
+	if d then print(s) end
+	
+end
+
+function send (id, msg, protocol,...)
+
+	local modem = getPeripheral("modem")
+	
+	local frequency = 0
+	
+	if select(1,...) ~= nil then frequency = select(1,...) end
+
+	rednet.open(modem)
+	rednet.send(tonumber(id), {frequency = tonumber(frequency), msg = msg}, tostring(protocol))
+	rednet.close(modem)
+
+end
+
+function receive (protocol)
+
+	local modem = getPeripheral("modem")
+	local id = 0
+	local msg = {}
+	local p = ""
+	
+	rednet.open(modem)
+	id, msg, p = rednet.receive(protocol)
+	rednet.close(modem)
+	
+	return id, msg
+end
+
+local chest = peripheral.wrap(getPeripheral("ender_chest"))
+local modem = getPeripheral("modem")
+local turtleGetItemProt = "turtleGetItem"
+local getItemId = nil
+local frequency = 0
+
+function emptyChest ()
+	while turtle.suckDown() do
+		chest.setFrequency(0)
+		turtle.select(1)
+		turtle.dropDown()
+		chest.setFrequency(frequency)
+	end
+end
+
+function getItem (itemName, slot, amount)
+	
+	if getItemId == nil then return end
+	
+	local id = tonumber(getItemId)
+	local cmd = "getItem"
+	local request = {cmd = cmd, itemName = tostring(itemName), amount = tonumber(amount)}
+	
+	dbug("Requesting item from id: "..tostring(id).." cmd: "..tostring(cmd).." itemName: "..tostring(itemName).." amount: "..tostring(amount))
+	
+	repeat
+		send(id, request, turtleGetItemProt)
+		id, msg = receive(turtleGetItemProt)
+	until msg.msg.success == true
+	
+	dbug("Received "..tostring(amount).." "..tostring(itemName))
+	
+	turtle.select(tonumber(slot))
+	turtle.suckDown(tonumber(amount))
+	
+end
+
+function refuel ()
+
+	while turtle.getFuelLevel() < 5000 do
+		dbug("Refueling, currnet fuel levels: "..tostring(turtle.getFuelLevel()))
+		turtle.select(1)
+		getItem("Lava Bucket", 1, 1)
+		turtle.refuel()
+		chest.setFrequency(0)
+		turtle.dropDown()
+		chest.setFrequency(frequency)
+	end
+				
+end
+
+function openFrequency ()
+
+	local modem = getPeripheral("modem")
+	local open = {cmd = "openFrequency"}
+	local command_id = nil
+	local id = 0
+	local msg = {}
+	
+	repeat
+		rednet.open(modem)
+		command_id = rednet.lookup(tostring(turtleGetItemProt), tostring(turtleGetItemProt))
+		rednet.close(modem)
+	until command_id ~= nil
+	
+	dbug("Sending to id: "..tostring(command_id).." msg: "..tostring(open.cmd).." protocol: "..tostring(turtleGetItemProt))
+	
+	send(command_id, open, turtleGetItemProt)
+	
+	dbug("Waiting for response")
+	
+	repeat
+		id, msg = receive(turtleGetItemProt)
+	until msg.msg.success
+	
+	dbug("Response received from id: "..tostring(id).." frequency: "..tostring(msg.frequency))
+	
+	getItemId = tonumber(msg.frequency)
+	frequency = tonumber(msg.frequency)
+	
+end
+
+function closeFrequency ()
+
+	local modem = getPeripheral("modem")
+	local close = {cmd = "closeFrequency"}
+	local command_id = nil
+	local id = 0
+	local msg = {}
+	
+	repeat
+		rednet.open(modem)
+		command_id = rednet.lookup(tostring(turtleGetItemProt), tostring(turtleGetItemProt))
+		rednet.close(modem)
+	until command_id ~= nil
+	
+	dbug("Sending to id: "..tostring(command_id).." msg: "..tostring(close.cmd).." protocol: "..tostring(turtlegetItemProt))
+	
+	send(command_id, close, turtleGetItemProt, frequency)
+	
+	dbug("Waiting for response")
+	
+	repeat
+		id, msg = receive(turtleGetItemProt)
+	until msg.msg.success
+	
+	dbug("Response received from id: "..tostring(id).." success: "..tostring(msg.msg.success))
+	
+end
+
+function equipPickAxe ()
+
+	turtle.select(1)
+	turtle.equipRight()
+	chest.setFrequency(0)
+	turtle.dropDown()
+	turtle.setFrequency(frequency)
+	getItem("Diamond Pickaxe", 1, 1)
+	turtle.equipRight()
+	
+end
+
+function buildLightCol(section)
+	
+	local sz = 5
+	
+	refuel()
+	
+	getItem("Block of Iron", 1, 20)
+	getItem("Red Alloy Wire", 2, 5)
+	getItem("Radiant Lumium Lamp", 3, 4)
+	
+	for i = 1, (section - 1) * sz do
+		turtle.up()
+	end
+	
+	turtle.forward()
+	turtle.forward()
+	turtle.forward()
+	
+	for i = 1, sz do
+		if i == 1 then turtle.select(3) else turtle.select(1) end
+		turtle.placeDown()
+		turtle.up()
+	end
+	
+	for i = 1, sz do turtle.down() end
+	
+	turtle.back()
+	turtle.turnRight()
+	turtle.forward()
+	
+	for i = 1, sz do
+		if i == 1 then turtle.select(3) else turtle.select(1) end
+		turtle.placeDown()
+		turtle.up()
+	end
+
+	for i = 1, sz do turtle.down() end
+	
+	turtle.back()
+	turtle.back()
+	
+	for i = 1, sz do
+		if i == 1 then turtle.select(3) else turtle.select(1) end
+		turtle.placeDown()
+		turtle.up()
+	end
+
+	for i = 1, sz do turtle.down() end
+	
+	turtle.turnLeft()
+	turtle.back()
+	turtle.down()
+	
+	for i = 1, sz do
+		turtle.select(2)
+		turtle.place()
+		turtle.up()
+	end
+
+	for i = 1, sz do turtle.down() end
+	
+	turtle.up()
+	
+	for i = 1, sz do
+		if i == 1 then turtle.select(3) else turtle.select(1) end
+		turtle.placeDown()
+		turtle.up()
+	end	
+	
+	turtle.back()
+	
+	for i = 1, sz * section do
+		turtle.down()
+	end
+	
+end
+
+function main ()
+
+	if #args < 1 then return end
+	
+	local numCols  = tonumber(args[1])
+	local startAtCol = 1
+	
+	if #args >= 2 then startAtCol = tonumber(args[2]) end
+	
+	openFrequency()
+	chest.setFrequency(frequency)
+
+	emptyChest()
+	refuel()
+	equipPickAxe()
+	
+	for i = startAtCol, numCols do
+		buildLightCol(i)
+	end
+	
+	closeFrequency()
+	chest.setFrequency(0)
+	
+end
+
+main()
