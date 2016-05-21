@@ -160,7 +160,7 @@ function equipPickAxe ()
 	turtle.equipRight()
 	chest.setFrequency(0)
 	turtle.dropDown()
-	turtle.setFrequency(frequency)
+	chest.setFrequency(frequency)
 	getItem("Diamond Pickaxe", 1, 1)
 	turtle.equipRight()
 	
