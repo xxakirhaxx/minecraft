@@ -660,6 +660,9 @@ function main ()
 	getItem("Diamond Pickaxe", 1, 1)
 	turtle.select(1)
 	turtle.equipRight()
+	turtle.select(16)
+	getItem("Torch", 16, 20)
+	turtle.select(1)
 	
 	refuel()
 	
