@@ -50,6 +50,15 @@ local turtleGetItemProt = "turtleGetItem"
 local getItemId = nil
 local frequency = 0
 
+function emptyChest ()
+	while turtle.suckDown() do
+		chest.setFrequency(0)
+		turtle.select(1)
+		turtle.dropDown()
+		chest.setFrequency(frequency)
+	end
+end
+
 function getItem (itemName, slot, amount,...)
 	
 	if getItemId == nil then return end
@@ -665,6 +674,8 @@ function main ()
 	frequency = tonumber(msg.frequency)
 	
 	chest.setFrequency(frequency)
+	
+	emptyChest()
 	
 	getItem("Diamond Pickaxe", 1, 1)
 	turtle.select(1)
