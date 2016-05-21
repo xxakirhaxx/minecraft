@@ -190,44 +190,44 @@ function buildLightCol(section)
 		turtle.up()
 	end
 	
-	for i = 1, sz do turtle.down() end
-	
 	turtle.back()
 	turtle.turnRight()
 	turtle.forward()
 	
-	for i = 1, sz do
-		if i == 1 then turtle.select(3) else turtle.select(1) end
-		turtle.placeDown()
-		turtle.up()
-	end
-
 	for i = 1, sz do turtle.down() end
-	
-	turtle.back()
-	turtle.back()
 	
 	for i = 1, sz do
 		if i == 1 then turtle.select(3) else turtle.select(1) end
 		turtle.placeDown()
 		turtle.up()
 	end
-
+	
+	turtle.back()
+	turtle.back()
+	
 	for i = 1, sz do turtle.down() end
+	
+	for i = 1, sz do
+		if i == 1 then turtle.select(3) else turtle.select(1) end
+		turtle.placeDown()
+		turtle.up()
+	end
 	
 	turtle.turnLeft()
 	turtle.back()
 	turtle.down()
 	
+	for i = 1, sz do turtle.down() end
+
 	for i = 1, sz do
 		turtle.select(2)
 		turtle.place()
 		turtle.up()
 	end
-
-	for i = 1, sz do turtle.down() end
 	
 	turtle.up()
+	
+	for i = 1, sz do turtle.down() end
 	
 	for i = 1, sz do
 		if i == 1 then turtle.select(3) else turtle.select(1) end
