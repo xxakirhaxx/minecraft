@@ -166,13 +166,27 @@ function equipPickAxe ()
 	
 end
 
+function clearInv ()
+
+	chest.setFrequency(0)
+	
+	for i = 1, 16 do
+		turtle.select(i)
+		turtle.dropDown()
+	end
+	
+	chest.setFrequency(frequency)
+	
+end
+
 function buildLightCol(section)
 	
 	local sz = 5
 	
+	clearInv()
 	refuel()
 	
-	getItem("Block of Iron", 1, 20)
+	getItem("Block of Iron", 1, 16)
 	getItem("Red Alloy Wire", 2, 5)
 	getItem("Radiant Lumium Lamp", 3, 4)
 	
@@ -256,6 +270,7 @@ function main ()
 	openFrequency()
 	chest.setFrequency(frequency)
 
+	clearInv()
 	emptyChest()
 	refuel()
 	equipPickAxe()
@@ -263,6 +278,9 @@ function main ()
 	for i = startAtCol, numCols do
 		buildLightCol(i)
 	end
+	
+	clearInv()
+	emptyChest()
 	
 	closeFrequency()
 	chest.setFrequency(0)
