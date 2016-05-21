@@ -95,7 +95,7 @@ function forwardAndPlaceDown(slot,...)
 	if select(1,...) then torch = select(1,...) end
 	
 	if obstruction == true and slot ~= 0 then
-		if item == "minecraft:torch" then
+		if item.name == "minecraft:torch" then
 			moveDown = true
 		end
 	end
