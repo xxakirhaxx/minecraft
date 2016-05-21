@@ -86,12 +86,15 @@ function refuel ()
 				
 end
 
-function forwardAndPlaceDown(slot, torch)
+function forwardAndPlaceDown(slot,...)
 
 	local obstruction, item = turtle.inspectDown()
 	local moveDown = false
+	local torch = false
 	
-	if obstruction == true then
+	if select(1,...) then torch = select(1,...) end
+	
+	if obstruction == true and slot ~= 0 then
 		if item == "minecraft:torch" then
 			moveDown = true
 		end
@@ -102,7 +105,7 @@ function forwardAndPlaceDown(slot, torch)
 	
 	obstruction, item = turtle.inspectDown()
 	
-	if obstruction == true then
+	if obstruction == true and slot ~= 0 then
 		turtle.select(15)
 		turtle.digDown()
 		
@@ -123,10 +126,14 @@ function forwardAndPlaceDown(slot, torch)
 		turtle.select(16)
 		turtle.placeDown()
 	end
+	
+	turtle.select(1)
 end
 
 function buildNormalSection (y)
 
+	local torch = true
+	
 	refuel()
 	
 	getItem("Block of Iron", 1, 42)
@@ -148,10 +155,10 @@ function buildNormalSection (y)
 		turtle.up()
 	end
 	
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	forwardAndPlaceDown(2)
 	forwardAndPlaceDown(2)
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	forwardAndPlaceDown(1)
 	forwardAndPlaceDown(3)
 	
@@ -201,11 +208,11 @@ function buildNormalSection (y)
 	forwardAndPlaceDown(2)
 	
 	turtle.turnLeft()
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	turtle.turnLeft()
 	forwardAndPlaceDown(2)
 	forwardAndPlaceDown(2)
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	forwardAndPlaceDown(1)
 	forwardAndPlaceDown(3)
 	
@@ -226,10 +233,10 @@ function buildNormalSection (y)
 	
 	
 	
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	forwardAndPlaceDown(2)
 	forwardAndPlaceDown(2)
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	forwardAndPlaceDown(3)
 	forwardAndPlaceDown(3)
 	
@@ -299,11 +306,11 @@ function buildNormalSection (y)
 	forwardAndPlaceDown(2)
 	
 	turtle.turnLeft()
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	turtle.turnLeft()
 	forwardAndPlaceDown(2)
 	forwardAndPlaceDown(2)
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	forwardAndPlaceDown(3)
 	forwardAndPlaceDown(3)
 	
@@ -324,10 +331,10 @@ function buildNormalSection (y)
 	
 	
 	
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	forwardAndPlaceDown(2)
 	forwardAndPlaceDown(2)
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	forwardAndPlaceDown(1)
 	forwardAndPlaceDown(3)
 	
@@ -377,11 +384,11 @@ function buildNormalSection (y)
 	forwardAndPlaceDown(2)
 	
 	turtle.turnLeft()
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	turtle.turnLeft()
 	forwardAndPlaceDown(2)
 	forwardAndPlaceDown(2)
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	forwardAndPlaceDown(1)
 	forwardAndPlaceDown(3)
 	
@@ -401,10 +408,10 @@ function buildNormalSection (y)
 	
 	
 	
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	forwardAndPlaceDown(2)
 	forwardAndPlaceDown(2)
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	forwardAndPlaceDown(1)
 	forwardAndPlaceDown(3)
 	
@@ -454,11 +461,11 @@ function buildNormalSection (y)
 	forwardAndPlaceDown(2)
 	
 	turtle.turnLeft()
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	turtle.turnLeft()
 	forwardAndPlaceDown(2)
 	forwardAndPlaceDown(2)
-	forwardAndPlaceDown(1)
+	forwardAndPlaceDown(1, torch)
 	forwardAndPlaceDown(1)
 	forwardAndPlaceDown(3)
 	
@@ -681,6 +688,7 @@ function main ()
 	
 	turtle.placeDown()
 
+	
 	for i = 1, nSection do
 		fillNuclearReactor(i)
 	end
