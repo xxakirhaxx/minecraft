@@ -73,25 +73,6 @@ function receive (protocol)
 	return id, msg
 end
 
-
-
---Removes a nuclear control system
---id: int
---nuclear system id to be deleted
---returns: boolean
--- true if delete succesful false if unsuccesful
-local function removeNuclearControlSystem (id)
-	
-	for key, values in pairs(nuclearControlSystems) do
-		if tonumber(key) == tonumber(id) then
-			table.remove(nuclearControlSystems, tonumber(id))
-			return true
-		end
-	end
-	
-	return false
-end
-
 local function getNuclearControlIDs ()
 
 	local modem = getPeripheral("modem")
@@ -111,34 +92,23 @@ local function updateNuclearControlSystemsStats (...)
 
 	local rid = 0
 	local rMsg = {}
+	local ids = getNuclearControlIDs()
 	
-	if args ~= nil then
-		
-		local id = args[1]
-			
-			repeat
-				send(id, "getStats", nuclearControlProt)
-				rid, rMsg = receive(nuclearControlProt)
-			until tonumber(rid) == tonumber(id) and rMsg.msg.currentMode ~= nil
-			
-			nuclearControlSystems[tonumber(rid)] = rMsg.msg
-
-		
+	if #ids > 0 then
+		nuclearControlSystems = {}
 	else
+		return
+	end
 	
-		local ids = getNuclearControlIDs()
+	for i = 1, #ids do
 		
-		for i = 1, #ids do
-		
-			repeat
-				send(ids[i], "getStats", nuclearControlProt)
-				rid, rMsg = receive(nuclearControlProt)
-			until tonumber(rid) == tonumber(ids[i]) and rMsg.msg.currentMode ~= nil
+		repeat
+			send(ids[i], "getStats", nuclearControlProt)
+			rid, rMsg = receive(nuclearControlProt)
+		until tonumber(rid) == tonumber(ids[i]) and rMsg.msg.currentMode ~= nil
 			
-			nuclearControlSystems[tonumber(rid)] = rMsg.msg
+		nuclearControlSystems[tonumber(rid)] = rMsg.msg
 
-		end
-		
 	end
 	
 end
@@ -428,7 +398,8 @@ local function handleCommandEvent (cmd)
 		else
 			rMsg = executeCommand(0,c[1])
 		end
-		
+	elseif c[1] == "help" then
+		print("Commands: stop [id?], shutdown [id?], start [id?], disconnect [id?], update, show [all, energy, cooldown, shutdown], quit")
 	elseif c[1] == "update" then
 		rMsg = updateNuclearControlSystemsStats()
 	elseif c[1] == "show" then
