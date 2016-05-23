@@ -219,6 +219,7 @@ function wait (num)
 		if protocol == nuclearControlProt then
 			msg = command(id, msg.msg)
 		elseif tostring(protocol) == "dns" then
+			dbug("Sending dns msg to id: "..tostring(id).." computerID: "..tostring(os.getComputerID()).." protocol: "..tostring(protocol))
 			rednet.open(modem)
 			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
 			rednet.close(modem)
