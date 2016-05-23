@@ -225,7 +225,10 @@ end
 function init ()
 
 	os.sleep(5)
-	sendReactorInfo(0)
+	
+	rednet.open(modem)
+	rednet.host(tostring(nuclearControlProt), tostring(nuclearControlProt))
+	rednet.close(modem)
 	
 end
 

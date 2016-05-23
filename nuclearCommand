@@ -247,29 +247,6 @@ local function handleNuclearSystemEvent (id, msg)
 	nuclearControlSystems[tonumber(id)] = msg.msg
 end
 
-local function reset ()
-
-	local modem = getPeripheral("modem")
-	
-	tid = os.startTimer(5)
-	
-	while true do
-		broadcast("getStats", nuclearControlProt)
-		rednet.open(modem)
-		local event, id, msg, protocol = os.pullEvent()
-		rednet.close(modem)
-	
-		if event == "timer" then break end
-		
-		if event == "rednet_message" then
-			if protocol == nuclearControlProtocol and msg.msg.currentMode ~= nil then
-				nuclearControlSystems[tonumber(id)] = msg.msg
-			end
-		end
-	end
-	
-end
-
 --Sends a command to one or all nuclear control systems
 --id: int
 --if id is 0 cmd will be broadcast to all nuclear control systems
@@ -369,8 +346,6 @@ local function init ()
 	rednet.open(modem)
 	rednet.host(tostring(nuclearCommandHost), tostring(nuclearCommandHost))
 	rednet.close(modem)
-	
-	reset()
 	
 	print("Initialization Complete!")
 
