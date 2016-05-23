@@ -479,19 +479,19 @@ local function eventHandler ()
 	
 	--handle events
 	if protocol == nuclearControlProt and #msg.msg > 1 then
-		dbug("Event: "..tostring(event).." Handling id: "..tostring(id).." msg: "..tostring(msg.msg))
+		dbug("Event: "..tostring(event).." Handling id: "..tostring(id))
 		msg = handleNuclearSystemEvent(id, msg)
 	elseif event == "rednet_message" then
-		dbug("Event: "..tostring(event).." Handling id: "..tostring(id).." msg: "..tostring(msg.msg))
+		dbug("Event: "..tostring(event).." Handling id: "..tostring(id))
 		msg = handleRednetMessageEvent(id, msg)
 	elseif event == "key" then
-		dbug("Event: "..tostring(event).." Handling id: "..tostring(id).." msg: "..tostring(msg.msg))
+		dbug("Event: "..tostring(event).." Handling id: "..tostring(id))
 		msg = handleCommandEvent(read())
 	elseif event == "timer" and id == tid then
-		dbug("Event: "..tostring(event).." Handling id: "..tostring(id).." msg: "..tostring(msg.msg))
+		dbug("Event: "..tostring(event).." Handling id: "..tostring(id))
 		msg = handleSystemEvent()
 	elseif event == "monitor_touch" then
-		dbug("Event: "..tostring(event).." Handling id: "..tostring(id).." msg: "..tostring(msg.msg))
+		dbug("Event: "..tostring(event).." Handling id: "..tostring(id))
 		msg = handleMonitorTouchEvent()
 	end
 	
