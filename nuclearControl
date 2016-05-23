@@ -213,6 +213,7 @@ function wait (num)
 	setCurrentMode("")
 	
 	if event == "rednet_message" and protocol == nuclearControlProt then
+		dbug("id: "..tostring(id).." msg: "..tostring(msg.msg))
 		msg = command(id, msg.msg)	
 	end
 	
