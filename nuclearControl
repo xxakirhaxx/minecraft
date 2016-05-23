@@ -270,12 +270,8 @@ function systemCycle ()
 		
 		if item ~= nil then
 			
-			if item["dmg"]/item["max_dmg"] < .05 and item["name"] ~= "reactorUraniumQuad" then
+			if item["dmg"]/item["max_dmg"] < .05 then
 				partsRdy = partsRdy + 1
-			end
-
-			if item["dmg"]/item["max_dmg"] < .05 and item["name"] == "reactorUraniumQuad" then
-				uraniumRdy = uraniumRdy + 1
 			end
 			
 			if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
@@ -290,7 +286,7 @@ function systemCycle ()
 		end
 	end
 	
-	if invSize - 4 <= partsRdy and invSize - 50 <= uraniumRdy and energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() < 1 then
+	if invSize <= partsRdy and energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() < 1 then
 		mode = "energy"
 	end
 	
