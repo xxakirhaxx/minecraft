@@ -114,11 +114,12 @@ function shutDownMode ()
 end
 
 function display (mode)
-	term.clear()
-	print("Current Temperature: ", reactor.getHeat())
-	print("Max Temperature: ", reactor.getMaxHeat())
-	print("Shutdown Temperature: ", reactor.getMaxHeat() / 5)
-	print("System State: ", mode)
+	--term.clear()
+	--print("ID: "..tostring(os.getComputerID()))
+	--print("Current Temperature: ", reactor.getHeat())
+	--print("Max Temperature: ", reactor.getMaxHeat())
+	--print("Shutdown Temperature: ", reactor.getMaxHeat() / 5)
+	--print("System State: ", mode)
 	
 end
 
@@ -205,6 +206,8 @@ function wait (num)
 		event, id, msg, protocol = os.pullEvent()
 		rednet.close(modem)
 		
+		dbug("Event: "..tostring(event).." id: "..tostring(id).." msg: "..tostring(msg).." protocol: "..tostring(protocol))
+		
 		if event == "timer" or event == "rednet_message" then
 			break
 		end
@@ -247,6 +250,7 @@ while true do
 	local shutDownTemp = maxTemp / 5
 	local invSize = reactor.getInventorySize()
 	
+	dbug("Beginning Cycle.")
 	setCurrentMode("energy")
 	
 	-- Lock into cool down mode if  temp is to high until temp is 0
