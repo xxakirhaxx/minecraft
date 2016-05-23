@@ -122,6 +122,9 @@ local function updateNuclearControlSystemsStats (...)
 				send(key, "getStats", nuclearControlProt)
 				rid, rMsg = receive(nuclearControlProt)
 				dbug("Received rid: "..tostring(rid).." rMsg.msg: "..tostring(rMsg.msg))
+				for key, value in pairs(rMsg.msg) do
+					print(tostring(key).." : "..tostring(value))
+				end
 			until tonumber(rid) == tonumber(key) and #rMsg.msg > 0
 			
 			nuclearControlSystems[tonumber(rid)] = rMsg.msg
