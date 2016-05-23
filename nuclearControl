@@ -264,7 +264,7 @@ function systemCycle ()
 		
 		if item ~= nil then
 			
-			if item["dmg"]/item["max_dmg"] < .05 or (item["name"] == "reactorUraniumQuad" and item["dmg"]/item["max_dmg"] <= .95) then
+			if item["dmg"]/item["max_dmg"] < .05 or (item["name"] == "reactorUraniumQuad") then
 				partsRdy = partsRdy + 1
 			end
 			
