@@ -102,17 +102,16 @@ local function updateNuclearControlSystemsStats (...)
 	local rMsg = {}
 	local ids = getNuclearControlIDs()
 	
-	if #ids > 0 then
-		nuclearControlSystems = {}
-	else
-		return
-	end
-	
+	nuclearControlSystems = {}
+
 	for i = 1, #ids do
 		
 		send(ids[i], "getStats", nuclearControlProt)
 		rid, rMsg = receive(nuclearControlProt, ids[i])	
-		nuclearControlSystems[tonumber(rid)] = rMsg.msg
+		
+		if rid ~= nil and rid ~= 0 then
+			nuclearControlSystems[tonumber(rid)] = rMsg.msg
+		end
 
 	end
 	
