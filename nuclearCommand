@@ -247,6 +247,25 @@ local function handleNuclearSystemEvent (id, msg)
 	nuclearControlSystems[tonumber(id)] = msg.msg
 end
 
+local function reset ()
+
+	tid = os.startTimer(5)
+	
+	while true do
+		broadcast("getStats", nuclearControlProt)
+		rednet.open(modem)
+		local event, id, msg, protocol = os.pullEvent()
+		rednet.close(modem)
+	
+		if event == "timer" then break end
+		
+		if protocol == nuclearControlProtocol and msg.msg.currentMode ~= nil then
+			nuclearControlSystems[tonumber(id)] = msg.msg
+		end
+	end
+	
+end
+
 --Sends a command to one or all nuclear control systems
 --id: int
 --if id is 0 cmd will be broadcast to all nuclear control systems
@@ -417,8 +436,8 @@ local function handleCommandEvent (cmd)
 			rMsg = executeCommand(0,c[1])
 		end
 		
-	elseif c[1] == "init" then
-		init()
+	elseif c[1] == "reset" then
+		reset()
 	elseif c[1] == "show" then
 		if c[2] == nil then
 			filter = "all"
