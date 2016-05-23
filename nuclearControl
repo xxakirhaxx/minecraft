@@ -258,9 +258,6 @@ function systemCycle ()
 	
 	if temp > shutDownTemp then
 		mode = "cooldown"
-	elseif temp < shutDownTemp and temp > 2 then
-	elseif temp < 2 then
-		mode = "energy"
 	end
 	
 	if energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() >= 1 then
