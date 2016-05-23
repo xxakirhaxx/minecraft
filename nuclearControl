@@ -225,7 +225,7 @@ end
 function init ()
 
 	os.sleep(5)
-	sendReactorInfo()
+	sendReactorInfo(0)
 	
 end
 
