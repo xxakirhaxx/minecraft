@@ -293,7 +293,7 @@ function systemCycle ()
 		end
 	end
 	
-	if invSize == partsRdy and invSize == uraniumRdy and energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() < 1 then
+	if invSize - 4 <= partsRdy and invSize - 50 <= uraniumRdy and energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() < 1 then
 		mode = "energy"
 	end
 	
