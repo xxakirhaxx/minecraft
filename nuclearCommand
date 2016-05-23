@@ -109,7 +109,7 @@ local function updateNuclearControlSystemsStats (...)
 				rid, rMsg = receive(nuclearControlProt)
 			until tonumber(rid) == tonumber(id) and #rMsg.msg > 0
 			
-			nuclearControlSystems[rid] = rMsg.msg
+			nuclearControlSystems[tonumber(rid)] = rMsg.msg
 
 		
 	else
@@ -121,7 +121,7 @@ local function updateNuclearControlSystemsStats (...)
 				rid, rMsg = receive(nuclearControlProt)
 			until tonumber(rid) == tonumber(key) and #rMsg.msg > 0
 			
-			nuclearControlSystems[rid] = rMsg.msg
+			nuclearControlSystems[tonumber(rid)] = rMsg.msg
 
 		end
 		
@@ -179,7 +179,10 @@ local function drawMonitor(page)
 	local totalEU = 0
 	local ids = {}
 	
+	dbug("Drawing monitor")
+	
 	for key, value in pairs(nuclearControlSystems) do
+		dbug("Found id: "..tostring(key))
 		if filter == nuclearControlSystems[key].currentMode or filter == "all" then
 			ids[#ids+1] = tonumber(key) 
 		end
