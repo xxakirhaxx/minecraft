@@ -208,7 +208,7 @@ function wait (num)
 		
 		dbug("Event: "..tostring(event).." id: "..tostring(id).." msg: "..tostring(msg).." protocol: "..tostring(protocol))
 		
-		if event == "timer" or event == "rednet_message" then
+		if (event == "timer" and tostring(tid) == tostring(id)) or event == "rednet_message" then
 			break
 		end
 	end
@@ -224,11 +224,12 @@ function wait (num)
 			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
 			rednet.close(modem)
 		end
+	elseif event == "timer" then
+		systemCycle()
 	end
 	
 	os.cancelTimer(tid)
 	
-	return msg
 end
 
 function init ()
@@ -243,55 +244,71 @@ function init ()
 	
 end
 
-init()
-
-while true do
+function systemCycle ()
 	local temp = reactor.getHeat()
 	local maxTemp = reactor.getMaxHeat()
 	local shutDownTemp = maxTemp / 5
 	local invSize = reactor.getInventorySize()
+	local coolDown = false
+	local mode = currentMode
+	local partsRdy = 0
+	local uraniumRdy = 0
 	
 	dbug("Beginning Cycle.")
-	setCurrentMode("energy")
 	
-	-- Lock into cool down mode if  temp is to high until temp is 0
 	if temp > shutDownTemp then
-		while reactor.getHeat() > 1 do
-			setCurrentMode("cooldown")
-			wait(cycle)
-		end
-		setCurrentMode("energy")
-	end
-	
-	for i = 1, invSize do
-		local item = reactor.getStackInSlot(i)
-		if item ~= nil then
-			--Check parts dmg, if any is too high send system into cool down mode
-			if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
-				while reactor.getStackInSlot(i)["dmg"]/item["max_dmg"] > .05 do
-					setCurrentMode("cooldown")
-					wait(cycle)
-				end
-				setCurrentMode("energy")
-			end
-			
-			--Check fuel rod dmg, if dmg is too high shut down 
-			if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
-				while item["dmg"]/item["max_dmg"] > .95 do
-					setCurrentMode("shutdown")
-					wait(cycle)
-				end
-				setCurrentMode("energy")
-			end
-		end
+		mode = "cooldown"
+	elseif temp < shutDownTemp and temp > 2 then
+	elseif temp < 2 then
+		mode = "energy"
 	end
 	
 	if energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() >= 1 then
-		while energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() >= 1 do
-			setCurrentMode("cooldown")
-			wait(cycle)
-		end
-		setCurrentMode("energy")
+		mode = "cooldown"
 	end
-	wait(cycle)
+	
+	for i = 1, invSize do
+		
+		local item = reactor.getStackInSlot(i)
+		
+		if item ~= nil then
+			
+			if item["dmg"]/item["max_dmg"] < .05 and item["name"] ~= "reactorUraniumQuad" then
+				partsRdy = partsRdy + 1
+			end
+
+			if item["dmg"]/item["max_dmg"] < .05 and item["name"] == "reactorUraniumQuad" then
+				uraniumRdy = uraniumRdy + 1
+			end
+			
+			if item["dmg"]/item["max_dmg"] > .5 and item["name"] ~= "reactorUraniumQuad" then
+				mode = "cooldown"
+				break
+			end
+			
+			if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
+				mode = "shutdown"
+				break
+			end
+		end
+	end
+	
+	if invSize == partsRdy and invSize == uraniumRdy and energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() < 1 then
+		mode = "energy"
+	end
+	
+	setCurrentMode(mode)
+	
 end
+
+function main ()
+
+	init()
+	
+	while true do
+		wait(cycle)
+	end
+	
+end
+
+main()
