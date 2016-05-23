@@ -48,13 +48,19 @@ function send (id, msg, protocol)
 
 end
 
-function receive (protocol)
+function receive (...)
 
 	local modem = getPeripheral("modem")
 	local id = 0
 	local msg = {}
 	local p = ""
 	local attempts = 0
+	
+	local protocol = tostring(select(1,...))
+	local cid = tonumber(select(2,...))
+	
+	if protocol == nil then protocol = "" end
+	if cid == nil then cid = 0 end
 	
 	repeat
 		rednet.open(modem)
@@ -68,7 +74,9 @@ function receive (protocol)
 			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(p))
 			rednet.close(modem)
 		end
-	until p == protocol or attempts > timeOutAttempts 
+		
+		
+	until ((protocol == "" or p == protocol) and (cid == 0 or tonumber(cid) == tonumber(id))) or attempts > timeOutAttempts 
 	
 	return id, msg
 end
@@ -102,11 +110,8 @@ local function updateNuclearControlSystemsStats (...)
 	
 	for i = 1, #ids do
 		
-		repeat
-			send(ids[i], "getStats", nuclearControlProt)
-			rid, rMsg = receive(nuclearControlProt)
-		until tonumber(rid) == tonumber(ids[i]) and rMsg.msg.currentMode ~= nil
-			
+		send(ids[i], "getStats", nuclearControlProt)
+		rid, rMsg = receive(nuclearControlProt, ids[i])	
 		nuclearControlSystems[tonumber(rid)] = rMsg.msg
 
 	end
@@ -247,12 +252,10 @@ local function executeCommand (id, cmd)
 	--It's poor design, but a very specific action needs to be taken if the cmd is disconnect
 	if id > 0 then
 		
-		repeat
-			send(id, cmd, nuclearControlProt)
-			rid, rMsg = receive(nuclearControlProt)
-		until id == rid and rMsg.msg.success ~= nil
+		send(id, cmd, nuclearControlProt)
+		rid, rMsg = receive(nuclearControlProt, id)
 		
-		if cmd == "disconnect" then
+		if cmd == "disconnect" and rMsg.msg.success ~= nil then
 			nuclearControlSystems[tonumber(rid)] = nil
 		end
 		
@@ -260,13 +263,13 @@ local function executeCommand (id, cmd)
 	
 		if cmd == "disconnect" then
 			for key, value in pairs(nuclearControlSystems) do
-				
-				repeat
-					send(key, cmd, nuclearControlProt)
-					rid, rMsg = receive(nuclearControlProt)
-				until id == rid and rMsg.msg.success ~= nil
-				
-				nuclearControlSystems[key] = nil
+
+				send(key, cmd, nuclearControlProt)
+				rid, rMsg = receive(nuclearControlProt, key)
+
+				if rMsg.msg.success ~= nil then
+					nuclearControlSystems[key] = nil
+				end
 			end
 
 		else
