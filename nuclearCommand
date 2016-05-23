@@ -116,6 +116,7 @@ local function updateNuclearControlSystemsStats (...)
 	
 		for key, value in pairs(nuclearControlSystems) do
 		
+			dbug("key: "..tostring(key))
 			repeat
 				send(key, "getStats")
 				rid, rMsg = receive(nuclearControlProt)
