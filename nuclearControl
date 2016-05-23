@@ -229,6 +229,8 @@ end
 
 function init ()
 
+	local modem = getPeripheral("modem")
+	
 	os.sleep(5)
 	
 	rednet.open(modem)
