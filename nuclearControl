@@ -234,7 +234,7 @@ function init ()
 	os.sleep(5)
 	
 	rednet.open(modem)
-	rednet.host(tostring(nuclearControlProt), tostring(nuclearControlProt)..tostring(os.getComputerID()))
+	rednet.host(tostring(nuclearControlProt), tostring(tostring(nuclearControlProt)..tostring(os.getComputerID())))
 	rednet.close(modem)
 	
 end
