@@ -463,7 +463,7 @@ local function eventHandler ()
 
 	
 	--handle events
-	if protocol == nuclearControlProtocol and #msg.msg > 1 then
+	if protocol == nuclearControlProtocol and msg.msg ~= nil then
 		msg = handleNuclearSystemEvent(id, msg)
 	elseif event == "rednet_message" then
 		msg = handleRednetMessageEvent(id, msg)
