@@ -165,16 +165,6 @@ function command (id, cmd)
  
 		commandOverride = true
 		
-	elseif cmd == "disconnect" then
-	
-		send(id, {success = true}, nuclearControlProt)
-		
-		commandOverride = false
-		
-		setCurrentMode("shutdown")
-		
-		os.reboot()
-		
 	elseif cmd == "getStats" then
 		sendReactorInfo(id)
 	elseif cmd == "start" then
