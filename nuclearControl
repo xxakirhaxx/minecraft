@@ -177,11 +177,15 @@ function command (id, cmd)
 		
 	elseif cmd == "getStats" then
 		sendReactorInfo(id)
-	elseif cmd == "start" or cmd == "turnon" then
+	elseif cmd == "start" then
 		
 		send(id, {success = true}, nuclearControlProt)
 		
 		commandOverride = false
+		
+		setCurrentMode("energy")
+		
+		systemCycle()
 		
 	end	
 	
