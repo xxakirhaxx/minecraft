@@ -350,6 +350,8 @@ local function init ()
 	rednet.host(tostring(nuclearCommandHost), tostring(nuclearCommandHost))
 	rednet.close(modem)
 	
+	broadcast("getStats", nuclearControlProt)
+	
 	print("Initialization Complete!")
 
 end
