@@ -221,6 +221,14 @@ function wait (num)
 	return msg
 end
 
+function init ()
+
+	os.sleep(5)
+	sendReactorInfo()
+	
+end
+
+init()
 
 while true do
 	local temp = reactor.getHeat()
