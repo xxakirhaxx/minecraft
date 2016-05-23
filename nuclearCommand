@@ -264,7 +264,7 @@ local function executeCommand (id, cmd)
 		dbug("Waiting for response...")
 		
 		repeat
-			send(id, cmd)
+			send(id, cmd, nuclearControlProt)
 			rid, rMsg = receive(nuclearControlProt)
 		until id == rid and rMsg.msg.success ~= nil
 		
@@ -282,7 +282,7 @@ local function executeCommand (id, cmd)
 				dbug("Sending cmd: "..tostring(cmd).." to id: "..tostring(key))
 				dbug("Waiting for response...")
 				repeat
-					send(key, cmd)
+					send(key, cmd, nuclearControlProt)
 					rid, rMsg = receive(nuclearControlProt)
 				until id == rid and rMsg.msg.success ~= nil
 				
@@ -294,7 +294,7 @@ local function executeCommand (id, cmd)
 		else
 			for key, value in pairs(nuclearControlSystems) do
 				
-				send(key, cmd)
+				send(key, cmd, nuclearControlProt)
 				
 			end
 		end
