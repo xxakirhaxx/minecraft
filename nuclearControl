@@ -81,11 +81,11 @@ function receive (protocol)
 	return id, msg
 end
 
-function sendReactorInfo ()
+function sendReactorInfo (id)
 
 	local reactorInfo = {getHeat = reactor.getHeat(), getMaxHeat = reactor.getMaxHeat(), getEUOutput = reactor.getEUOutput(), currentMode = currentMode}
 	
-	send(0, reactorInfo, nuclearControlProt)
+	send(id, reactorInfo, nuclearControlProt)
 	
 end
 
@@ -175,7 +175,7 @@ function command (id, cmd)
 		os.reboot()
 		
 	elseif cmd == "getStats" then
-		sendReactorInfo()
+		sendReactorInfo(id)
 	elseif cmd == "start" or cmd == "turnon" then
 		
 		send(id, {success = true}, nuclearControlProt)
