@@ -4,64 +4,84 @@ local cycle = 5
 local currentMode = "energy"
 local nuclearControlId = 0
 local modemSide = "front"
+local nuclearControlProt = "nuclearControl"
+local commandOverride = false
+local nuclearCommandHost = "nuclearCommand"
+
+function getPeripheral (name)
+	for i = 1, #peripheral.getNames() do
+		if peripheral.getType(peripheral.getNames()[i]) == name then
+			return peripheral.getNames()[i]
+		end
+	end
+end
+
+local d = true
+
+function dbug (s)
+
+	if d then print(s) end
+	
+end
+
+function broadcast (msg, protocol)
+
+	local modem = "back"
+	
+	rednet.open(modem)
+	rednet.broadcast(msg)
+	rednet.close(modem)
+	
+end
+
+function send (id, msg, protocol)
+
+	local modem = getPeripheral("modem")
+	
+	if id == 0 then
+		rednet.open(modem)
+		id = rednet.lookup(nuclearCommandHost, nuclearCommandHost)
+		rednet.close(modem)
+	end
+	
+	rednet.open(modem)
+	rednet.send(tonumber(id), {msg = msg}, tostring(protocol))
+	rednet.close(modem)
+
+end
+
+function receive (protocol)
+
+	local modem = getPeripheral("modem")
+	local id = 0
+	local msg = {}
+	local p = ""
+	local attempts = 0
+	
+	repeat
+		rednet.open(modem)
+		id, msg, p = rednet.receive(tonumber(timeout))
+		rednet.close(modem)
+	
+		attempts = attempts + 1
+		
+		if p == "dns" then
+			rednet.open(modem)
+			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(p))
+			rednet.close(modem)
+		end
+	until p == protocol or attempts > timeOutAttempts 
+	
+	return id, msg
+end
 
 function sendReactorInfo ()
 
-	local id = 0
-	local msg = ""
 	local reactorInfo = {getHeat = reactor.getHeat(), getMaxHeat = reactor.getMaxHeat(), getEUOutput = reactor.getEUOutput(), currentMode = currentMode}
 	
-	rednet.open(modemSide)
-	rednet.send(tonumber(nuclearControlId), reactorInfo)
-	rednet.close(modemSide)
+	send(0, reactorInfo, nuclearControlProt)
 	
 end
-
-function getNuclearControlId ()
-	local event = ""
-	local id = 0
-	local msg = ""
-	
-	while msg ~= "nuclearControl" do
-	
-		rednet.open(modemSide)
-		id, msg = rednet.receive()
-		rednet.close(modemSide)
-		
-		print(nuclearControlId, " : ", id, " : ", msg)
-		if msg == "turnon" and id == nuclearControlId then
-			
-			rednet.open(modemSide)
-			rednet.send(id, "received")
-			rednet.close(modemSide)
-			
-			return id
-		elseif msg == "getStats" and id == nuclearControlId then
-			sendReactorInfo()
-		elseif id == nuclearControlId then
-		
-			rednet.open(modemSide)
-			rednet.send(id, "received")
-			rednet.close(modemSide)
-			
-		end
-		
-	end
-	
-	rednet.open(modemSide)
-	rednet.send(id, "nuclearCommand")
-	rednet.close(modemSide)
-	
-	while msg ~= "start" do
-		rednet.open(modemSide)
-		id, msg = rednet.receive()
-		rednet.close(modemSide)
-	end
-	
-	return id
-end
-
-nuclearControlId = getNuclearControlId()
 
 function coolDownMode ()
 	redstone.setOutput("back", false)
@@ -98,6 +118,10 @@ end
 
 function setCurrentMode (m)
 	
+	if commandOverride == true then
+		return
+	end
+	
 	if m ~= "" then
 		currentMode = m
 	end
@@ -113,56 +137,57 @@ function setCurrentMode (m)
 end
 
 function command (id, cmd)
-
-	local m = currentMode
 	
 	if cmd == "shutdown" then
 		
-		rednet.open(modemSide)
-		rednet.send(id, "received")
-		rednet.close(modemSide)
+		send(id, {success = true}, nuclearControlProt)
+		
+		commandOverride = false
 		
 		setCurrentMode("shutdown")
-		getNuclearControlId()
-		setCurrentMode(m)
+		
+		commandOverride = true
 		
 	elseif cmd == "stop" then
 	
-		rednet.open(modemSide)
-		rednet.send(id, "received")
-		rednet.close(modemSide)
+		send(id, {success = true}, nuclearControlProt)
+
+		commandOverride = false
 		
-		msg = ""
 		setCurrentMode("cooldown")
+ 
+		commandOverride = true
 		
-		while msg ~= "start" do 
-			msg = wait(cycle) 
-		end
-		
-		rednet.open(modemSide)
-		rednet.send(id, "received")
-		rednet.close(modemSide)
-		
-		setCurrentMode(m)
 	elseif cmd == "disconnect" then
 	
-		rednet.open(modemSide)
-		rednet.send(id, "received")
-		rednet.close(modemSide)
+		send(id, {success = true}, nuclearControlProt)
+		
+		commandOverride = false
 		
 		setCurrentMode("shutdown")
+		
 		os.reboot()
+		
 	elseif cmd == "getStats" then
 		sendReactorInfo()
+	elseif cmd == "start" or cmd == "turnon" then
+		
+		send(id, {success = true}, nuclearControlProt)
+		
+		commandOverride = false
+		
 	end	
 	
 	return cmd
 end
 
 function wait (num)
+
+	local modem = getPeripheral("modem")
 	local event = ""
 	local id = 0
-	local msg = ""
+	local msg = {}
+	local protocol = ""
 	local tid  = 0
 	
 	if num > 0 then
@@ -170,9 +195,9 @@ function wait (num)
 	end
 
 	while true do
-		rednet.open(modemSide)
-		event, id, msg  = os.pullEvent()
-		rednet.close(modemSide)
+		rednet.open(modem)
+		event, id, msg, protocol = os.pullEvent()
+		rednet.close(modem)
 		
 		if event == "timer" or event == "rednet_message" then
 			break
@@ -181,8 +206,8 @@ function wait (num)
 		
 	setCurrentMode("")
 	
-	if event == "rednet_message" and id == nuclearControlId then
-		msg = command(id, msg)	
+	if event == "rednet_message" and protocol == nuclearControlProt then
+		msg = command(id, msg.msg)	
 	end
 	
 	os.cancelTimer(tid)

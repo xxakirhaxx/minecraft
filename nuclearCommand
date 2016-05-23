@@ -1,6 +1,7 @@
 --Time between running normal system events
 local cycle = 5
 local monitor = peripheral.wrap("top")
+local nuclearControlProt = "nuclearControl"
 local nuclearControlSystems = {}
 local nuclearControlIds = {}
 local currentPage = 0
@@ -8,37 +9,72 @@ local modemSide = "bottom"
 local pageSize = 54
 local timeOutAttempts = 5
 local timeout = 1
+local nuclearCommandHost = "nuclearCommand"
 local filter = "all"
 local filterMsg = "Showing all system entries"
 
---sends a message using nuclear control system protocol
---id: int
---nuclear control system id
---msg: string
---msg to send to nuclear control system
---return: boolean, any
---true if msg sent succesfully false if not, msg is whatever you were expecting back
-local function send (id, msg)
-
-	local rid = 0
-	local rMsg = ""
-	local connect = false
-	
-	for i = 1, timeOutAttempts do
-	
-		rednet.open(modemSide)
-		rednet.send(tonumber(id),msg)
-		rid, rMsg = rednet.receive(timeout)
-		rednet.close(modemSide)
-		
-		if tonumber(rid) == tonumber(id) and (type(rMsg) == "table" or (type(rMsg) == "string" and rMsg == "received")) then
-			connect = true
-			break
+function getPeripheral (name)
+	for i = 1, #peripheral.getNames() do
+		if peripheral.getType(peripheral.getNames()[i]) == name then
+			return peripheral.getNames()[i]
 		end
 	end
-	
-	return connect, rMsg
 end
+
+local d = true
+
+function dbug (s)
+
+	if d then print(s) end
+	
+end
+
+function broadcast (msg, protocol)
+
+	local modem = "back"
+	
+	rednet.open(modem)
+	rednet.broadcast(msg)
+	rednet.close(modem)
+	
+end
+
+function send (id, msg, protocol)
+
+	local modem = getPeripheral("modem")
+	
+	rednet.open(modem)
+	rednet.send(tonumber(id), {msg = msg}, tostring(protocol))
+	rednet.close(modem)
+
+end
+
+function receive (protocol)
+
+	local modem = getPeripheral("modem")
+	local id = 0
+	local msg = {}
+	local p = ""
+	local attempts = 0
+	
+	repeat
+		rednet.open(modem)
+		id, msg, p = rednet.receive(tonumber(timeout))
+		rednet.close(modem)
+	
+		attempts = attempts + 1
+		
+		if p == "dns" then
+			rednet.open(modem)
+			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(p))
+			rednet.close(modem)
+		end
+	until p == protocol or attempts > timeOutAttempts 
+	
+	return id, msg
+end
+
+
 
 --Removes a nuclear control system
 --id: int
@@ -47,10 +83,9 @@ end
 -- true if delete succesful false if unsuccesful
 local function removeNuclearControlSystem (id)
 	
-	for i = 1, #nuclearControlIds do
-		if nuclearControlIds[i] == id then
-			table.remove(nuclearControlSystems, id)
-			table.remove(nuclearControlIds, i)
+	for key, values in pairs(nuclearControlSystems) do
+		if tonumber(key) == tonumber(id) then
+			table.remove(nuclearControlSystems, tonumber(id))
 			return true
 		end
 	end
@@ -63,32 +98,31 @@ end
 --optional send number id to update a single nuclear control system
 local function updateNuclearControlSystemsStats (...)
 
-	
-	local id = 0
-	local msg = {}
-	local received = false
+	local rid = 0
+	local rMsg = {}
 	
 	if args ~= nil then
 		
-		id = args[1]
+		local id = args[1]
 			
-			received, msg = send(id, "getStats")
+			repeat
+				send(id, "getStats")
+				rid, rMsg = receive(nuclearControlProt)
+			until tonumber(rid) == tonumber(id) and #rMsg.msg > 0
+			
+			nuclearControlSystems[rid] = rMsg.msg
 
-			if received and type(msg) == "table" and msg ~= nil then
-				nuclearControlSystems[id] = msg
-			end
 		
 	else
 	
-		for i = 1, #nuclearControlIds do
+		for key, value in pairs(nuclearControlSystems) do
 		
-			id = nuclearControlIds[i]
+			repeat
+				send(key, "getStats")
+				rid, rMsg = receive(nuclearControlProt)
+			until tonumber(rid) == tonumber(key) and #rMsg.msg > 0
 			
-			received, msg = send(id, "getStats")
-				
-			if received and type(msg) == "table" and msg ~= nil then
-				nuclearControlSystems[id] = msg
-			end
+			nuclearControlSystems[rid] = rMsg.msg
 
 		end
 		
@@ -146,9 +180,9 @@ local function drawMonitor(page)
 	local totalEU = 0
 	local ids = {}
 	
-	for i = 1, #nuclearControlIds do
-		if nuclearControlSystems[tonumber(nuclearControlIds[i])] ~= nil and filter == nuclearControlSystems[tonumber(nuclearControlIds[i])].currentMode or filter == "all" then
-			ids[#ids+1] = nuclearControlIds[i] 
+	for key, value in pairs(nuclearControlSystems) do
+		if filter == nuclearControlSystems[key].currentMode or filter == "all" then
+			ids[#ids+1] = tonumber(key) 
 		end
 	end
 	
@@ -177,9 +211,9 @@ local function drawMonitor(page)
 		
 	end
 	
-	for i = 1, #nuclearControlIds do
+	for key, value in pairs(nuclearControlSystems) do
 	
-		totalEU = totalEU + nuclearControlSystems[tonumber(nuclearControlIds[i])].getEUOutput
+		totalEU = totalEU + nuclearControlSystems[key].getEUOutput
 		
 	end
 	
@@ -194,22 +228,6 @@ local function drawMonitor(page)
 	
 end
 
---Verifies if an id is a nuclear system id
---id: int
---Represents a possible computer id
---returns: boolean
---true if id exists in nuclearControlIds table else false
-local function isNuclearSystemId (id)
-
-	for i = 1, #nuclearControlIds do
-		if id == nuclearControlIds[i] then
-			return true
-		end
-	end
-
-	return false
-end
-
 --handles all nuclear system events
 --id: int
 --a nuclear system id
@@ -218,7 +236,7 @@ end
 --returns: string
 --return message
 local function handleNuclearSystemEvent (id, msg)
-	nuclearControlSystems[id] = msg
+	nuclearControlSystems[tonumber(id)] = msg.msg
 end
 
 --Sends a command to one or all nuclear control systems
@@ -231,42 +249,40 @@ end
 local function executeCommand (id, cmd)
 
 	local received = false
+	local rid = 0
 	local rMsg = ""
 	
 	--It's poor design, but a very specific action needs to be taken if the cmd is disconnect
 	if id > 0 then
 	
-		received, rMsg = send(tonumber(id), cmd)
+		repeat
+			send(id, cmd)
+			rid, rMsg = receive(nuclearControlProt)
+		until id == rid and rMsg.msg.success ~= nil
 		
-		if cmd == "disconnect" and received == true then
-			removeNuclearControlSystem(tonumber(id))
+		if cmd == "disconnect" then
+			nuclearControlSystems[tonumber(rid)] = nil
 		end
 		
 	else
 	
 		if cmd == "disconnect" then
-			for i = #nuclearControlIds, 1, -1 do
+			for key, value in pairs(nuclearControlSystems) do
 				
-				received, rMsg = send(tonumber(nuclearControlIds[i]), cmd)
+				repeat
+					send(key, cmd)
+					rid, rMsg = receive(nuclearControlProt)
+				until id == rid and rMsg.msg.success ~= nil
 				
-				if received then
-					removeNuclearControlSystem(tonumber(nuclearControlIds[i]))
-				end
-				
-			end	
+				nuclearControlSystems[key] = nil
+
 		else
-			for i = 1, #nuclearControlIds do
+			for key, value in pairs(nuclearControlSystems) do
 				
-				received, rMsg = send(tonumber(nuclearControlIds[i]), cmd)
+				send(key, cmd)
 				
 			end
 		end
-	end
-	
-	if received then
-		rMsg = ""
-	else
-		rMsg = "\""..cmd.."\" command not executed. Nuclear control system was busy."
 	end
 	
 	return rMsg
@@ -274,7 +290,6 @@ end
 
 --Handles normal system events
 local function handleSystemEvent ()
-	
 	
 	local msg = updateNuclearControlSystemsStats()
 	
@@ -290,26 +305,18 @@ end
 --senders msg
 --returns: string
 --return message
-local function handleRednetMessageEvent (id, msg)
+local function handleRednetMessageEvent (id, msg, protocol)
 
 	local rMsg = ""
+	local modem = getPeripheral("modem")
 	
-	return rMsg
-end
-
---Adds nuclear control system to nuclearControlIds and sends a start command
---id: int
---nuclear control system id
-local function addNuclearControlSystem (id)
-
-	
-	if nuclearControlSystems[tonumber(id)] == nil then
-		print("Adding "..id.." to nuclearControlIds")
-		--add id to table
-		nuclearControlIds[#nuclearControlIds + 1] = tonumber(id)
-		nuclearControlSystems[tonumber(id)] = {getHeat = 0, getMaxHeat = 0, getEUOutput = 0, currentMode = ""}
+	if protocol == "dns" then
+		rednet.open(modem)
+		rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
+		rednet.close(modem)
 	end
-	
+		
+	return rMsg
 end
 
 --initialize program
@@ -318,28 +325,15 @@ local function init ()
 	local event = ""
 	local id = 0
 	local msg = ""
+	local modem = getPeripheral("modem")
 	
 	print("Initializing system...")
 	--Clear Monitor and start initialize timer
 	monitor.clear()
 	
-	local tid = os.startTimer(10)
-	
-	while event ~= "timer" and id ~= tid do
-		
-		rednet.open(modemSide)
-		rednet.broadcast("nuclearControl")
-		event, id, msg = os.pullEvent()
-		rednet.close(modemSide)
-		
-		if event == "rednet_message" and msg == "nuclearCommand" then
-			addNuclearControlSystem(id)
-			rednet.open(modemSide)
-			rednet.send(id, "start")
-			rednet.close(modemSide)
-		end
-		
-	end
+	rednet.open(modem)
+	rednet.host(tostring(nuclearCommandHost), tostring(nuclearCommandHost))
+	rednet.close(modem)
 	
 	print("Initialization Complete!")
 
@@ -436,7 +430,7 @@ end
 local function handleMonitorTouchEvent ()
 
 	local rMsg = ""
-	local maxPage = math.ceil(#nuclearControlIds / pageSize)
+	local maxPage = math.ceil(#nuclearControlSystems / pageSize)
 	
 	currentPage = currentPage + 1
 	
@@ -453,33 +447,31 @@ end
 -- t: int
 -- time between performing system events
 local function eventHandler ()
+
+	local modem = getPeripheral("modem")
 	local event = ""
 	local id = 0
 	local msg = ""
 	local tid = os.startTimer(cycle)
+	local protocol = ""
 	
 	--get any event
-	rednet.open(modemSide)
-	event, id, msg = os.pullEvent()
-	rednet.close(modemSide)
+	rednet.open(modem)
+	event, id, msg, protocol = os.pullEvent()
+	rednet.close(modem)
 
 	
 	--handle events
-	if isNuclearSystemId(id) then
+	if protocol == nuclearControlProtocol then
 		msg = handleNuclearSystemEvent(id, msg)
-		if msg ~= "" then print(msg) end
 	elseif event == "rednet_message" then
 		msg = handleRednetMessageEvent(id, msg)
-		if msg ~= "" then print(msg) end
 	elseif event == "key" then
 		msg = handleCommandEvent(read())
-		if msg ~= "" and msg ~= "quit" then print(msg) end
 	elseif event == "timer" and id == tid then
 		msg = handleSystemEvent()
-		if msg ~= "" then print(msg) end
 	elseif event == "monitor_touch" then
 		msg = handleMonitorTouchEvent()
-		if msg ~= "" then print(msg) end
 	end
 	
 	os.cancelTimer(tid)
@@ -490,10 +482,12 @@ end
 --Handles everything before a shutdown occurs
 local function shutdown ()
 
-	for i = 1, #nuclearControlIds do
-		send(nuclearControlIds[i], "shutdown")
-	end
+	local modem = getPeripheral("modem")
 	
+	executeCommand(0, "shutdown")
+	rednet.open(modem)
+	rednet.unhost(nuclearCommandHost, nuclearCommandHost)
+	rednet.close(modem)
 	monitor.clear()
 	
 end
