@@ -42,7 +42,13 @@ function send (id, msg, protocol)
 		rednet.open(modem)
 		id = rednet.lookup(nuclearCommandHost, nuclearCommandHost)
 		rednet.close(modem)
+		
+		if id == nil then
+			return
+		end
+		
 	end
+	
 	
 	rednet.open(modem)
 	rednet.send(tonumber(id), {msg = msg}, tostring(protocol))
