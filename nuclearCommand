@@ -485,7 +485,7 @@ local function eventHandler ()
 		msg = handleNuclearSystemEvent(id, msg)
 	elseif event == "rednet_message" then
 		dbug("Event: "..tostring(event).." Handling id: "..tostring(id))
-		msg = handleRednetMessageEvent(id, msg)
+		msg = handleRednetMessageEvent(id, msg, protocol)
 	elseif event == "key" then
 		dbug("Event: "..tostring(event).." Handling id: "..tostring(id))
 		msg = handleCommandEvent(read())
