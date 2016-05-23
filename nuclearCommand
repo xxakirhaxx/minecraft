@@ -33,7 +33,7 @@ function broadcast (msg, protocol)
 	local modem = getPeripheral("modem")
 	
 	rednet.open(modem)
-	rednet.broadcast(msg)
+	rednet.broadcast(msg, protocol)
 	rednet.close(modem)
 	
 end
