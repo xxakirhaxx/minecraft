@@ -16,7 +16,7 @@ function getPeripheral (name)
 	end
 end
 
-local d = true
+local d = false
 
 function dbug (s)
 
@@ -114,12 +114,12 @@ function shutDownMode ()
 end
 
 function display (mode)
-	--term.clear()
-	--print("ID: "..tostring(os.getComputerID()))
-	--print("Current Temperature: ", reactor.getHeat())
-	--print("Max Temperature: ", reactor.getMaxHeat())
-	--print("Shutdown Temperature: ", reactor.getMaxHeat() / 5)
-	--print("System State: ", mode)
+	term.clear()
+	print("ID: "..tostring(os.getComputerID()))
+	print("Current Temperature: ", reactor.getHeat())
+	print("Max Temperature: ", reactor.getMaxHeat())
+	print("Shutdown Temperature: ", reactor.getMaxHeat() / 5)
+	print("System State: ", mode)
 	
 end
 
