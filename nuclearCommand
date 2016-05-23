@@ -105,7 +105,7 @@ local function updateNuclearControlSystemsStats (...)
 		local id = args[1]
 			
 			repeat
-				send(id, "getStats")
+				send(id, "getStats", nuclearControlProt)
 				rid, rMsg = receive(nuclearControlProt)
 			until tonumber(rid) == tonumber(id) and #rMsg.msg > 0
 			
@@ -118,7 +118,7 @@ local function updateNuclearControlSystemsStats (...)
 		
 			dbug("key: "..tostring(key))
 			repeat
-				send(key, "getStats")
+				send(key, "getStats", nuclearControlProt)
 				rid, rMsg = receive(nuclearControlProt)
 			until tonumber(rid) == tonumber(key) and #rMsg.msg > 0
 			
