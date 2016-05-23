@@ -215,7 +215,7 @@ function wait (num)
 	if event == "rednet_message" then
 		if protocol == nuclearControlProt then
 			msg = command(id, msg.msg)
-		elseif protocol == "dns"
+		elseif protocol == "dns" then
 			rednet.open(modem)
 			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
 			rednet.close(modem)
