@@ -92,6 +92,18 @@ local function removeNuclearControlSystem (id)
 	return false
 end
 
+local function getNuclearControlIDs ()
+
+	local modem = getPeripheral("modem")
+	
+	rednet.open(modem)
+	local ids = {rednet.lookup(nuclearControlProt)}
+	rednet.close(modem)
+	
+	return ids
+	
+end
+
 --Updates nuclearControlSystems table with current data
 --id: int
 --optional send number id to update a single nuclear control system
@@ -114,12 +126,14 @@ local function updateNuclearControlSystemsStats (...)
 		
 	else
 	
-		for key, value in pairs(nuclearControlSystems) do
+		local ids = getNuclearControlIDs()
+		
+		for i = 1, #ids do
 		
 			repeat
-				send(key, "getStats", nuclearControlProt)
+				send(ids[i], "getStats", nuclearControlProt)
 				rid, rMsg = receive(nuclearControlProt)
-			until tonumber(rid) == tonumber(key) and rMsg.msg.currentMode ~= nil
+			until tonumber(rid) == tonumber(ids[i]) and rMsg.msg.currentMode ~= nil
 			
 			nuclearControlSystems[tonumber(rid)] = rMsg.msg
 
@@ -415,8 +429,8 @@ local function handleCommandEvent (cmd)
 			rMsg = executeCommand(0,c[1])
 		end
 		
-	elseif c[1] == "reset" then
-		reset()
+	elseif c[1] == "update" then
+		rMsg = updateNuclearControlSystemsStats()
 	elseif c[1] == "show" then
 		if c[2] == nil then
 			filter = "all"
