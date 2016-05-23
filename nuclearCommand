@@ -107,7 +107,7 @@ local function updateNuclearControlSystemsStats (...)
 			repeat
 				send(id, "getStats", nuclearControlProt)
 				rid, rMsg = receive(nuclearControlProt)
-			until tonumber(rid) == tonumber(id)
+			until tonumber(rid) == tonumber(id) and rMsg.msg.currentMode ~= nil
 			
 			nuclearControlSystems[tonumber(rid)] = rMsg.msg
 
@@ -119,7 +119,7 @@ local function updateNuclearControlSystemsStats (...)
 			repeat
 				send(key, "getStats", nuclearControlProt)
 				rid, rMsg = receive(nuclearControlProt)
-			until tonumber(rid) == tonumber(key)
+			until tonumber(rid) == tonumber(key) and rMsg.msg.currentMode ~= nil
 			
 			nuclearControlSystems[tonumber(rid)] = rMsg.msg
 
@@ -262,16 +262,11 @@ local function executeCommand (id, cmd)
 	
 	--It's poor design, but a very specific action needs to be taken if the cmd is disconnect
 	if id > 0 then
-	
-		dbug("Sending cmd: "..tostring(cmd).." to id: "..tostring(id))
-		dbug("Waiting for response...")
 		
 		repeat
 			send(id, cmd, nuclearControlProt)
 			rid, rMsg = receive(nuclearControlProt)
 		until id == rid and rMsg.msg.success ~= nil
-		
-		dbug("Response received!")
 		
 		if cmd == "disconnect" then
 			nuclearControlSystems[tonumber(rid)] = nil
@@ -282,14 +277,10 @@ local function executeCommand (id, cmd)
 		if cmd == "disconnect" then
 			for key, value in pairs(nuclearControlSystems) do
 				
-				dbug("Sending cmd: "..tostring(cmd).." to id: "..tostring(key))
-				dbug("Waiting for response...")
 				repeat
 					send(key, cmd, nuclearControlProt)
 					rid, rMsg = receive(nuclearControlProt)
 				until id == rid and rMsg.msg.success ~= nil
-				
-				dbug("Response received!")
 				
 				nuclearControlSystems[key] = nil
 			end
