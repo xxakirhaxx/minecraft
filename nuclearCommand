@@ -249,6 +249,8 @@ end
 
 local function reset ()
 
+	local modem = getPeripheral("modem")
+	
 	tid = os.startTimer(5)
 	
 	while true do
@@ -366,7 +368,7 @@ local function init ()
 	rednet.host(tostring(nuclearCommandHost), tostring(nuclearCommandHost))
 	rednet.close(modem)
 	
-	broadcast("getStats", nuclearControlProt)
+	reset()
 	
 	print("Initialization Complete!")
 
