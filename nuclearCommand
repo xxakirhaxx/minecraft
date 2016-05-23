@@ -235,6 +235,9 @@ end
 --returns: string
 --return message
 local function handleNuclearSystemEvent (id, msg)
+
+	dbug("Handling nuclear systems event from id: "..tostring(id).." msg: "..tostring(msg))
+	
 	nuclearControlSystems[tonumber(id)] = msg.msg
 end
 
@@ -254,10 +257,15 @@ local function executeCommand (id, cmd)
 	--It's poor design, but a very specific action needs to be taken if the cmd is disconnect
 	if id > 0 then
 	
+		dbug("Sending cmd: "..tostring(cmd).." to id: "..tostring(id))
+		dbug("Waiting for response...")
+		
 		repeat
 			send(id, cmd)
 			rid, rMsg = receive(nuclearControlProt)
 		until id == rid and rMsg.msg.success ~= nil
+		
+		dbug("Response received!")
 		
 		if cmd == "disconnect" then
 			nuclearControlSystems[tonumber(rid)] = nil
@@ -268,10 +276,14 @@ local function executeCommand (id, cmd)
 		if cmd == "disconnect" then
 			for key, value in pairs(nuclearControlSystems) do
 				
+				dbug("Sending cmd: "..tostring(cmd).." to id: "..tostring(key))
+				dbug("Waiting for response...")
 				repeat
 					send(key, cmd)
 					rid, rMsg = receive(nuclearControlProt)
 				until id == rid and rMsg.msg.success ~= nil
+				
+				dbug("Response received!")
 				
 				nuclearControlSystems[key] = nil
 			end
@@ -310,6 +322,8 @@ local function handleRednetMessageEvent (id, msg, protocol)
 
 	local rMsg = ""
 	local modem = getPeripheral("modem")
+	
+	dbug("id: "..tostring(id).." msg: "..tostring(msg.msg).." protocol: "..tostring(protocol))
 	
 	if protocol == "dns" then
 		rednet.open(modem)
@@ -360,6 +374,7 @@ local function handleCommandEvent (cmd)
 
 	--handle each command
 	
+	dbug("Handling command: "..tostring(cmd))
 	--quits program
 	if c[1] == "quit" then
 		rMsg = c[1]
@@ -464,14 +479,19 @@ local function eventHandler ()
 	
 	--handle events
 	if protocol == nuclearControlProt and #msg.msg > 1 then
+		dbug("Event: "..tostring(event).." Handling id: "..tostring(id).." msg: "..tostring(msg.msg))
 		msg = handleNuclearSystemEvent(id, msg)
 	elseif event == "rednet_message" then
+		dbug("Event: "..tostring(event).." Handling id: "..tostring(id).." msg: "..tostring(msg.msg))
 		msg = handleRednetMessageEvent(id, msg)
 	elseif event == "key" then
+		dbug("Event: "..tostring(event).." Handling id: "..tostring(id).." msg: "..tostring(msg.msg))
 		msg = handleCommandEvent(read())
 	elseif event == "timer" and id == tid then
+		dbug("Event: "..tostring(event).." Handling id: "..tostring(id).." msg: "..tostring(msg.msg))
 		msg = handleSystemEvent()
 	elseif event == "monitor_touch" then
+		dbug("Event: "..tostring(event).." Handling id: "..tostring(id).." msg: "..tostring(msg.msg))
 		msg = handleMonitorTouchEvent()
 	end
 	
