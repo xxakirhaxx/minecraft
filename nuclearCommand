@@ -261,8 +261,10 @@ local function reset ()
 	
 		if event == "timer" then break end
 		
-		if protocol == nuclearControlProtocol and msg.msg.currentMode ~= nil then
-			nuclearControlSystems[tonumber(id)] = msg.msg
+		if event == "rednet_message" then
+			if protocol == nuclearControlProtocol and msg.msg.currentMode ~= nil then
+				nuclearControlSystems[tonumber(id)] = msg.msg
+			end
 		end
 	end
 	
