@@ -139,6 +139,9 @@ local function drawLine (id, k)
 	local euPos = 17
 	local tPos = 24
 	
+	if id == nil then return end
+	if nuclearControlSystems[id] == nil then return end
+	
 	local temp = math.floor(tonumber(nuclearControlSystems[id].getHeat)/tonumber(nuclearControlSystems[id].getMaxHeat))
 	local mode = ""
 	
