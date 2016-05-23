@@ -275,6 +275,7 @@ local function executeCommand (id, cmd)
 				until id == rid and rMsg.msg.success ~= nil
 				
 				nuclearControlSystems[key] = nil
+			end
 
 		else
 			for key, value in pairs(nuclearControlSystems) do
@@ -283,6 +284,7 @@ local function executeCommand (id, cmd)
 				
 			end
 		end
+		
 	end
 	
 	return rMsg
