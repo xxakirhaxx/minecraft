@@ -212,9 +212,14 @@ function wait (num)
 		
 	setCurrentMode("")
 	
-	if event == "rednet_message" and protocol == nuclearControlProt then
-		dbug("id: "..tostring(id).." msg: "..tostring(msg.msg))
-		msg = command(id, msg.msg)	
+	if event == "rednet_message" then
+		if protocol == nuclearControlProt then
+			msg = command(id, msg.msg)
+		elseif protocol == "dns"
+			rednet.open(modem)
+			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(protocol))
+			rednet.close(modem)
+		end
 	end
 	
 	os.cancelTimer(tid)
