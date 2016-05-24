@@ -51,12 +51,17 @@ local getItemId = nil
 local frequency = 0
 
 function emptyChest ()
+
+	turtle.select(1)
+	
 	while turtle.suckDown() do
 		chest.setFrequency(0)
 		turtle.select(1)
 		turtle.dropDown()
 		chest.setFrequency(frequency)
 	end
+	
+	turtle.select(1)
 end
 
 function getItem (itemName, slot, amount)
@@ -92,7 +97,7 @@ function refuel ()
 		turtle.dropDown()
 		chest.setFrequency(frequency)
 	end
-				
+			
 end
 
 function forwardAndPlaceDown(slot,...)
@@ -673,6 +678,8 @@ function main ()
 	frequency = tonumber(msg.frequency)
 	
 	chest.setFrequency(frequency)
+	
+	turtle.select(1)
 	
 	emptyChest()
 	
