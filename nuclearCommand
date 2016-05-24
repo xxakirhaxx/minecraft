@@ -1,5 +1,5 @@
 --Time between running normal system events
-local cycle = 5
+local cycle = 20
 local monitor = peripheral.wrap("top")
 local nuclearControlProt = "nuclearControl"
 local nuclearControlSystems = {}
@@ -386,9 +386,18 @@ local function handleCommandEvent (cmd)
 			rMsg = executeCommand(0,c[1])
 		end
 	elseif c[1] == "help" then
-		print("Commands: stop [id?], shutdown [id?], start [id?], update, show [all, energy, cooldown, shutdown], quit")
+		print("Commands: stop [id?], shutdown [id?], start [id?], update, setCycle [num], show [all, energy, cooldown, shutdown], quit")
 	elseif c[1] == "update" then
 		rMsg = updateNuclearControlSystemsStats()
+	elseif c[1] == "setCycle"
+		cycle = tonumber(c[2])
+		
+		if cycle < 5 then
+			cycle = 5
+		end
+		
+		print("Cycle set to "..tostring(c[2]))
+		
 	elseif c[1] == "show" then
 		if c[2] == nil then
 			filter = "all"

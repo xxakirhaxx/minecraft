@@ -97,6 +97,7 @@ function coolDownMode ()
 	redstone.setOutput("right", false)
 	redstone.setOutput("top", false)
 	redstone.setOutput("left", true)
+	cycle = 20
 	return "COOLDOWN"
 end
 
@@ -105,6 +106,7 @@ function energyMode ()
 	redstone.setOutput("right", false)
 	redstone.setOutput("top", true)
 	redstone.setOutput("left", false)
+	cycle = 5
 	return "ENERGY"
 end
 
@@ -113,6 +115,7 @@ function shutDownMode ()
 	redstone.setOutput("right", true)
 	redstone.setOutput("top", false)
 	redstone.setOutput("left", false)
+	cycle = 60
 	return "SHUTDOWN"
 end
 
