@@ -16,7 +16,7 @@ function getPeripheral (name)
 	end
 end
 
-local d = false
+local d = true
 
 function dbug (s)
 
@@ -114,12 +114,15 @@ function shutDownMode ()
 end
 
 function display (mode)
-	term.clear()
-	print("ID: "..tostring(os.getComputerID()))
-	print("Current Temperature: ", reactor.getHeat())
-	print("Max Temperature: ", reactor.getMaxHeat())
-	print("Shutdown Temperature: ", reactor.getMaxHeat() / 5)
-	print("System State: ", mode)
+
+	if d == false then
+		term.clear()
+		print("ID: "..tostring(os.getComputerID()))
+		print("Current Temperature: ", reactor.getHeat())
+		print("Max Temperature: ", reactor.getMaxHeat())
+		print("Shutdown Temperature: ", reactor.getMaxHeat() / 5)
+		print("System State: ", mode)
+	end
 	
 end
 
@@ -262,6 +265,7 @@ function systemCycle ()
 		
 		local item = reactor.getStackInSlot(i)
 		
+		dbug("Item name: "..tostring(item["name"]).." Item dmg: "..tostring(item["dmg"]).." item max_dmg: "..tostring(item["max_dmg"]).." item_dmg/item_max_dmg: "..tostring(item["dmg"]/item["max_dmg"]))
 		if item ~= nil then
 			
 			if item["dmg"]/item["max_dmg"] < .05 or (item["name"] == "reactorUraniumQuad") then
@@ -279,6 +283,9 @@ function systemCycle ()
 			end
 		end
 	end
+	
+	dbug("invSize: "..tostring(invSize).." partsRdy: "..tostring(partsRdy))
+	dbug("Energy: "..tostring(energyCell.getEnergyStored()/energyCell.getMaxEnergyStored()))
 	
 	if invSize <= partsRdy and energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() < 1 then
 		mode = "energy"
