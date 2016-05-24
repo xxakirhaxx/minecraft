@@ -308,6 +308,12 @@ local function init ()
 	local msg = ""
 	local modem = getPeripheral("modem")
 	
+	while msg ~= "startup"
+		rednet.open(modem)
+		id, msg = rednet.receive()
+		rednet.close(modem)
+	end
+	
 	print("Initializing system...")
 	--Clear Monitor and start initialize timer
 	monitor.clear()

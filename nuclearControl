@@ -232,12 +232,16 @@ end
 function init ()
 
 	local modem = getPeripheral("modem")
+	local id = 0
+	local msg = ""
 	
 	os.sleep(5)
 	
-	rednet.open(modem)
-	rednet.receive()
-	rednet.close(modem)
+	while msg ~= "startup"
+		rednet.open(modem)
+		id, msg = rednet.receive()
+		rednet.close(modem)
+	end
 	
 	rednet.open(modem)
 	rednet.host(tostring(nuclearControlProt), tostring(tostring(nuclearControlProt)..tostring(os.getComputerID())))
