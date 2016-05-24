@@ -265,8 +265,9 @@ function systemCycle ()
 		
 		local item = reactor.getStackInSlot(i)
 		
-		dbug("Item name: "..tostring(item["name"]).." Item dmg: "..tostring(item["dmg"]).." item max_dmg: "..tostring(item["max_dmg"]).." item_dmg/item_max_dmg: "..tostring(item["dmg"]/item["max_dmg"]))
 		if item ~= nil then
+			
+			dbug("Item name: "..tostring(item["name"]).." Item dmg: "..tostring(item["dmg"]).." item max_dmg: "..tostring(item["max_dmg"]).." item_dmg/item_max_dmg: "..tostring(item["dmg"]/item["max_dmg"]))
 			
 			if item["dmg"]/item["max_dmg"] < .05 or (item["name"] == "reactorUraniumQuad") then
 				partsRdy = partsRdy + 1
