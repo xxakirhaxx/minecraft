@@ -244,6 +244,10 @@ function init ()
 		rednet.open(modem)
 		id, msg = rednet.receive()
 		rednet.close(modem)
+		
+		if tostring(msg) == "reboot" then
+			os.reboot()
+		end
 	end
 	
 	rednet.open(modem)
