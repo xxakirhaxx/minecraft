@@ -308,7 +308,7 @@ local function init ()
 	local msg = ""
 	local modem = getPeripheral("modem")
 	
-	while msg ~= "startup"
+	while msg ~= "startup" do
 		rednet.open(modem)
 		id, msg = rednet.receive()
 		rednet.close(modem)

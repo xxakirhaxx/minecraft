@@ -237,7 +237,7 @@ function init ()
 	
 	os.sleep(5)
 	
-	while msg ~= "startup"
+	while msg ~= "startup" do
 		rednet.open(modem)
 		id, msg = rednet.receive()
 		rednet.close(modem)
