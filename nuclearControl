@@ -16,7 +16,7 @@ function getPeripheral (name)
 	end
 end
 
-local d = true
+local d = false
 
 function dbug (s)
 
@@ -288,7 +288,7 @@ function systemCycle ()
 	dbug("invSize: "..tostring(invSize).." partsRdy: "..tostring(partsRdy))
 	dbug("Energy: "..tostring(energyCell.getEnergyStored()/energyCell.getMaxEnergyStored()))
 	
-	if invSize <= partsRdy and energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() < 1 then
+	if invSize - 4 <= partsRdy and energyCell.getEnergyStored()/energyCell.getMaxEnergyStored() < 1 then
 		mode = "energy"
 	end
 	
