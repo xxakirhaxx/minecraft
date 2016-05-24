@@ -1,13 +1,3 @@
-local reactor = peripheral.wrap("back")
-local energyCell = peripheral.wrap("bottom")
-local cycle = 5
-local currentMode = "energy"
-local nuclearControlId = 0
-local modemSide = "front"
-local nuclearControlProt = "nuclearControl"
-local commandOverride = false
-local nuclearCommandHost = "nuclearCommand"
-
 function getPeripheral (name)
 	for i = 1, #peripheral.getNames() do
 		if peripheral.getType(peripheral.getNames()[i]) == name then
@@ -15,6 +5,19 @@ function getPeripheral (name)
 		end
 	end
 end
+
+
+local reactor = peripheral.wrap(getPeripheral("nuclear_reactor"))
+local energyCell = peripheral.wrap(getPeripheral("tile_thermalexpansion_cell_resonant_name"))
+local cycle = 5
+local currentMode = "shutdown"
+local nuclearControlId = 0
+local modemSide = "front"
+local nuclearControlProt = "nuclearControl"
+local commandOverride = false
+local nuclearCommandHost = "nuclearCommand"
+
+
 
 local d = false
 
