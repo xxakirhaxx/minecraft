@@ -13,5 +13,6 @@ for i = 1, #items do
 	if display_name == itemName then
 		print("Item: "..tostring(itemName).."/ Crafting amount: "..tostring(amount))
 		interface.requestCrafting(fingerprint, tonumber(amount))
+		break
 	end
 end
