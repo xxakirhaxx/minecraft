@@ -1,0 +1,17 @@
+local args = {...}
+local interface = peripheral.wrap("top")
+local items = interface.getAvailableItems("proxy")
+
+local itemName = args[1]
+local amount = tonumber(args[2])
+
+for i = 1, #items do
+	
+	local fingerprint = items[i].fingerprint
+	local display_name = items[i].item.basic().display_name
+		
+	if display_name == itemName then
+		print("Item: "..tostring(itemName).."/ Crafting amount: "..tostring(amount))
+		interface.requestCrafting(fingerprint, tonumber(amount))
+	end
+end
