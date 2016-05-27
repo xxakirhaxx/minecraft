@@ -9,8 +9,9 @@ for i = 1, #items do
 	
 	local fingerprint = items[i].fingerprint
 	local display_name = items[i].item.basic().display_name
+	local is_craftable = items[i].is_craftable
 		
-	if display_name == itemName then
+	if display_name == itemName and is_craftable then
 		print("Item: "..tostring(itemName).."/ Crafting amount: "..tostring(amount))
 		interface.requestCrafting(fingerprint, tonumber(amount))
 		break
