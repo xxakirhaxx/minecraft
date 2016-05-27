@@ -389,7 +389,7 @@ local function handleCommandEvent (cmd)
 		print("Commands: stop [id?], shutdown [id?], start [id?], update, setCycle [num], show [all, energy, cooldown, shutdown], quit")
 	elseif c[1] == "update" then
 		rMsg = updateNuclearControlSystemsStats()
-	elseif c[1] == "setCycle"
+	elseif c[1] == "setCycle" then
 		cycle = tonumber(c[2])
 		
 		if cycle < 5 then
