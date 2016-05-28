@@ -1,0 +1,348 @@
+local args = {...}
+
+function getPeripheral (name)
+	for i = 1, #peripheral.getNames() do
+		if peripheral.getType(peripheral.getNames()[i]) == name then
+			return peripheral.getNames()[i]
+		end
+	end
+end
+
+local d = true
+
+function dbug (s)
+
+	if d then print(s) end
+	
+end
+
+function send (id, msg, protocol,...)
+
+	local modem = getPeripheral("modem")
+	
+	local frequency = 0
+	
+	if select(1,...) ~= nil then frequency = select(1,...) end
+
+	rednet.open(modem)
+	rednet.send(tonumber(id), {frequency = tonumber(frequency), msg = msg}, tostring(protocol))
+	rednet.close(modem)
+
+end
+
+function receive (protocol)
+
+	local modem = getPeripheral("modem")
+	local id = 0
+	local msg = {}
+	local p = ""
+	
+	rednet.open(modem)
+	id, msg, p = rednet.receive(protocol)
+	rednet.close(modem)
+	
+	return id, msg
+end
+
+local chest = peripheral.wrap(getPeripheral("ender_chest"))
+local turtleGetItemProt = "turtleGetItem"
+local getItemId = nil
+local frequency = 0
+
+function emptyChest ()
+
+	turtle.select(1)
+	
+	chest.setFrequency(frequency)
+	
+	while turtle.suckDown() do
+		chest.setFrequency(0)
+		turtle.select(1)
+		turtle.dropDown()
+		chest.setFrequency(frequency)
+	end
+	
+	chest.setFrequency(frequency)
+	
+	turtle.select(1)
+end
+
+function getItem (itemName, slot, amount)
+	
+	if getItemId == nil then return end
+	
+	local id = tonumber(getItemId)
+	local cmd = "getItem"
+	local request = {cmd = cmd, itemName = tostring(itemName), amount = tonumber(amount)}
+	
+	dbug("Requesting item from id: "..tostring(id).." cmd: "..tostring(cmd).." itemName: "..tostring(itemName).." amount: "..tostring(amount))
+	
+	repeat
+		send(id, request, turtleGetItemProt)
+		id, msg = receive(turtleGetItemProt)
+	until msg.msg.success == true
+	
+	dbug("Received "..tostring(amount).." "..tostring(itemName))
+	
+	turtle.select(tonumber(slot))
+	turtle.suckDown(tonumber(amount))
+	
+end
+
+function clearInv ()
+
+	chest.setFrequency(0)
+	
+	turtle.select(1)
+	
+	for i = 1, 16 do
+		turtle.select(i)
+		turtle.dropDown()
+	end
+	
+	turtle.select(1)
+	turtle.equipRight()
+	turtle.dropDown()
+	turtle.select(1)
+	
+	chest.setFrequency(frequency)
+	
+end
+
+function refuel ()
+
+	chest.setFrequency(frequency)
+	
+	while turtle.getFuelLevel() < 5000 do
+		dbug("Refueling, currnet fuel levels: "..tostring(turtle.getFuelLevel()))
+		turtle.select(1)
+		getItem("Lava Bucket", 1, 1)
+		turtle.refuel()
+		chest.setFrequency(0)
+		turtle.dropDown()
+		chest.setFrequency(frequency)
+	end
+	
+	chest.setFrequency(frequency)
+			
+end
+
+function openFrequency ()
+
+	local modem = getPeripheral("modem")
+	local open = {cmd = "openFrequency"}
+	local command_id = nil
+	local id = 0
+	local msg = {}
+	
+	repeat
+		rednet.open(modem)
+		command_id = rednet.lookup(tostring(turtleGetItemProt), tostring(turtleGetItemProt))
+		rednet.close(modem)
+	until command_id ~= nil
+	
+	dbug("Sending to id: "..tostring(command_id).." msg: "..tostring(open.cmd).." protocol: "..tostring(turtleGetItemProt))
+	
+	send(command_id, open, turtleGetItemProt)
+	
+	dbug("Waiting for response")
+	
+	repeat
+		id, msg = receive(turtleGetItemProt)
+	until msg.msg.success
+	
+	dbug("Response received from id: "..tostring(id).." frequency: "..tostring(msg.frequency))
+	
+	getItemId = tonumber(msg.frequency)
+	frequency = tonumber(msg.frequency)
+	
+end
+
+function closeFrequency ()
+
+	local modem = getPeripheral("modem")
+	local close = {cmd = "closeFrequency"}
+	local command_id = nil
+	local id = 0
+	local msg = {}
+	
+	repeat
+		rednet.open(modem)
+		command_id = rednet.lookup(tostring(turtleGetItemProt), tostring(turtleGetItemProt))
+		rednet.close(modem)
+	until command_id ~= nil
+	
+	dbug("Sending to id: "..tostring(command_id).." msg: "..tostring(close.cmd).." protocol: "..tostring(turtlegetItemProt))
+	
+	send(command_id, close, turtleGetItemProt, frequency)
+	
+	dbug("Waiting for response")
+	
+	repeat
+		id, msg = receive(turtleGetItemProt)
+	until msg.msg.success
+	
+	dbug("Response received from id: "..tostring(id).." success: "..tostring(msg.msg.success))
+	
+end
+
+function equipPickAxe ()
+
+	turtle.select(1)
+	turtle.equipRight()
+	chest.setFrequency(0)
+	turtle.dropDown()
+	chest.setFrequency(frequency)
+	getItem("Diamond Pickaxe", 1, 1)
+	turtle.equipRight()
+	
+end
+
+function init ()
+
+	openFrequency()
+	
+	turtle.select(1)
+	
+	clearInv()
+	
+	clearChest()
+	
+	refuel()
+	
+	equipPickAxe()
+	
+	turtle.select(1)
+	
+end
+
+function shutdown ()
+
+	closeFrequency()
+	
+end
+
+function selectItem (name)
+
+	for i = 1, 16 do
+		turtle.select(i)
+		if turtle.getItemDetail().name == name then return end
+	end
+	
+	turtle.select(1)
+end
+
+function forward ()
+	
+	while turtle.detect() do
+		turtle.dig()
+	end
+	
+	selectItem("minecraft:cobblestone")
+	turtle.place()
+	turtle.dig()
+
+	turtle.select(1)
+	turtle.forward()
+		
+end
+
+function up ()
+	
+	while turtle.detectUp() do
+		turtle.digUp()
+	end
+	
+	selectItem("minecraft:cobblestone")
+	turtle.placeUp()
+	turtle.digUp()
+	
+	turtle.select(1)
+	turtle.up()
+		
+end
+
+function turn (i)
+
+	if i % 2 == 1 then
+		turtle.turnRight()
+	else
+		turtle.turnLeft()
+	end
+	
+end
+
+function build (h,l,w)
+
+	getItem("Cobblestone", 1, 64)
+	getItem("Torch", 2, 64)
+	getItem("Torch", 3, 64)
+	getItem("Torch", 4, 64)
+	getItem("Torch", 5, 64)
+	getItem("Torch", 6, 64)
+	getItem("Torch", 7, 64)
+	getItem("Torch", 8, 64)
+	getItem("Torch", 9, 64)
+	getItem("Torch", 10, 64)
+	getItem("Torch", 11, 64)
+	getItem("Torch", 12, 64)
+	
+	for i = 1, h do
+		for j = 1, w do
+			for k = 1, l do
+			
+				forward()
+				
+				if i == 2 and k % 5 == 0 then
+				
+					if turtle.detectDown() then
+						turtle.digDown()
+						selectItem("minecraft:cobblestone")
+						turtle.placeDown()
+						turtle.digDown()
+					end
+					
+					selectItem("minecraft:torch")
+					turtle.placeDown()
+					
+				end
+			end
+			
+			if j % 2 == 1 then
+			
+				turn(i)
+				forward()
+				turn(i)
+				
+			else
+			
+				turn(i+1)
+				forward()
+				turn(i+1)
+				
+			end
+			
+		end
+		
+		up()
+		
+	end
+end
+
+function main ()
+
+	if args[1] == nil or args[2] == nil or args[3] == nil or #args < 3 then return end
+	
+	local height = tonumber(args[3])
+	local length = tonumber(args[1])
+	local width = tonumber(args[2])
+	
+	init()
+	
+	build(height, length, width)
+	
+	shutdown()
+	
+end
+
+main()
