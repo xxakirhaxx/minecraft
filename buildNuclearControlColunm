@@ -54,12 +54,16 @@ function emptyChest ()
 
 	turtle.select(1)
 	
+	chest.setFrequency(frequency)
+	
 	while turtle.suckDown() do
 		chest.setFrequency(0)
 		turtle.select(1)
 		turtle.dropDown()
 		chest.setFrequency(frequency)
 	end
+	
+	chest.setFrequency(frequency)
 	
 	turtle.select(1)
 end
@@ -86,8 +90,30 @@ function getItem (itemName, slot, amount)
 	
 end
 
+function clearInv ()
+
+	chest.setFrequency(0)
+	
+	turtle.select(1)
+	
+	for i = 1, 16 do
+		turtle.select(i)
+		turtle.dropDown()
+	end
+	
+	turtle.select(1)
+	turtle.equipRight()
+	turtle.dropDown()
+	turtle.select(1)
+	
+	chest.setFrequency(frequency)
+	
+end
+
 function refuel ()
 
+	chest.setFrequency(frequency)
+	
 	while turtle.getFuelLevel() < 5000 do
 		dbug("Refueling, currnet fuel levels: "..tostring(turtle.getFuelLevel()))
 		turtle.select(1)
@@ -97,6 +123,8 @@ function refuel ()
 		turtle.dropDown()
 		chest.setFrequency(frequency)
 	end
+	
+	chest.setFrequency(frequency)
 			
 end
 
@@ -680,6 +708,8 @@ function main ()
 	chest.setFrequency(frequency)
 	
 	turtle.select(1)
+	
+	clearInv()
 	
 	emptyChest()
 	
