@@ -279,17 +279,7 @@ end
 function build (h,l,w)
 
 	getItem("Cobblestone", 1, 64)
-	getItem("Torch", 2, 64)
-	getItem("Torch", 3, 64)
-	getItem("Torch", 4, 64)
-	getItem("Torch", 5, 64)
-	getItem("Torch", 6, 64)
-	getItem("Torch", 7, 64)
-	getItem("Torch", 8, 64)
-	getItem("Torch", 9, 64)
-	getItem("Torch", 10, 64)
-	getItem("Torch", 11, 64)
-	getItem("Torch", 12, 64)
+
 	
 	for k = 1, h do
 	
