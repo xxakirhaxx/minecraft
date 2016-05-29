@@ -277,13 +277,12 @@ function turn (i)
 end
 
 function build (h,l,w)
-
-	getItem("Cobblestone", 1, 64)
-
 	
 	for k = 1, h do
 	
-		if k ~= 1 then
+		getItem("Cobblestone", 1, 64)
+		
+		for a = 2, k do
 			up()
 		end
 		
@@ -314,10 +313,16 @@ function build (h,l,w)
 		
 		turtle.turnLeft()
 	
-	end
-	
-	for k = 1, h - 1 do
-		turtle.down()
+		for a = 2, k do
+			turtle.down()
+		end
+		
+		clearInv()
+		
+		refuel(w*(2*l + 1) + 2*(k+1))
+		
+		clearInv()
+		
 	end
 	
 end
@@ -330,7 +335,7 @@ function main ()
 	local length = tonumber(args[1]) - 1
 	local width = tonumber(args[2])
 	
-	init(height*(width*(2*length + 1) + 1))
+	init(width*(2*length + 1))
 	
 	build(height, length, width)
 	
