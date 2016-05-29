@@ -291,56 +291,44 @@ function build (h,l,w)
 	getItem("Torch", 11, 64)
 	getItem("Torch", 12, 64)
 	
-	for i = 1, h do
+	for k = 1, h do
 	
-		if i ~= 1 then
+		if k ~= 1 then
 			up()
 		end
 		
 		for j = 1, w do
-		
+			
 			if j ~= 1 then
-				if j % 2 == 0 then
-				
-					turn(j + i + 1)
-					forward()
-					turn(j + i + 1)
-					
-				else
-				
-					turn(j + i + 1)
-					forward()
-					turn(j + i + 1)
-					
-				end
-			end
-			
-			for k = 1, l do
-			
+				turtle.turnRight()
 				forward()
-				
-				if i == 2 and k % 5 == 0 and j % 5 == 0 then
-				
-					if turtle.detectDown() then
-						turtle.digDown()
-						selectItem("minecraft:cobblestone")
-						turtle.placeDown()
-						turtle.digDown()
-					end
-					
-					selectItem("minecraft:torch")
-					turtle.placeDown()
-					
-				end
-			end
-			
-			if j == w then
-				turtle.turnLeft()
 				turtle.turnLeft()
 			end
 			
+			for i = 1, l do
+				forward()
+			end
+			
+			for i = 1, l do
+				turtle.back()
+			end
+		
 		end
+		
+		turtle.turnRight()
+		
+		for j = 1, w do
+			turtle.back()
+		end
+		
+		turtle.turnLeft()
+	
 	end
+	
+	for k = 1, h do
+		turtle.down()
+	end
+	
 end
 
 function main ()
@@ -351,7 +339,7 @@ function main ()
 	local length = tonumber(args[1]) - 1
 	local width = tonumber(args[2])
 	
-	init((length + 1) * width * height)
+	init(h*(w*(2*l + 1) + 1))
 	
 	build(height, length, width)
 	
