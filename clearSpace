@@ -113,7 +113,7 @@ function refuel ()
 
 	chest.setFrequency(frequency)
 	
-	while turtle.getFuelLevel() < 5000 do
+	while turtle.getFuelLevel() < turtle.getFuelLimit() do
 		dbug("Refueling, currnet fuel levels: "..tostring(turtle.getFuelLevel()))
 		turtle.select(1)
 		getItem("Lava Bucket", 1, 1)
