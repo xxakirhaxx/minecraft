@@ -218,6 +218,10 @@ end
 
 function shutdown ()
 
+	emptyChest()
+	
+	clearInv()
+	
 	closeFrequency()
 	
 end
