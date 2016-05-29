@@ -309,6 +309,7 @@ function build (h,l,w)
 				forward()
 			end
 			
+			
 			for i = 1, l do
 				turtle.back()
 			end
@@ -317,7 +318,7 @@ function build (h,l,w)
 		
 		turtle.turnRight()
 		
-		for j = 1, w do
+		for j = 1, w - 1 do
 			turtle.back()
 		end
 		
@@ -325,7 +326,7 @@ function build (h,l,w)
 	
 	end
 	
-	for k = 1, h do
+	for k = 1, h - 1 do
 		turtle.down()
 	end
 	
