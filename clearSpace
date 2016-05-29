@@ -264,7 +264,7 @@ end
 
 function turn (i)
 
-	if i % 2 == 1 then
+	if i % 2 == 0 then
 		turtle.turnRight()
 	else
 		turtle.turnLeft()
@@ -289,6 +289,23 @@ function build (h,l,w)
 	
 	for i = 1, h do
 		for j = 1, w do
+		
+			if j ~= 1 then
+				if j % 2 == 0 then
+				
+					turn(i)
+					forward()
+					turn(i)
+					
+				else
+				
+					turn(i+1)
+					forward()
+					turn(i+1)
+					
+				end
+			end
+			
 			for k = 1, l do
 			
 				forward()
@@ -308,18 +325,9 @@ function build (h,l,w)
 				end
 			end
 			
-			if j % 2 == 1 then
-			
-				turn(i)
-				forward()
-				turn(i)
-				
-			else
-			
-				turn(i+1)
-				forward()
-				turn(i+1)
-				
+			if j == w then
+				turtle.turnLeft()
+				turtle.turnLeft()
 			end
 			
 		end
