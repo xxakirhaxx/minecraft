@@ -206,7 +206,7 @@ function init ()
 	
 	clearInv()
 	
-	clearChest()
+	emptyChest()
 	
 	refuel()
 	
