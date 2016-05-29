@@ -109,11 +109,11 @@ function clearInv ()
 	
 end
 
-function refuel ()
+function refuel (num)
 
 	chest.setFrequency(frequency)
 	
-	while turtle.getFuelLevel() < turtle.getFuelLimit() do
+	while turtle.getFuelLevel() < num + 1000 do
 		dbug("Refueling, currnet fuel levels: "..tostring(turtle.getFuelLevel()))
 		turtle.select(1)
 		getItem("Lava Bucket", 1, 1)
@@ -198,7 +198,7 @@ function equipPickAxe ()
 	
 end
 
-function init ()
+function init (num)
 
 	openFrequency()
 	
@@ -208,7 +208,7 @@ function init ()
 	
 	emptyChest()
 	
-	refuel()
+	refuel(num)
 	
 	equipPickAxe()
 	
@@ -292,6 +292,11 @@ function build (h,l,w)
 	getItem("Torch", 12, 64)
 	
 	for i = 1, h do
+	
+		if i ~= 1 then
+			up()
+		end
+		
 		for j = 1, w do
 		
 			if j ~= 1 then
@@ -335,9 +340,6 @@ function build (h,l,w)
 			end
 			
 		end
-		
-		up()
-		
 	end
 end
 
@@ -346,10 +348,10 @@ function main ()
 	if args[1] == nil or args[2] == nil or args[3] == nil or #args < 3 then return end
 	
 	local height = tonumber(args[3])
-	local length = tonumber(args[1])
+	local length = tonumber(args[1]) - 1
 	local width = tonumber(args[2])
 	
-	init()
+	init(length * width * height)
 	
 	build(height, length, width)
 	
