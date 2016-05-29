@@ -351,7 +351,7 @@ function main ()
 	local length = tonumber(args[1]) - 1
 	local width = tonumber(args[2])
 	
-	init(length * width * height)
+	init((length + 1) * width * height)
 	
 	build(height, length, width)
 	
