@@ -297,15 +297,15 @@ function build (h,l,w)
 			if j ~= 1 then
 				if j % 2 == 0 then
 				
-					turn(j)
+					turn(j + i + 1)
 					forward()
-					turn(j)
+					turn(j + i + 1)
 					
 				else
 				
-					turn(j+1)
+					turn(j + i + 1)
 					forward()
-					turn(j+1)
+					turn(j + i + 1)
 					
 				end
 			end
