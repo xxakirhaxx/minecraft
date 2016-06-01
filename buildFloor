@@ -243,6 +243,12 @@ function build (l, w)
 	
 	for i = 1, w do
 		
+		if i ~= 1 then
+			turtle.turnRight()
+			turtle.forward()
+			turtle.turnLeft()
+		end
+		
 		selectItem("EnderStorage:enderChest")
 		turtle.placeDown()
 		chest = peripheral.wrap(getPeripheral("ender_chest"))	
@@ -266,11 +272,6 @@ function build (l, w)
 		
 		turtle.digDown()
 		
-		if i ~= 1 then
-			turtle.turnRight()
-			turtle.forward()
-			turtle.turnLeft()
-		end
 		
 		for k = 1, l do
 		
