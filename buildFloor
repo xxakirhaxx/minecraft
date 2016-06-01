@@ -249,7 +249,7 @@ function build (l, w)
 		local t = l
 		local n = 1
 		
-		while temp > 0 do
+		while t > 0 do
 			
 			if t > 64 then
 				getItem("Block of Iron", n, 64)
