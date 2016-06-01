@@ -53,7 +53,9 @@ function selectItem (name)
 
 	for i = 1, 16 do
 		turtle.select(i)
-		if turtle.getItemDetail().name == name then return end
+		if turtle.getItemDetail().name ~= nil then 
+			if turtle.getItemDetail().name == name then return end
+		end
 	end
 	
 	turtle.select(1)
@@ -203,7 +205,7 @@ function equipPickAxe ()
 	chest.setFrequency(0)
 	turtle.dropDown()
 	chest.setFrequency(frequency)
-	getItem("Diamond Pickaxe", 1, 1)
+	getItem("Diamond Pickaxe", 1)
 	turtle.equipRight()
 	
 end
