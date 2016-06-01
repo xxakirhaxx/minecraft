@@ -198,7 +198,7 @@ function equipPickAxe ()
 	
 end
 
-function init (num)
+function init ()
 
 	openFrequency()
 	
@@ -208,7 +208,7 @@ function init (num)
 	
 	emptyChest()
 	
-	refuel(num)
+	refuel(0)
 	
 	equipPickAxe()
 	
@@ -236,94 +236,67 @@ function selectItem (name)
 	turtle.select(1)
 end
 
-function forward ()
+function build (l, w)
 	
-	while turtle.detect() do
-		turtle.dig()
-	end
+	turtle.digDown()
 	
-	selectItem("minecraft:cobblestone")
-	turtle.place()
-	turtle.dig()
-
-	turtle.select(1)
-	turtle.forward()
+	for i = 1, w do
 		
-end
-
-function up ()
-	
-	while turtle.detectUp() do
-		turtle.digUp()
-	end
-	
-	selectItem("minecraft:cobblestone")
-	turtle.placeUp()
-	turtle.digUp()
-	
-	turtle.select(1)
-	turtle.up()
+		selectItem("EnderStorage:enderChest")
+		turtle.placeDown()
+		chest = peripheral.wrap(getPeripheral("ender_chest"))	
 		
-end
-
-function turn (i)
-
-	if i % 2 == 0 then
-		turtle.turnRight()
-	else
-		turtle.turnLeft()
-	end
-	
-end
-
-function build (h,l,w)
-	
-	for k = 1, h do
-	
-		getItem("Cobblestone", 1, 64)
+		local t = l
+		local n = 1
 		
-		for a = 2, k do
-			up()
+		while temp > 0 do
+			
+			if t > 64 then
+				getItem("Block of Iron", n, 64)
+			else
+				getItem("Block of Iron", n, t)
+			end
+			
+			n = n + 1
+			t = t - 64
+			
 		end
 		
-		for j = 1, w do
-			
-			if j ~= 1 then
-				turtle.turnRight()
-				forward()
-				turtle.turnLeft()
-			end
-			
-			for i = 1, l do
-				forward()
-			end
-			
-			
-			for i = 1, l do
-				turtle.back()
-			end
+		refuel(l*2)
 		
+		turtle.digDown()
+		
+		if i ~= 1 then
+			turtle.turnRight()
+			turtle.forward()
+			turtle.turnLeft()
 		end
 		
-		turtle.turnRight()
+		for k = 1, l do
 		
-		for j = 1, w - 1 do
+			if k ~= 1 then
+				turtle.forward()
+			end
+			
+			selectItem("minecraft:iron_block")
+			turtle.placeDown()
+	
+		end
+		
+		for k = 1, l - 1 do
 			turtle.back()
 		end
 		
-		turtle.turnLeft()
-	
-		for a = 2, k do
-			turtle.down()
-		end
-		
-		clearInv()
-		
-		refuel(w*(2*l + 1) + 2*(k+1))
-		
-		clearInv()
-		
 	end
+	
+	if turtle.detectUp() then
+		turtle.digUp()
+	end
+	
+	turtle.up()
+	selectItem("EnderStorage:enderChest")
+	turtle.placeDown()
+	chest = peripheral.wrap(getPeripheral("ender_chest"))
 	
 end
 
@@ -331,13 +304,12 @@ function main ()
 
 	if args[1] == nil or args[2] == nil or args[3] == nil or #args < 3 then return end
 	
-	local height = tonumber(args[3])
-	local length = tonumber(args[1]) - 1
+	local length = tonumber(args[1])
 	local width = tonumber(args[2])
 	
-	init(width*(2*length + 1))
+	init()
 	
-	build(height, length, width)
+	build(length, width)
 	
 	shutdown()
 	
