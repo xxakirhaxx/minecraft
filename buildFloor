@@ -49,6 +49,16 @@ local turtleGetItemProt = "turtleGetItem"
 local getItemId = nil
 local frequency = 0
 
+function selectItem (name)
+
+	for i = 1, 16 do
+		turtle.select(i)
+		if turtle.getItemDetail().name == name then return end
+	end
+	
+	turtle.select(1)
+end
+
 function emptyChest ()
 
 	turtle.select(1)
@@ -67,7 +77,7 @@ function emptyChest ()
 	turtle.select(1)
 end
 
-function getItem (itemName, slot, amount)
+function getItem (itemName, amount)
 	
 	if getItemId == nil then return end
 	
@@ -84,7 +94,6 @@ function getItem (itemName, slot, amount)
 	
 	dbug("Received "..tostring(amount).." "..tostring(itemName))
 	
-	turtle.select(tonumber(slot))
 	turtle.suckDown(tonumber(amount))
 	
 end
@@ -115,14 +124,15 @@ function refuel (num)
 	
 	while turtle.getFuelLevel() < num + 1000 do
 		dbug("Refueling, currnet fuel levels: "..tostring(turtle.getFuelLevel()))
-		turtle.select(1)
-		getItem("Lava Bucket", 1, 1)
+		getItem("Lava Bucket", 1)
+		selectItem("minecraft:lava_bucket")
 		turtle.refuel()
 		chest.setFrequency(0)
 		turtle.dropDown()
 		chest.setFrequency(frequency)
 	end
 	
+	turtle.select(1)
 	chest.setFrequency(frequency)
 			
 end
@@ -226,15 +236,6 @@ function shutdown ()
 	
 end
 
-function selectItem (name)
-
-	for i = 1, 16 do
-		turtle.select(i)
-		if turtle.getItemDetail().name == name then return end
-	end
-	
-	turtle.select(1)
-end
 
 function build (l, w)
 	
@@ -247,17 +248,16 @@ function build (l, w)
 		chest = peripheral.wrap(getPeripheral("ender_chest"))	
 		
 		local t = l
-		local n = 1
+		
 		
 		while t > 0 do
 			
 			if t > 64 then
-				getItem("Block of Iron", n, 64)
+				getItem("Block of Iron", 64)
 			else
-				getItem("Block of Iron", n, t)
+				getItem("Block of Iron", t)
 			end
 			
-			n = n + 1
 			t = t - 64
 			
 		end
