@@ -302,7 +302,7 @@ end
 
 function main ()
 
-	if args[1] == nil or args[2] == nil or args[3] == nil or #args < 3 then return end
+	if args[1] == nil or args[2] == nil or #args < 2 then return end
 	
 	local length = tonumber(args[1])
 	local width = tonumber(args[2])
