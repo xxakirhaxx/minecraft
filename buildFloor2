@@ -111,11 +111,6 @@ function clearInv ()
 		turtle.dropDown()
 	end
 	
-	turtle.select(1)
-	turtle.equipRight()
-	turtle.dropDown()
-	turtle.select(1)
-	
 	chest.setFrequency(frequency)
 	
 end
