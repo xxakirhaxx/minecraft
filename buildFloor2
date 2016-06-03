@@ -276,8 +276,13 @@ function build (l, w)
 		for k = 1, l do
 		
 			if k ~= 1 then
-				turtle.dig()
+				
+				while turtle.detect() do
+					turtle.dig()
+				end
+				
 				turtle.forward()
+				
 			end
 			
 			selectItem("minecraft:iron_block")
@@ -285,9 +290,21 @@ function build (l, w)
 	
 		end
 		
+		turtle.turnLeft()
+		turtle.turnLeft()
+		
 		for k = 1, l - 1 do
-			turtle.back()
+		
+			while turtle.detect() do
+				turtle.dig()
+			end
+			
+			turtle.forward()
+			
 		end
+		
+		turtle.turnLeft()
+		turtle.turnLeft()
 		
 	end
 	
