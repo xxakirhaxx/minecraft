@@ -206,12 +206,6 @@ function equipPickAxe ()
 end
 
 function init ()
-
-	turtle.digDown()
-
-	selectItem("EnderStorage:enderChest")
-	
-	turtle.placeDown()
 	
 	openFrequency()
 	
@@ -233,11 +227,19 @@ end
 
 function shutdown ()
 
+	turtle.digDown()
+	
+	selectItem("EnderStorage:enderChest")
+	
+	turtle.placeDown()
+	
 	emptyChest()
 	
 	clearInv()
 	
 	closeFrequency()
+	
+	turtle.digDown()
 	
 end
 
@@ -272,6 +274,7 @@ function build (l, w)
 		end
 		
 		turtle.turnRight()
+		turtle.dig()
 		turtle.forward()
 		turtle.turnLeft()
 		
