@@ -274,6 +274,7 @@ function build (l, w)
 		end
 		
 		turtle.turnRight()
+		turtle.dig()
 		turtle.forward()
 		turtle.turnLeft()
 		
