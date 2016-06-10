@@ -276,7 +276,7 @@ function build (l, w, h)
 		
 	emptyChest()
 		
-	refuel((h - 1) * (l - 1) * (w - 1) * 8)
+	refuel(h * l * w * 8)
 		
 	dig("down")
 	
