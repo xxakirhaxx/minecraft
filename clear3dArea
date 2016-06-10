@@ -266,20 +266,6 @@ end
 
 function build (l, w, h)
 	
-	dig("down")
-
-	selectItem("EnderStorage:enderChest")
-	
-	turtle.placeDown()
-		
-	clearInv()
-		
-	emptyChest()
-		
-	refuel(h * l * w * 8)
-		
-	dig("down")
-	
 	for i = 1, h do
 	
 		if i ~= 1 then
@@ -297,6 +283,14 @@ function build (l, w, h)
 			end
 			
 			for j = 1, l do
+
+			dig("down")
+
+			selectItem("EnderStorage:enderChest")
+			
+			refuel(l*2)
+			
+			dig("down")
 			
 				if j ~= 1 then
 					dig("forward")
