@@ -28,23 +28,30 @@ function main ()
 	
 		if item.fingerprint.id ~= "IC2:itemScrap" then
 			
+			local qty = item.item.basic().qty
+			local max_size = item.item.basic().max_size
+			
 			for b, interface in pairs(interfaces) do
 				
-				if item.item.basic().qty > 0 then
-					interface.exportItem(item.fingerprint, "down", item.item.basic().max_size)
-					dbug(item.item.basic().qty)
+				if qty > 0  then
+					interface.exportItem(item.fingerprint, "down", max_size)
+					qty = qty - max_size
+					dbug(qty)
 				else
 					break
 				end
 				
-				if item.item.basic().qty > 0 then
-					interface.exportItem(item.fingerprint, "up", item.item.basic().max_size)
-					dbug(item.item.basic().qty)
+				if qty > 0 then
+					interface.exportItem(item.fingerprint, "up", max_size)
+					qty = qty - max_size
+					dbug(qty)
 				else
 					break
 				end
 				
 			end
+			
+			break
 			
 		end
 		
