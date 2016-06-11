@@ -1,4 +1,4 @@
-function getPeripherals ()
+function getPeripheral (name)
 
 	local p = {}
 	
@@ -21,8 +21,8 @@ end
 
 function main ()
 
-	local interfaces = getPeripherals()
-	local items = interfaces[1].getAvailableItems()
+	local interfaces = getPeripheral("tileinterface")
+	local litems = interfaces[1].getAvailableItems()
 	
 	for a, item in pairs(items) do
 	
