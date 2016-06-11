@@ -30,8 +30,11 @@ function main ()
 			
 			for b, interface in pairs(interfaces) do
 				
-				interface.exportItem(item.fingerprint, "down", item.item.basic().max_size)
-				interface.exportItem(item.fingerprint, "up", item.item.basic().max_size)
+				local fingerprint = item.fingerprint
+				local max_stack = item.item.basic().max_size
+				
+				interface.exportItem(fingerprint, "down", max_stack)
+				interface.exportItem(fingerprint, "up", max_stack)
 				
 			end
 			
