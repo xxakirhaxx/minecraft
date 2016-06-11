@@ -74,18 +74,33 @@ function getItem (itemName, amount)
 	local id = tonumber(getItemId)
 	local cmd = "getItem"
 	local request = {cmd = cmd, itemName = tostring(itemName), amount = tonumber(amount)}
+	local slot = 1
 	
-	dbug("Requesting item from id: "..tostring(id).." cmd: "..tostring(cmd).." itemName: "..tostring(itemName).." amount: "..tostring(amount))
+	for i = 1, 16 do
+		if not turtle.getItemDetail(i) then 
+			slot = i
+			break
+		end
+	end
 	
-	repeat
-		send(id, request, turtleGetItemProt)
-		id, msg = receive(turtleGetItemProt)
-	until msg.msg.success == true
+	while amount > 0 and slot < 17 do
 	
-	dbug("Received "..tostring(amount).." "..tostring(itemName))
+		dbug("Requesting item from id: "..tostring(id).." cmd: "..tostring(cmd).." itemName: "..tostring(itemName).." amount: "..tostring(amount))
 	
-	turtle.select(tonumber(slot))
-	turtle.suckUp(tonumber(amount))
+		repeat
+			send(id, request, turtleGetItemProt)
+			id, msg = receive(turtleGetItemProt)
+		until msg.msg.success == true
+	
+		dbug("Received "..tostring(amount).." "..tostring(itemName))
+	
+		turtle.select(tonumber(slot))
+		turtle.suckUp(tonumber(amount))
+	
+		amount = amount - turtle.getItemCount(slot)
+		slot = slot + 1
+		
+	end
 	
 end
 
