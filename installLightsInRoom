@@ -311,6 +311,10 @@ function build (l, w)
 			end
 			
 			dig("down")
+			
+			selectItem("ThermalExpansion:Light")
+			
+			turtle.place()
 
 			selectItem("EnderStorage:enderChest")
 
@@ -321,6 +325,12 @@ function build (l, w)
 			emptyChest()
 			
 			dig("down")
+			
+			dig("forward")
+			
+			selectItem("ThermalExpansion:Light")
+			
+			turtle.placeDown()
 			
 		end
 		
@@ -343,8 +353,8 @@ end
 
 function main ()
 	
-	local length = tonumber(args[1]) - 1
-	local width = tonumber(args[2]) - 1
+	local length = tonumber(args[1])
+	local width = tonumber(args[2])
 	
 	init()
 	
