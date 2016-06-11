@@ -67,10 +67,10 @@ function emptyChest ()
 	
 	chest.setFrequency(frequency)
 	
-	while turtle.suckDown() do
+	while turtle.suckUp() do
 		chest.setFrequency(0)
 		turtle.select(1)
-		turtle.dropDown()
+		turtle.dropUp()
 		chest.setFrequency(frequency)
 	end
 	
@@ -96,7 +96,7 @@ function getItem (itemName, amount)
 	
 	dbug("Received "..tostring(amount).." "..tostring(itemName))
 	
-	turtle.suckDown(tonumber(amount))
+	turtle.suckUp(tonumber(amount))
 	
 end
 
@@ -108,7 +108,7 @@ function clearInv ()
 	
 	for i = 1, 16 do
 		turtle.select(i)
-		turtle.dropDown()
+		turtle.dropUp()
 	end
 	
 	chest.setFrequency(frequency)
@@ -125,7 +125,7 @@ function refuel (num)
 		selectItem("minecraft:lava_bucket")
 		turtle.refuel()
 		chest.setFrequency(0)
-		turtle.dropDown()
+		turtle.dropUp()
 		chest.setFrequency(frequency)
 	end
 	
@@ -198,7 +198,7 @@ function equipPickAxe ()
 	turtle.select(1)
 	turtle.equipRight()
 	chest.setFrequency(0)
-	turtle.dropDown()
+	turtle.dropUp()
 	chest.setFrequency(frequency)
 	getItem("Diamond Pickaxe", 1)
 	turtle.equipRight()
@@ -239,7 +239,7 @@ function init ()
 	
 	equipPickAxe()
 	
-	turtle.digDown()
+	turtle.digUp()
 	
 	turtle.select(1)
 	
@@ -247,11 +247,11 @@ end
 
 function shutdown ()
 
-	turtle.digDown()
+	turtle.digUp()
 	
 	selectItem("EnderStorage:enderChest")
 	
-	turtle.placeDown()
+	turtle.placeUp()
 	
 	emptyChest()
 	
@@ -259,7 +259,7 @@ function shutdown ()
 	
 	closeFrequency()
 	
-	turtle.digDown()
+	turtle.digUp()
 	
 end
 
@@ -279,17 +279,17 @@ function build (l, w)
 		
 		if k % lightSpace == 0 or k == 1 or k == w then
 		
-			dig("down")
+			dig("up")
 
 			selectItem("EnderStorage:enderChest")
 			
-			turtle.placeDown()
+			turtle.placeUp()
 			
 			refuel(l*2)
 			
 			getItem("Radiant Lumium Lamp", math.floor(l / lightSpace) + (math.ceil((l % lightSpace) / lightSpace) + 1))
 			
-			dig("down")
+			dig("up")
 			
 			for j = 1, l do
 			
@@ -310,27 +310,17 @@ function build (l, w)
 				turtle.back()
 			end
 			
-			dig("down")
-			
-			selectItem("ThermalExpansion:Light")
-			
-			turtle.place()
+			dig("up")
 
 			selectItem("EnderStorage:enderChest")
 
-			turtle.placeDown()
+			turtle.placeUp()
 		
 			clearInv()
 		
 			emptyChest()
 			
-			dig("down")
-			
-			dig("forward")
-			
-			selectItem("ThermalExpansion:Light")
-			
-			turtle.placeDown()
+			dig("up")
 			
 		end
 		

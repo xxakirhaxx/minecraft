@@ -55,10 +55,10 @@ function emptyChest ()
 	
 	chest.setFrequency(frequency)
 	
-	while turtle.suckDown() do
+	while turtle.suckUp() do
 		chest.setFrequency(0)
 		turtle.select(1)
-		turtle.dropDown()
+		turtle.dropUp()
 		chest.setFrequency(frequency)
 	end
 	
@@ -85,7 +85,7 @@ function getItem (itemName, slot, amount)
 	dbug("Received "..tostring(amount).." "..tostring(itemName))
 	
 	turtle.select(tonumber(slot))
-	turtle.suckDown(tonumber(amount))
+	turtle.suckUp(tonumber(amount))
 	
 end
 
@@ -97,12 +97,12 @@ function clearInv ()
 	
 	for i = 1, 16 do
 		turtle.select(i)
-		turtle.dropDown()
+		turtle.dropUp()
 	end
 	
 	turtle.select(1)
 	turtle.equipRight()
-	turtle.dropDown()
+	turtle.dropUp()
 	turtle.select(1)
 	
 	chest.setFrequency(frequency)
@@ -119,7 +119,7 @@ function refuel (num)
 		getItem("Lava Bucket", 1, 1)
 		turtle.refuel()
 		chest.setFrequency(0)
-		turtle.dropDown()
+		turtle.dropUp()
 		chest.setFrequency(frequency)
 	end
 	
@@ -191,10 +191,30 @@ function equipPickAxe ()
 	turtle.select(1)
 	turtle.equipRight()
 	chest.setFrequency(0)
-	turtle.dropDown()
+	turtle.dropUp()
 	chest.setFrequency(frequency)
 	getItem("Diamond Pickaxe", 1, 1)
 	turtle.equipRight()
+	
+end
+
+function dig (s) 
+
+	if type(s) ~= "string" then return end
+	
+	if s == "up" then
+		while turtle.detectUp() do
+			turtle.digUp()
+		end
+	elseif s == "down" then
+		while turtle.detectDown() do
+			turtle.digDown()
+		end
+	elseif s == "forward" then
+		while turtle.detect() do
+			turtle.dig()
+		end
+	end
 	
 end
 
@@ -236,76 +256,16 @@ function selectItem (name)
 	turtle.select(1)
 end
 
-function build (l, w)
+function build ()
 	
-	turtle.digDown()
-	
-	for i = 1, w do
-		
-		selectItem("EnderStorage:enderChest")
-		turtle.placeDown()
-		chest = peripheral.wrap(getPeripheral("ender_chest"))	
-		
-		local t = l
-		local n = 1
-		
-		while temp > 0 do
-			
-			if t > 64 then
-				getItem("Block of Iron", n, 64)
-			else
-				getItem("Block of Iron", n, t)
-			end
-			
-			n = n + 1
-			t = t - 64
-			
-		end
-		
-		refuel(l*2)
-		
-		turtle.digDown()
-		
-		if i ~= 1 then
-			turtle.turnRight()
-			turtle.forward()
-			turtle.turnLeft()
-		end
-		
-		for k = 1, l do
-		
-			if k ~= 1 then
-				turtle.forward()
-			end
-			
-			selectItem("minecraft:iron_block")
-			turtle.placeDown()
-	
-		end
-		
-		for k = 1, l - 1 do
-			turtle.back()
-		end
-		
-	end
-	
-	turtle.up()
-	selectItem("EnderStorage:enderChest")
-	turtle.placeDown()
-	chest = peripheral.wrap(getPeripheral("ender_chest"))
-	
+
 end
 
 function main ()
-
-	if args[1] == nil or args[2] == nil or args[3] == nil or #args < 3 then return end
-	
-	local length = tonumber(args[1]) - 1
-	local width = tonumber(args[2])
 	
 	init()
 	
-	build(length, width)
+	build()
 	
 	shutdown()
 	
