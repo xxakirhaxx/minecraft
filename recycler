@@ -22,7 +22,7 @@ end
 function main ()
 
 	local interfaces = getPeripheral("tileinterface")
-	local items = interfaces[1].getAvailableItems()
+	local items = interfaces[1].getAvailableItems("proxy")
 	
 	for a, item in pairs(items) do
 	
@@ -30,11 +30,8 @@ function main ()
 			
 			for b, interface in pairs(interfaces) do
 				
-				local fingerprint = item.fingerprint
-				local max_stack = item.item.basic().max_size
-				
-				interface.exportItem(fingerprint, "down", max_stack)
-				interface.exportItem(fingerprint, "up", max_stack)
+				interface.exportItem(item.fingerprint, "down", item.item.basic().max_size)
+				interface.exportItem(item.fingerprint, "up", item.item.basic().max_size)
 				
 			end
 			
