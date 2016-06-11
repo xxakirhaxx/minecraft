@@ -67,7 +67,7 @@ function emptyChest ()
 	turtle.select(1)
 end
 
-function getItem (itemName, slot, amount)
+function getItem (itemName, amount)
 	
 	if getItemId == nil then return end
 	

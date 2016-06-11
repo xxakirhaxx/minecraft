@@ -1,0 +1,49 @@
+function getPeripherals ()
+
+	local p = {}
+	
+	for i = 1, #peripheral.getNames() do
+		if peripheral.getType(peripheral.getNames()[i]) == name then
+			p[#p + 1] = peripheral.wrap(peripheral.getNames()[i])
+		end
+	end
+	
+	return p
+end
+
+local d = true
+
+function dbug (s)
+
+	if d then print(s) end
+	
+end
+
+local main ()
+
+	local interfaces = getPeripherals()
+	local items = interfaces[1].getAvailableItems()
+	
+	for a, item in pairs(items) do
+	
+		if item.fingerprint.id ~= "IC2:itemScrap" then
+			
+			for b, interface in pairs(interfaces) do
+				
+				interface.exportItem(item.fingerprint, "down", item.item.basic().max_size)
+				interface.exportItem(item.fingerprint, "up", item.item.basic().max_size)
+				
+			end
+			
+		end
+		
+	end
+	
+end
+
+while true do
+
+	main()
+	os.sleep(10)
+	
+end
