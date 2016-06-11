@@ -19,7 +19,7 @@ function dbug (s)
 	
 end
 
-local main ()
+function main ()
 
 	local interfaces = getPeripherals()
 	local items = interfaces[1].getAvailableItems()
