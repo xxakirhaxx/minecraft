@@ -30,8 +30,12 @@ function main ()
 			
 			for b, interface in pairs(interfaces) do
 				
-				interface.exportItem(item.fingerprint, "down", item.item.basic().max_size)
-				interface.exportItem(item.fingerprint, "up", item.item.basic().max_size)
+				if item.item.basic().qty > item.item.basic().max_size then
+					interface.exportItem(item.fingerprint, "down", item.item.basic().max_size)
+					interface.exportItem(item.fingerprint, "up", item.item.basic().max_size)
+				else
+					break
+				end
 				
 			end
 			
