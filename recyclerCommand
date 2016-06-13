@@ -1,0 +1,372 @@
+local args = {...}
+
+function getPeripheral (name)
+	for i = 1, #peripheral.getNames() do
+		if peripheral.getType(peripheral.getNames()[i]) == name then
+			return peripheral.getNames()[i]
+		end
+	end
+end
+
+local d = true
+
+function dbug (s)
+
+	if d then print(s) end
+	
+end
+
+function send (id, msg, protocol,...)
+
+	local modem = getPeripheral("modem")
+	
+	local frequency = 0
+	
+	if select(1,...) ~= nil then frequency = select(1,...) end
+
+	rednet.open(modem)
+	rednet.send(tonumber(id), {frequency = tonumber(frequency), msg = msg}, tostring(protocol))
+	rednet.close(modem)
+
+end
+
+function receive (protocol)
+
+	local modem = getPeripheral("modem")
+	local id = 0
+	local msg = {}
+	local p = ""
+	
+	rednet.open(modem)
+	id, msg, p = rednet.receive(protocol)
+	rednet.close(modem)
+	
+	return id, msg
+end
+
+function getBlackList ()
+
+	local list = {}
+	local file = io.open("blackList", "r")
+	local line = file:read()
+	
+	while line ~= nil do
+		
+		list[#list+1] = line
+		
+	end
+	
+	return list
+	
+	file:close()
+	
+	return list
+
+end
+
+function setBlackList (list)
+
+	local file = io.open("blackList", "w")
+	
+	for i = 1, #list do
+	
+		file:write(tostring(list[i]).."\n")
+		
+	end
+	
+	file:close()
+	
+end
+
+function getWhiteList ()
+
+	local list = {}
+	local file = io.open("whiteList", "r")
+	local line = file:read()
+	
+	while line ~= nil do
+		
+		list[#list+1] = line
+		
+	end
+	
+	return list
+	
+	file:close()
+	
+	return list
+	
+end
+
+function setWhiteList (list)
+
+	local file = io.open("whiteList", "w")
+	
+	for i = 1, #list do
+	
+		file:write(tostring(list[i]).."\n")
+		
+	end
+	
+	file:close()
+	
+end
+
+function drawMonitor ()
+
+end
+
+function addBlackList (item)
+
+	local list = getBlackList()
+	
+	list[#list+1] = item
+	
+	setBlackList(list)
+	
+end
+
+function removeBlackList (item)
+
+	local list = getBlackList()
+	
+	for i = 1, #list do
+		
+		if list[i] == item then 
+		
+			table.remove(list, i) 
+			break
+			
+		end
+		
+	end
+	
+	setBlackList(list)
+	
+end
+
+function addWhiteList (item)
+
+	local list = getWhiteList()
+	
+	list[#list+1] = item
+	
+	setWhiteList(list)
+	
+end
+
+function removeWhiteList (item)
+
+	local list = getWhiteList()
+	
+	for i = 1, #list do
+		
+		if list[i] == item then 
+		
+			table.remove(list, i) 
+			break
+			
+		end
+		
+	end
+	
+	setWhiteList(list)
+
+end
+
+function displayWhiteList ()
+
+	local list = getWhiteList()
+	
+	for i = 1, #list do
+	
+		print(tostring(list[i]))
+		
+	end
+	
+end
+
+function displayBlackList ()
+
+	local list = getBlackList()
+	
+	for i = 1, #list do
+	
+		print(tostring(list[i]))
+		
+	end
+	
+end
+
+function listed (name, list)
+
+	for i = 1, #list do
+	
+		if list[i] == name then
+			return true
+		end
+		
+	end
+	
+	return false
+end
+
+function runCycle ()
+
+	local interface = peripheral.wrap(getPeripheral("tileinterface"))
+	local items = interface.getAvailableItems("proxy")
+	local blackListNum = 1000
+	local whiteListNum = 5000000
+	local standard = 1000000
+	local num = standard
+	local whiteList = getWhiteList()
+	local blackList = getBlackList()
+	
+	for i = 1, #items do
+		
+		local name = items[i].item.basic().display_name
+		local fingerprint = items[i].fingerprint
+		local qty = items[i].item.basic().qty
+		local max_size = items[i].item.basic().max_size
+		
+		if listed(name, whiteList) then
+		
+			num = whiteListNum
+			
+		elseif listed(name, blackList) then
+		
+			num = blackListNum
+			
+		end
+		
+		if qty - num > 0 then
+		
+			local chunk = 100000
+			
+			while chunk > 0 and qty - num > 0 do
+			
+				exportItem(fingerprint, "down", max_size)
+				chunk = chunk - max_size
+				qty = qty - max_size
+				
+			end
+			
+			break
+			
+		end
+			
+		
+	end
+	
+end
+
+function executeCommand (cmd)
+
+	local c = {}
+	local itemName = ""
+	
+	for word, w in string.gmatch(tostring(cmd), "[%a%d]+") do
+		
+		c[#c+1] = word
+		
+	end
+	
+	cmd = c[1]
+	table.remove(c,1)
+	itemName = table.concat(c," ")
+	
+
+	if cmd == "addBlackList" then
+	
+		addBlackList(itemName)
+		
+	elseif cmd == "removeBlackList" then
+	
+		removeBlackList(itemName)
+		
+	elseif cmd == "addWhiteList" then
+	
+		addWhiteList(itemName)
+		
+	elseif cmd == "removeWhiteList" then
+	
+		removeWhiteList(itemName)
+		
+	elseif cmd == "displayWhiteList" then
+	
+		displayWhiteList()
+		
+	elseif cmd == "displayBlackList" then
+	
+		displayBlackList()
+		
+	elseif cmd == "cycle" then
+	
+		runCycle()
+		
+	elseif cmd == "help" then
+	
+		print("Commands: cycle : quit : displayBlackList : displayWhiteList : addBlackList [name] : removeBlackList [name] : addWhiteList [name] : removeWhiteList [name]")
+		
+	elseif cmd == "quit" then
+	
+	end
+	
+end
+
+function getCommand ()
+
+	local modem = getPeripheral("modem")
+	local event = ""
+	local id = 0
+	local msg = ""
+	local cycle = 30
+	local recycleCommandProt = "recycleCommand"
+	local tid = os.startTimer(cycle)
+	local protocol = ""
+	local cmd = "cycle"
+	
+	rednet.open(modem)
+	event, id, msg, protocol = os.pullEvent()
+	rednet.close(modem)
+
+	
+	if event == "rednet_message" then
+	
+		if protocol == recycleCommandProt then
+			
+			cmd = tostring(msg.cmd)
+			
+		end
+		
+	elseif event == "key" then
+	
+		cmd = tostring(read())
+		
+	elseif event == "timer" and id == tid then
+		
+		cmd = "cycle"
+		
+	end
+	
+	os.cancelTimer(tid)
+	
+	return cmd
+	
+end
+
+function main ()
+
+	local cmd = "cycle"
+	
+	repeat
+	
+		executeCommand(cmd)
+		
+		cmd = getCommand()
+		
+	until cmd == "quit"
+	
+end
+
+main()

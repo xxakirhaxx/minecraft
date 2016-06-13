@@ -298,6 +298,7 @@ function systemCycle ()
 			end
 			
 			if item["dmg"]/item["max_dmg"] > .95 and item["name"] == "reactorUraniumQuad" then
+				reactor.destroyStack(i)
 				mode = "shutdown"
 				break
 			end
