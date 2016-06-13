@@ -225,6 +225,8 @@ function runCycle ()
 		local qty = items[i].item.basic().qty
 		local max_size = items[i].item.basic().max_size
 		
+		dbug("Checking item "..tostring(name))
+		
 		if listed(name, whiteList) then
 		
 			num = whiteListNum
@@ -241,7 +243,7 @@ function runCycle ()
 			
 			while chunk > 0 and qty - num > 0 do
 			
-				exportItem(fingerprint, "down", max_size)
+				interface.exportItem(fingerprint, "down", max_size)
 				chunk = chunk - max_size
 				qty = qty - max_size
 				
@@ -326,6 +328,7 @@ function getCommand ()
 	event, id, msg, protocol = os.pullEvent()
 	rednet.close(modem)
 
+	dbug("Detected event: "..tostring(event))
 	
 	if event == "rednet_message" then
 	
