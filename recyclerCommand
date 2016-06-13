@@ -56,8 +56,6 @@ function getBlackList ()
 		
 	end
 	
-	return list
-	
 	file:close()
 	
 	return list
@@ -89,8 +87,6 @@ function getWhiteList ()
 		list[#list+1] = line
 		
 	end
-	
-	return list
 	
 	file:close()
 	
@@ -346,6 +342,7 @@ function getCommand ()
 	elseif event == "timer" and id == tid then
 		
 		cmd = "cycle"
+		drawMonitor()
 		
 	end
 	
@@ -358,6 +355,8 @@ end
 function main ()
 
 	local cmd = "cycle"
+	
+	local list = {}
 	
 	repeat
 	
