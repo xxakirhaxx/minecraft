@@ -359,12 +359,12 @@ function main ()
 
 	local cmd = "cycle"
 	
-	local list = {}
-	
 	repeat
 	
+		dbug("Executing command")
 		executeCommand(cmd)
 		
+		dbug("Getting new command")
 		cmd = getCommand()
 		
 	until cmd == "quit"
