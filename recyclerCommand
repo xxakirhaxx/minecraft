@@ -209,14 +209,24 @@ end
 
 function runCycle ()
 
+	dbug("Getting interface periph")
 	local interface = peripheral.wrap(getPeripheral("tileinterface"))
+	dbug("Got interface periph")
+	dbug("Getting items")
 	local items = interface.getAvailableItems("proxy")
+	dbug("Got items")
+	
 	local blackListNum = 1000
 	local whiteListNum = 5000000
 	local standard = 1000000
 	local num = standard
+	
+	dbug("Getting whiteList")
 	local whiteList = getWhiteList()
+	dbug("Got whiteList")
+	dbug("Getting blackList")
 	local blackList = getBlackList()
+	dbug("Got blackList")
 	
 	for i = 1, #items do
 		
