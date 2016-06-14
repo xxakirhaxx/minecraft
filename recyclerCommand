@@ -274,6 +274,8 @@ function executeCommand (cmd)
 	itemName = table.concat(c," ")
 	
 
+	dbug("Command: "..tostring(cmd))
+	
 	if cmd == "addBlackList" then
 	
 		addBlackList(itemName)
@@ -300,6 +302,7 @@ function executeCommand (cmd)
 		
 	elseif cmd == "cycle" then
 	
+		dbug("Executing runCycle")
 		runCycle()
 		
 	elseif cmd == "help" then
