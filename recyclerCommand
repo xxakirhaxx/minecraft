@@ -53,6 +53,7 @@ function getBlackList ()
 	while line ~= nil do
 		
 		list[#list+1] = line
+		line = file:read()
 		
 	end
 	
@@ -85,6 +86,7 @@ function getWhiteList ()
 	while line ~= nil do
 		
 		list[#list+1] = line
+		line = file:read()
 		
 	end
 	
