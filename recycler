@@ -1,3 +1,5 @@
+local recyclerProtocol = "recycler"
+
 function getPeripheral (name)
 
 	local p = {}
@@ -17,6 +19,72 @@ function dbug (s)
 
 	if d then print(tostring(s)) end
 	
+end
+
+function send (id, msg, protocol)
+
+	local modem = getPeripheral("modem")
+	
+	rednet.open(modem)
+	rednet.send(tonumber(id), {msg = msg}, tostring(protocol))
+	rednet.close(modem)
+
+end
+
+function receive (...)
+
+	local modem = getPeripheral("modem")
+	local id = 0
+	local msg = {}
+	local p = ""
+	local attempts = 0
+	
+	local protocol = tostring(select(1,...))
+	local cid = tonumber(select(2,...))
+	
+	if protocol == nil then protocol = "" end
+	if cid == nil then cid = 0 end
+	
+	repeat
+		rednet.open(modem)
+		id, msg, p = rednet.receive(tonumber(timeout))
+		rednet.close(modem)
+	
+		attempts = attempts + 1
+		
+		if p == "dns" then
+			rednet.open(modem)
+			rednet.send(tonumber(id), tostring(os.getComputerID()), tostring(p))
+			rednet.close(modem)
+		end
+		
+		
+	until ((protocol == "" or p == protocol) and (cid == 0 or tonumber(cid) == tonumber(id))) or attempts > timeOutAttempts 
+	
+	return id, msg
+end
+
+local function init ()
+	
+	local id = 0
+	local msg = ""
+	local modem = getPeripheral("modem")
+	
+	while msg ~= "startup" do
+		rednet.open(modem)
+		id, msg = rednet.receive()
+		rednet.close(modem)
+		
+		if tostring(msg) == "reboot" then
+			os.reboot()
+		end
+	end
+	
+	print("Initializing system...")
+	--Clear Monitor and start initialize timer
+	monitor.clear()	
+	print("Initialization Complete!")
+
 end
 
 function main ()
@@ -58,6 +126,8 @@ function main ()
 	end
 	
 end
+
+init()
 
 while true do
 
