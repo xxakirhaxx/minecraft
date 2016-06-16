@@ -83,6 +83,8 @@ local function init ()
 		end
 	end
 	
+	os.wait(math.random(1,60))
+	
 	print("Initializing system...")
 	--Clear Monitor and start initialize timer
 	monitor.clear()	

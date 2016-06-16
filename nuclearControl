@@ -254,6 +254,8 @@ function init ()
 		end
 	end
 	
+	os.wait(math.random(1,60))
+	
 	rednet.open(modem)
 	rednet.host(tostring(nuclearControlProt), tostring(tostring(nuclearControlProt)..tostring(os.getComputerID())))
 	rednet.close(modem)
