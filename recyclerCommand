@@ -386,7 +386,7 @@ local function init ()
 		end
 	end
 	
-	os.wait((os.getComputerID() % 120) + 1)
+	os.wait((tonumber(os.getComputerID()) % 120) + 1)
 	
 	print("Initializing system...")
 	--Clear Monitor and start initialize timer
