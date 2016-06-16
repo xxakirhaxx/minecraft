@@ -1,5 +1,14 @@
 local recyclerProtocol = "recycler"
 
+function getPeripheralSingle (name)
+
+	for i = 1, #peripheral.getNames() do
+		if peripheral.getType(peripheral.getNames()[i]) == name then
+			return peripheral.getNames()[i]
+		end
+	end
+	
+end
 function getPeripheral (name)
 
 	local p = {}
@@ -68,7 +77,7 @@ local function init ()
 	
 	local id = 0
 	local msg = ""
-	local modem = getPeripheral("modem")
+	local modem = getPeripheralSingle("modem")
 	
 	while msg ~= "startup" do
 		rednet.open(modem)

@@ -370,9 +370,34 @@ function getCommand ()
 	
 end
 
+local function init ()
+	
+	local id = 0
+	local msg = ""
+	local modem = getPeripheral("modem")
+	
+	while msg ~= "startup" do
+		rednet.open(modem)
+		id, msg = rednet.receive()
+		rednet.close(modem)
+		
+		if tostring(msg) == "reboot" then
+			os.reboot()
+		end
+	end
+	
+	print("Initializing system...")
+	--Clear Monitor and start initialize timer
+	monitor.clear()	
+	print("Initialization Complete!")
+
+end
+
 function main ()
 
 	local cmd = "cycle"
+	
+	init()
 	
 	repeat
 	
