@@ -254,7 +254,7 @@ function init ()
 		end
 	end
 	
-	os.wait(math.random(1,60))
+	os.wait((os.getComputerID() % 120) + 1)
 	
 	rednet.open(modem)
 	rednet.host(tostring(nuclearControlProt), tostring(tostring(nuclearControlProt)..tostring(os.getComputerID())))

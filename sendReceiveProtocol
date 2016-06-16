@@ -83,11 +83,10 @@ local function init ()
 		end
 	end
 	
-	os.wait(math.random(1,60))
+	os.wait((os.getComputerID() % 120) + 1)
 	
 	print("Initializing system...")
-	--Clear Monitor and start initialize timer
-	monitor.clear()	
+	
 	print("Initialization Complete!")
 
 end
